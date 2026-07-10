@@ -787,7 +787,7 @@
 @media print {
   @page {
     size: landscape;
-    margin: 10mm 15mm;
+    margin: 8mm 10mm;
   }
 
   * {
@@ -797,16 +797,26 @@
   }
 
   body {
-    background-color: #ffffff !important;
+    background: #ffffff !important;
     color: #000000 !important;
-    font-size: 11px !important;
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
-  
-  .app-container {
-    background-color: #ffffff !important;
+
+  #root {
+    width: 100% !important;
     min-height: 0 !important;
   }
 
+  .app-container {
+    background: #ffffff !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* ===== HIDE ALL UI CHROME ===== */
   .top-nav,
   .chatbot-sidebar,
   .chatbot-toggle-btn,
@@ -814,24 +824,26 @@
   .row-actions-td,
   .delete-row-btn,
   .save-prompt-banner,
-  .risk-score-selectors,
   .save-btn-confirm,
   .save-btn-discard,
+  .risk-score-selectors,
+  .modal-overlay,
   th:last-child,
   td:last-child {
     display: none !important;
   }
 
+  /* ===== LAYOUT CONTAINERS: kill all overflow/scroll ===== */
   .main-workspace {
     height: auto !important;
     overflow: visible !important;
-    background-color: #ffffff !important;
+    background: #ffffff !important;
     display: block !important;
   }
 
   .document-workspace {
-    padding: 0 !important;
-    background-color: #ffffff !important;
+    padding: 5mm 0 !important;
+    background: #ffffff !important;
     overflow: visible !important;
     display: block !important;
   }
@@ -839,72 +851,190 @@
   .document-sheet {
     box-shadow: none !important;
     border: none !important;
+    border-radius: 0 !important;
     padding: 0 !important;
+    margin: 0 !important;
     max-width: 100% !important;
     width: 100% !important;
     min-height: 0 !important;
-    background-color: #ffffff !important;
+    background: #ffffff !important;
+    overflow: visible !important;
   }
 
-  /* Sharp table borders for high legibility on print */
-  .meta-table, 
-  .meta-table td, 
-  .hirac-table, 
-  .hirac-table th, 
-  .hirac-table td, 
-  .doc-footer-signatures, 
-  .sig-box, 
-  .sig-remarks-box {
-    border: 1px solid #000000 !important;
+  /* ===== DOCUMENT HEADER ===== */
+  .doc-header-layout {
+    border-bottom: 2px solid #000000 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .doc-title {
+    font-size: 16px !important;
+    color: #000000 !important;
+  }
+
+  /* ===== METADATA TABLE ===== */
+  .meta-table {
     border-collapse: collapse !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
   }
 
-  /* Table Header formatting */
-  .hirac-table th {
-    background-color: #5c5c5c !important; /* Solid grey header */
-    color: #ffffff !important;
-    font-weight: bold !important;
-    font-size: 10.5px !important;
-    padding: 8px 4px !important;
+  .meta-table td {
+    border: 1px solid #000000 !important;
+    padding: 3px 6px !important;
+    font-size: 10px !important;
   }
 
-  /* Metadata formatting */
   .meta-label {
-    background-color: #7f7f7f !important; /* Darker grey header label */
+    background-color: #5c5c5c !important;
     color: #ffffff !important;
     font-weight: bold !important;
     text-transform: uppercase !important;
-    font-size: 10px !important;
+    font-size: 9px !important;
+  }
+
+  .meta-value {
+    background: #ffffff !important;
   }
 
   .meta-value input {
     border: none !important;
     background: transparent !important;
-    font-weight: bold !important;
+    font-weight: 600 !important;
     color: #000000 !important;
-    font-size: 11px !important;
+    font-size: 10px !important;
+    padding: 0 !important;
+    height: auto !important;
+    display: inline !important;
   }
 
-  /* Textareas and cell formatting */
-  .cell-editable, 
-  textarea, 
-  input {
+  /* ===== HIRAC TABLE — THE CRITICAL FIX ===== */
+  .hirac-table-container {
+    overflow: visible !important;      /* KILLS the scrollbar */
+    border-radius: 0 !important;       /* No rounded corners in print */
+    border: none !important;           /* Table cells handle their own borders */
+    width: 100% !important;
+    margin-bottom: 15px !important;
+  }
+
+  .hirac-table {
+    width: 100% !important;
+    min-width: 0 !important;           /* REMOVES the 1150px min-width */
+    table-layout: fixed !important;    /* Forces columns to respect widths */
+    border-collapse: collapse !important;
+    font-size: 10px !important;
+  }
+
+  .hirac-table th {
+    border: 1px solid #000000 !important;
+    background-color: #5c5c5c !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    font-size: 9px !important;
+    padding: 6px 3px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .header-subtext {
+    font-size: 7px !important;
+  }
+
+  .hirac-table td {
+    border: 1px solid #000000 !important;
+    padding: 4px !important;
+    vertical-align: top !important;
+    background: #ffffff !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: visible !important;
+  }
+
+  /* ===== TEXTAREA/INPUT — KILL ALL SCROLLBARS AND FIXED HEIGHTS ===== */
+  .cell-editable,
+  .hirac-table textarea,
+  .hirac-table input,
+  .sig-name-input,
+  .sig-role-input,
+  .sig-remarks-box textarea,
+  .sig-remarks-box .cell-editable {
     border: none !important;
     background: transparent !important;
     color: #000000 !important;
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+    padding: 0 !important;
+    margin: 0 !important;
     width: 100% !important;
-    padding: 2px !important;
-    font-size: 11px !important;
+    /* These MUST use height: auto to override inline styles from JS */
     height: auto !important;
     min-height: 0 !important;
+    max-height: none !important;
     overflow: visible !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
     resize: none !important;
     white-space: pre-wrap !important;
     word-break: break-word !important;
     display: block !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
 
-  /* Clean table rows page splits */
+  /* ===== HIDE SELECT DROPDOWN ARROWS ===== */
+  select {
+    display: none !important;
+  }
+
+  /* ===== RISK CELLS ===== */
+  .risk-index-cell {
+    text-align: center !important;
+    vertical-align: middle !important;
+    padding: 4px 2px !important;
+  }
+
+  .risk-cell-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .risk-level-label {
+    font-weight: bold !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+  }
+
+  .risk-low {
+    background-color: #00b050 !important;
+    color: #ffffff !important;
+  }
+
+  .risk-medium {
+    background-color: #ffff00 !important;
+    color: #000000 !important;
+  }
+
+  .risk-high {
+    background-color: #ff0000 !important;
+    color: #ffffff !important;
+  }
+
+  /* ===== OP TYPE TEXT ===== */
+  .op-type-text,
+  .op-type-text textarea,
+  td.op-type-text .cell-editable {
+    color: #cc0000 !important;
+    font-weight: bold !important;
+  }
+
+  /* ===== PAGE BREAK CONTROL ===== */
   .hirac-table tr {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
@@ -913,33 +1043,24 @@
   .doc-footer-signatures {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0 !important;
+    margin-top: 20px !important;
   }
 
-  /* High-contrast solid Risk Category Badge coloring in Print */
-  .risk-index-cell {
-    text-align: center !important;
-    vertical-align: middle !important;
-    padding: 8px 4px !important;
+  .sig-box {
+    border: 1px solid #000000 !important;
+    background: #ffffff !important;
   }
 
-  .risk-level-label {
-    font-weight: bold !important;
-    font-size: 10.5px !important;
-    line-height: 1.2 !important;
-  }
-
-  .risk-low {
-    background-color: #00b050 !important; /* Solid printable green */
-    color: #ffffff !important;
-  }
-
-  .risk-medium {
-    background-color: #ffff00 !important; /* Solid printable yellow */
+  .sig-box-title {
     color: #000000 !important;
+    font-weight: bold !important;
   }
 
-  .risk-high {
-    background-color: #ff0000 !important; /* Solid printable red */
-    color: #ffffff !important;
+  .sig-remarks-box {
+    border: 1px solid #000000 !important;
+    background: #ffffff !important;
   }
 }
+

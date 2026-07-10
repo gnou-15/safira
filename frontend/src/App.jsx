@@ -403,7 +403,28 @@ function App() {
 
   // Launch browser native print interface (styled by print stylesheet)
   const handlePrint = () => {
+    // Strip all inline height/overflow styles from textareas before printing.
+    // AutoResizeTextarea sets these via JS, and inline styles override CSS !important
+    // in print media queries, causing scrollbars and fixed-height cells.
+    const textareas = document.querySelectorAll('textarea');
+    const savedStyles = [];
+    textareas.forEach((ta) => {
+      savedStyles.push(ta.getAttribute('style'));
+      ta.style.height = 'auto';
+      ta.style.minHeight = '0';
+      ta.style.maxHeight = 'none';
+      ta.style.overflow = 'visible';
+      ta.style.overflowY = 'visible';
+    });
+
     window.print();
+
+    // Restore original inline styles after the print dialog closes
+    textareas.forEach((ta, i) => {
+      if (savedStyles[i]) {
+        ta.setAttribute('style', savedStyles[i]);
+      }
+    });
   };
 
   return (
