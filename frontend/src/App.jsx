@@ -780,10 +780,10 @@ function App() {
                 </div>
                 <div className="sig-remarks-box">
                   <strong>Remarks / Notes:</strong>
-                  <textarea
+                  <AutoResizeTextarea
                     className="cell-editable"
                     placeholder="General report remarks or comments..."
-                    style={{ minHeight: '60px', marginTop: '10px' }}
+                    style={{ marginTop: '10px' }}
                     value={currentReport.footer_remarks || ''}
                     onChange={(e) => handleMetaEdit('footer_remarks', e.target.value)}
                   />
