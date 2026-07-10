@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from groq import Groq
 from supabase import create_client, Client
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -23,6 +24,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Initialize Groq client
 groq_api_key = os.getenv("GROQ_API_KEY")
