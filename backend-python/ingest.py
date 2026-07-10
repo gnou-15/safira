@@ -98,7 +98,14 @@ def main():
         chunks = chunk_text(text_content)
         print(f"Split {filename} into {len(chunks)} chunks.")
         
-        # 3. Create embeddings and upload to Supabase
+        # 3. Clear existing chunks for this file to prevent duplicates
+        try:
+            print(f"Clearing old database chunks for {filename}...")
+            supabase.table("safety_documents").delete().eq("document_name", filename).execute()
+        except Exception as e:
+            print(f"Warning: Failed to clear old chunks for {filename}: {e}")
+
+        # 4. Create embeddings and upload to Supabase
         uploaded_count = 0
         for i, chunk in enumerate(chunks):
             try:
