@@ -235,7 +235,7 @@ div.screen-only {
 
 .meta-table td {
   border: 1px solid var(--border-color);
-  padding: 6px 10px;
+  padding: 12px 16px;
   vertical-align: middle;
 }
 
@@ -260,7 +260,7 @@ div.screen-only {
   background: transparent;
   font-weight: 600;
   color: var(--text-primary);
-  padding: 4px 0;
+  padding: 6px 0;
   transition: all 0.15s ease;
 }
 
@@ -271,14 +271,14 @@ div.screen-only {
 .meta-value-sidebar {
   vertical-align: top !important;
   background-color: var(--bg-card);
-  padding: 8px 10px !important;
+  padding: 14px 16px !important;
 }
 
 .sidebar-label {
   font-weight: 700;
   font-size: 11px;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .sidebar-input {
@@ -290,7 +290,7 @@ div.screen-only {
   background: transparent;
   font-weight: 700;
   color: var(--text-primary);
-  padding: 4px 0;
+  padding: 6px 0;
   border-bottom: 1px solid transparent;
   transition: all 0.15s ease;
 }
@@ -308,9 +308,9 @@ div.screen-only {
   background: transparent;
   font-weight: 600;
   color: var(--text-secondary);
-  padding: 4px 0;
+  padding: 6px 0;
   resize: none;
-  min-height: 40px;
+  min-height: 48px;
   border-bottom: 1px solid transparent;
   transition: all 0.15s ease;
 }
@@ -320,9 +320,10 @@ div.screen-only {
 }
 
 .sidebar-subtext {
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--text-muted);
-  margin-top: 10px;
+  margin-top: 14px;
+  line-height: 1.3;
 }
 
 /* Main HIRAC Table */
@@ -417,6 +418,16 @@ div.screen-only {
 .cell-select-compact:focus {
   outline: none;
   border-color: var(--primary-color);
+}
+
+/* Screen Interactive Risk Widget Layout */
+.risk-cell-content.screen-only {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 4px 0 !important;
 }
 
 /* Risk Score Index Formatting */

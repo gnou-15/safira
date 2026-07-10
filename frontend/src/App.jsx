@@ -495,7 +495,7 @@ function App() {
               <table className="meta-table">
                 <tbody>
                   <tr>
-                    <td className="meta-label" style={{ width: '15%' }}>B TITLE:</td>
+                    <td className="meta-label" style={{ width: '15%' }}>REPORT TITLE:</td>
                     <td className="meta-value" colSpan={3} style={{ width: '65%' }}>
                       <input
                         type="text"
@@ -552,7 +552,7 @@ function App() {
                     </td>
                     <td className="meta-value-sidebar" rowSpan={2}>
                       <div className="sidebar-label">Assessor(s)/Team:</div>
-                      <textarea
+                      <AutoResizeTextarea
                         className="sidebar-textarea screen-only"
                         value={currentReport.assessor_team || ''}
                         onChange={(e) => handleMetaEdit('assessor_team', e.target.value)}
@@ -651,24 +651,28 @@ function App() {
                               <span className="risk-score-number"><br/>({row.initial_risk_score || 0})</span>
                             </div>
                             <div className="risk-score-selectors">
-                              <label>L:
-                                <select
-                                  className="cell-select-compact"
-                                  value={row.initial_likelihood || 3}
-                                  onChange={(e) => handleCellEdit(idx, 'initial_likelihood', parseInt(e.target.value))}
-                                >
-                                  {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                                </select>
-                              </label>
-                              <label style={{ marginLeft: '4px' }}>S:
-                                <select
-                                  className="cell-select-compact"
-                                  value={row.initial_severity || 3}
-                                  onChange={(e) => handleCellEdit(idx, 'initial_severity', parseInt(e.target.value))}
-                                >
-                                  {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                                </select>
-                              </label>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                                  Likelihood:
+                                  <select
+                                    className="cell-select-compact"
+                                    value={row.initial_likelihood || 3}
+                                    onChange={(e) => handleCellEdit(idx, 'initial_likelihood', parseInt(e.target.value))}
+                                  >
+                                    {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                                  </select>
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                                  Severity:
+                                  <select
+                                    className="cell-select-compact"
+                                    value={row.initial_severity || 3}
+                                    onChange={(e) => handleCellEdit(idx, 'initial_severity', parseInt(e.target.value))}
+                                  >
+                                    {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                                  </select>
+                                </label>
+                              </div>
                             </div>
                           </div>
                           {/* Print: solid-colored badge — divs always print backgrounds */}
@@ -695,24 +699,28 @@ function App() {
                               <span className="risk-score-number"><br/>({row.residual_risk_score || 0})</span>
                             </div>
                             <div className="risk-score-selectors">
-                              <label>L:
-                                <select
-                                  className="cell-select-compact"
-                                  value={row.residual_likelihood || 2}
-                                  onChange={(e) => handleCellEdit(idx, 'residual_likelihood', parseInt(e.target.value))}
-                                >
-                                  {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                                </select>
-                              </label>
-                              <label style={{ marginLeft: '4px' }}>S:
-                                <select
-                                  className="cell-select-compact"
-                                  value={row.residual_severity || 2}
-                                  onChange={(e) => handleCellEdit(idx, 'residual_severity', parseInt(e.target.value))}
-                                >
-                                  {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                                </select>
-                              </label>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                                  Likelihood:
+                                  <select
+                                    className="cell-select-compact"
+                                    value={row.residual_likelihood || 2}
+                                    onChange={(e) => handleCellEdit(idx, 'residual_likelihood', parseInt(e.target.value))}
+                                  >
+                                    {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                                  </select>
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                                  Severity:
+                                  <select
+                                    className="cell-select-compact"
+                                    value={row.residual_severity || 2}
+                                    onChange={(e) => handleCellEdit(idx, 'residual_severity', parseInt(e.target.value))}
+                                  >
+                                    {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                                  </select>
+                                </label>
+                              </div>
                             </div>
                           </div>
                           {/* Print: solid-colored badge — divs always print backgrounds */}
