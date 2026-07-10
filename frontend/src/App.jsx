@@ -376,32 +376,31 @@ function App() {
       <header className="top-nav">
         <div className="logo-container">
           <button className="brand-btn" onClick={() => fetchReports()}>SAFIRA</button>
+          
+          {reports.length > 0 && (
+            <select
+              className="report-select-dropdown"
+              value={currentReport?.id || ''}
+              onChange={(e) => loadReport(e.target.value)}
+            >
+              <option value="" disabled>Select a Report...</option>
+              {reports.map((report) => (
+                <option key={report.id} value={report.id}>
+                  {report.title}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
         <div className="nav-actions">
           <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
-          <button className="btn-primary" onClick={handlePrint}>Export PDF</button>
+          <button className="btn-primary" onClick={handlePrint}>EXPORT</button>
         </div>
       </header>
 
       {/* Main Container */}
       <main className="main-workspace">
         
-        {/* Left sidebar: Reports list */}
-        <aside className="reports-list-sidebar">
-          <div className="sidebar-header">HIRAC Reports Archive</div>
-          <div className="reports-menu-list">
-            {reports.map((report) => (
-              <div
-                key={report.id}
-                className={`report-item ${currentReport?.id === report.id ? 'active' : ''}`}
-                onClick={() => loadReport(report.id)}
-              >
-                {report.title}
-              </div>
-            ))}
-          </div>
-        </aside>
-
         {/* Center Canvas */}
         <section className="document-workspace">
           {currentReport ? (
@@ -410,10 +409,27 @@ function App() {
               <div className="doc-header-layout">
                 {/* Simulated aviation logo wings */}
                 <div className="logo-placeholder">
-                  <svg viewBox="0 0 100 40" width="100%" height="40">
-                    <path d="M10 20 L25 10 L40 20 L25 30 Z" fill="#7d8b99" />
-                    <path d="M90 20 L75 10 L60 20 L75 30 Z" fill="#7d8b99" />
-                    <text x="50" y="25" dominantBaseline="middle" textAnchor="middle" fontWeight="bold" fontSize="12" fill="#1a1a1a">PAGSS</text>
+                  <svg viewBox="0 0 260 70" width="220" height="60">
+                    <g transform="translate(0, 5)">
+                      {/* Left stylized wing lines */}
+                      <path d="M 10 32 L 70 12 L 70 20 L 20 37 Z" fill="#7d8b99" opacity="0.9" />
+                      <path d="M 20 39 L 70 24 L 70 32 L 30 44 Z" fill="#7d8b99" opacity="0.9" />
+                      <path d="M 30 46 L 70 35 L 70 42 L 40 49 Z" fill="#7d8b99" opacity="0.9" />
+                      
+                      {/* Center shield/diamond */}
+                      <polygon points="80,5 140,5 145,45 75,45" fill="#5c5c5c" stroke="#4a4a4a" strokeWidth="1" />
+                      <text x="110" y="27" dominantBaseline="middle" textAnchor="middle" fontWeight="900" fontSize="20" fill="#ffffff" letterSpacing="1">PAGSS</text>
+                      
+                      {/* Right stylized wing lines */}
+                      <path d="M 210 32 L 150 12 L 150 20 L 200 37 Z" fill="#7d8b99" opacity="0.9" />
+                      <path d="M 200 39 L 150 24 L 150 32 L 190 44 Z" fill="#7d8b99" opacity="0.9" />
+                      <path d="M 190 46 L 150 35 L 150 42 L 180 49 Z" fill="#7d8b99" opacity="0.9" />
+
+                      {/* Subtext below the wings */}
+                      <text x="110" y="55" dominantBaseline="middle" textAnchor="middle" fontWeight="700" fontSize="5" fill="#4a4a4a" letterSpacing="0.2">
+                        PHILIPPINE AIRPORT GROUND SUPPORT SOLUTIONS, INC.
+                      </text>
+                    </g>
                   </svg>
                 </div>
                 <div className="doc-title-container">
@@ -426,7 +442,7 @@ function App() {
                 <tbody>
                   <tr>
                     <td className="meta-label">B Title:</td>
-                    <td className="meta-value" colSpan="3">
+                    <td className="meta-value">
                       <input
                         type="text"
                         value={currentReport.title || ''}
@@ -452,7 +468,7 @@ function App() {
                       />
                     </td>
                     <td className="meta-label">Location:</td>
-                    <td className="meta-value" colSpan="3">
+                    <td className="meta-value">
                       <input
                         type="text"
                         value={currentReport.location || ''}
@@ -461,20 +477,40 @@ function App() {
                     </td>
                   </tr>
                   <tr>
-                    <td className="meta-label">Activity Assessed:</td>
-                    <td className="meta-value" colSpan="3">
+                    <td className="meta-label">Activity/Area being assessed:</td>
+                    <td className="meta-value">
                       <input
                         type="text"
                         value={currentReport.activity_assessed || ''}
                         onChange={(e) => handleMetaEdit('activity_assessed', e.target.value)}
                       />
                     </td>
-                    <td className="meta-label">Assessor Team:</td>
+                    <td className="meta-label">Assessor(s)/Team:</td>
                     <td className="meta-value">
                       <input
                         type="text"
                         value={currentReport.assessor_team || ''}
                         onChange={(e) => handleMetaEdit('assessor_team', e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="meta-label">Date Created:</td>
+                    <td className="meta-value">
+                      <input
+                        type="text"
+                        placeholder="YYYY-MM-DD"
+                        value={currentReport.date_created || ''}
+                        onChange={(e) => handleMetaEdit('date_created', e.target.value)}
+                      />
+                    </td>
+                    <td className="meta-label">Date Reviewed:</td>
+                    <td className="meta-value">
+                      <input
+                        type="text"
+                        placeholder="YYYY-MM-DD"
+                        value={currentReport.date_reviewed || ''}
+                        onChange={(e) => handleMetaEdit('date_reviewed', e.target.value)}
                       />
                     </td>
                   </tr>
@@ -486,25 +522,20 @@ function App() {
                 <table className="hirac-table">
                   <thead>
                     <tr>
-                      <th rowSpan="2" style={{ width: '12%' }}>Type of Operation or Activity</th>
-                      <th rowSpan="2" style={{ width: '12%' }}>Generic Hazard</th>
-                      <th rowSpan="2" style={{ width: '12%' }}>Risks (Consequences)</th>
-                      <th rowSpan="2" style={{ width: '12%' }}>Existing Defenses</th>
-                      <th colSpan="3">Initial Assessment</th>
-                      <th rowSpan="2" style={{ width: '15%' }}>Mitigating Actions</th>
-                      <th colSpan="3">Residual Assessment</th>
-                      <th rowSpan="2" style={{ width: '8%' }}>Remarks</th>
-                      <th rowSpan="2" style={{ width: '6%' }}>Target Date</th>
-                      <th rowSpan="2" style={{ width: '8%' }}>Dept Responsible</th>
-                      <th rowSpan="2" className="row-actions-td">Actions</th>
-                    </tr>
-                    <tr>
-                      <th style={{ width: '2.5%' }}>L</th>
-                      <th style={{ width: '2.5%' }}>S</th>
-                      <th style={{ width: '4%' }}>Index</th>
-                      <th style={{ width: '2.5%' }}>L</th>
-                      <th style={{ width: '2.5%' }}>S</th>
-                      <th style={{ width: '4%' }}>Index</th>
+                      <th style={{ width: '13%' }}>Type of Operation or Activity</th>
+                      <th style={{ width: '13%' }}>Generic Hazard</th>
+                      <th style={{ width: '13%' }}>Risks (Consequences of the Hazard)</th>
+                      <th style={{ width: '14%' }}>Existing Defenses to Control Safety Risks</th>
+                      <th style={{ width: '8%' }}>Safety Risk Index</th>
+                      <th style={{ width: '16%' }}>
+                        Mitigating Actions to Further Reduce Safety Risks
+                        <div className="header-subtext">(a) Elimination (b) Substitution (c) Engineering control (d) Administrative (e) PPE</div>
+                      </th>
+                      <th style={{ width: '8%' }}>Residual Risk Index</th>
+                      <th style={{ width: '8%' }}>Remarks</th>
+                      <th style={{ width: '6%' }}>Target Date</th>
+                      <th style={{ width: '8%' }}>Dept Responsible</th>
+                      <th className="row-actions-td">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -539,27 +570,34 @@ function App() {
                           />
                         </td>
                         
-                        {/* Initial Assessment parameters */}
-                        <td>
-                          <select
-                            className="cell-select"
-                            value={row.initial_likelihood}
-                            onChange={(e) => handleCellEdit(idx, 'initial_likelihood', parseInt(e.target.value))}
-                          >
-                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                          </select>
-                        </td>
-                        <td>
-                          <select
-                            className="cell-select"
-                            value={row.initial_severity}
-                            onChange={(e) => handleCellEdit(idx, 'initial_severity', parseInt(e.target.value))}
-                          >
-                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                          </select>
-                        </td>
+                        {/* Interactive Safety Risk Index (Single cell with internal score controls) */}
                         <td className={`risk-index-cell risk-${(row.initial_risk_index || 'Low').toLowerCase()}`}>
-                          {row.initial_risk_index} ({row.initial_risk_score})
+                          <div className="risk-cell-content">
+                            <div className="risk-level-label">
+                              {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}<br/>
+                              ({row.initial_risk_score || 0})
+                            </div>
+                            <div className="risk-score-selectors">
+                              <label>L:
+                                <select
+                                  className="cell-select-compact"
+                                  value={row.initial_likelihood || 3}
+                                  onChange={(e) => handleCellEdit(idx, 'initial_likelihood', parseInt(e.target.value))}
+                                >
+                                  {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                                </select>
+                              </label>
+                              <label style={{ marginLeft: '4px' }}>S:
+                                <select
+                                  className="cell-select-compact"
+                                  value={row.initial_severity || 3}
+                                  onChange={(e) => handleCellEdit(idx, 'initial_severity', parseInt(e.target.value))}
+                                >
+                                  {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                                </select>
+                              </label>
+                            </div>
+                          </div>
                         </td>
 
                         <td>
@@ -570,27 +608,34 @@ function App() {
                           />
                         </td>
 
-                        {/* Residual Assessment parameters */}
-                        <td>
-                          <select
-                            className="cell-select"
-                            value={row.residual_likelihood}
-                            onChange={(e) => handleCellEdit(idx, 'residual_likelihood', parseInt(e.target.value))}
-                          >
-                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                          </select>
-                        </td>
-                        <td>
-                          <select
-                            className="cell-select"
-                            value={row.residual_severity}
-                            onChange={(e) => handleCellEdit(idx, 'residual_severity', parseInt(e.target.value))}
-                          >
-                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                          </select>
-                        </td>
+                        {/* Interactive Residual Risk Index (Single cell with internal score controls) */}
                         <td className={`risk-index-cell risk-${(row.residual_risk_index || 'Low').toLowerCase()}`}>
-                          {row.residual_risk_index} ({row.residual_risk_score})
+                          <div className="risk-cell-content">
+                            <div className="risk-level-label">
+                              {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}<br/>
+                              ({row.residual_risk_score || 0})
+                            </div>
+                            <div className="risk-score-selectors">
+                              <label>L:
+                                <select
+                                  className="cell-select-compact"
+                                  value={row.residual_likelihood || 2}
+                                  onChange={(e) => handleCellEdit(idx, 'residual_likelihood', parseInt(e.target.value))}
+                                >
+                                  {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                                </select>
+                              </label>
+                              <label style={{ marginLeft: '4px' }}>S:
+                                <select
+                                  className="cell-select-compact"
+                                  value={row.residual_severity || 2}
+                                  onChange={(e) => handleCellEdit(idx, 'residual_severity', parseInt(e.target.value))}
+                                >
+                                  {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                                </select>
+                              </label>
+                            </div>
+                          </div>
                         </td>
 
                         <td>
@@ -717,7 +762,7 @@ function App() {
           )}
         </section>
 
-        {/* Right side chatbot panel */}
+        {/* Floating chatbot overlay at bottom right */}
         {chatOpen && (
           <aside className="chatbot-sidebar">
             <div className="chatbot-header">

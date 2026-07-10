@@ -15,9 +15,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 24px;
-  background-color: #3a3a3a;
-  border-bottom: 2px solid #4a4a4a;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #2b2b2b;
+  border-bottom: 1px solid #3f3f3f;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -26,25 +26,42 @@
 .logo-container {
   display: flex;
   align-items: center;
+  gap: 16px;
 }
 
 .brand-btn {
-  background-color: #7d8b99;
-  color: #ffffff;
+  background-color: #8f9ca8;
+  color: #1a1a1a;
   border: none;
-  padding: 8px 20px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 1.5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  padding: 8px 24px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+  transition: all 0.2s;
 }
 
 .brand-btn:hover {
-  background-color: #6c7b89;
-  transform: translateY(-1px);
+  background-color: #7d8b99;
+}
+
+/* Report Select Dropdown in Navbar */
+.report-select-dropdown {
+  background-color: #3a3a3c;
+  color: #ffffff;
+  border: 1px solid #5a5a5c;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  max-width: 250px;
+  transition: all 0.2s;
+}
+
+.report-select-dropdown:hover {
+  background-color: #4a4a4c;
 }
 
 .nav-actions {
@@ -54,34 +71,33 @@
 }
 
 .btn-primary {
-  background-color: #49a329;
+  background-color: #4caf50;
   color: #ffffff;
   border: none;
-  padding: 8px 24px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 14px;
+  padding: 8px 28px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(73, 163, 41, 0.25);
-  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.25);
+  transition: all 0.2s;
 }
 
 .btn-primary:hover {
-  background-color: #3f8e23;
+  background-color: #439e47;
   transform: translateY(-1px);
-  box-shadow: 0 6px 12px rgba(73, 163, 41, 0.35);
 }
 
 .btn-secondary {
   background-color: #4b5563;
   color: #ffffff;
   border: none;
-  padding: 8px 16px;
-  border-radius: 12px;
+  padding: 8px 18px;
+  border-radius: 20px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -96,28 +112,31 @@
   flex: 1;
   position: relative;
   height: calc(100vh - 65px);
-  overflow: hidden;
+  overflow-y: auto;
+  background-color: #2b2b2b;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 /* Document Sheet Workspace */
 .document-workspace {
-  flex: 1;
-  padding: 40px 20px;
-  overflow-y: auto;
+  width: 100%;
+  padding: 30px 15px;
   display: flex;
   justify-content: center;
   background-color: #262626;
+  box-sizing: border-box;
 }
 
-/* Print/Canvas Sheet container mimicking physical A4 */
+/* Print/Canvas Sheet container mimicking physical A4 wider layout */
 .document-sheet {
   background-color: #ffffff;
   width: 100%;
-  max-width: 1100px;
-  min-height: 1400px;
-  padding: 40px;
+  max-width: 1400px;
+  min-height: 1200px;
+  padding: 30px;
   box-sizing: border-box;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border-radius: 4px;
   position: relative;
 }
@@ -128,25 +147,26 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 2px solid #000000;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .logo-placeholder {
-  width: 140px;
+  flex-shrink: 0;
+  margin-right: 15px;
 }
 
 .doc-title-container {
-  text-align: center;
+  text-align: right;
   flex: 1;
 }
 
 .doc-title {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 19px;
+  font-weight: 900;
   margin: 0;
-  color: #1a1a1a;
-  letter-spacing: 0.5px;
+  color: #4a4a4a;
+  letter-spacing: 0.2px;
   text-transform: uppercase;
 }
 
@@ -154,64 +174,76 @@
 .meta-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 25px;
-  font-size: 13px;
+  margin-bottom: 20px;
+  font-size: 12px;
 }
 
 .meta-table td {
-  border: 1px solid #1a1a1a;
-  padding: 6px 10px;
+  border: 1px solid #7f7f7f;
+  padding: 5px 8px;
   vertical-align: middle;
 }
 
 .meta-label {
   font-weight: 800;
-  background-color: #e6e6e6;
-  width: 15%;
+  background-color: #5c5c5c;
+  width: 18%;
   text-transform: uppercase;
-  color: #1a1a1a;
+  color: #ffffff;
 }
 
 .meta-value {
-  width: 35%;
+  width: 32%;
 }
 
 .meta-value input {
   width: 100%;
   border: none;
   outline: none;
-  font-size: 13px;
+  font-size: 12px;
   font-family: inherit;
   background: transparent;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 /* Main HIRAC Table */
 .hirac-table-container {
   width: 100%;
   overflow-x: auto;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .hirac-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
-  min-width: 1000px;
+  font-size: 11px;
+  min-width: 1100px;
 }
 
 .hirac-table th {
-  border: 1px solid #000000;
-  background-color: #737373;
+  border: 1px solid #7f7f7f;
+  background-color: #5c5c5c;
   color: #ffffff;
-  padding: 8px 6px;
-  font-weight: 700;
+  padding: 10px 6px;
+  font-weight: 800;
   text-align: center;
   vertical-align: middle;
+  text-transform: uppercase;
   font-size: 11px;
+  line-height: 1.3;
+}
+
+.header-subtext {
+  font-size: 8.5px;
+  font-weight: 400;
+  text-transform: none;
+  margin-top: 4px;
+  opacity: 0.85;
 }
 
 .hirac-table td {
-  border: 1px solid #000000;
+  border: 1px solid #7f7f7f;
   padding: 6px;
   vertical-align: top;
   position: relative;
@@ -219,11 +251,6 @@
 
 /* Inline Edit Field */
 .cell-editable {
-  min-height: 40px;
-  outline: none;
-  border: none;
-  width: 100%;
-  background: transparent;
   font-family: inherit;
   font-size: 12px;
   resize: vertical;
@@ -320,18 +347,19 @@
 }
 
 /* Sign-off Footer Section */
+/* Sign-off Footer Section */
 .doc-footer-signatures {
-  margin-top: 50px;
-  border: 1px solid #1a1a1a;
+  margin-top: 40px;
+  border: 1px solid #7f7f7f;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .sig-box {
-  padding: 15px;
-  border-right: 1px solid #1a1a1a;
-  min-height: 120px;
+  padding: 12px;
+  border-right: 1px solid #7f7f7f;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -344,7 +372,7 @@
 .sig-box-title {
   font-weight: 800;
   text-decoration: underline;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .sig-name-input {
@@ -360,35 +388,38 @@
   border: none;
   outline: none;
   color: #666666;
-  font-size: 11px;
-  margin-top: 4px;
+  font-size: 10px;
+  margin-top: 3px;
 }
 
 .sig-remarks-box {
   grid-column: span 2;
-  border-top: 1px solid #1a1a1a;
-  padding: 15px;
+  border-top: 1px solid #7f7f7f;
+  padding: 12px;
 }
 
-/* RAG Chatbot Sidebar Overlay */
+/* RAG Chatbot FLOATING OVERLAY PANEL (Canva Mockup style) */
 .chatbot-sidebar {
-  width: 380px;
-  background-color: rgba(43, 43, 43, 0.95);
-  backdrop-filter: blur(10px);
-  border-left: 2px solid #4a4a4a;
-  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  bottom: 95px;
+  right: 24px;
+  width: 360px;
+  height: 480px;
+  background-color: #3a3a3c;
+  border: 1px solid #5a5a5c;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  position: relative;
-  transition: transform 0.3s ease;
-  z-index: 95;
+  z-index: 120;
+  overflow: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .chatbot-header {
-  padding: 16px 20px;
-  background-color: #353535;
-  border-bottom: 1px solid #4a4a4a;
+  padding: 12px 16px;
+  background-color: #2b2b2d;
+  border-bottom: 1px solid #4a4a4c;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -397,41 +428,41 @@
 
 .chatbot-title {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .chat-history {
   flex: 1;
-  padding: 20px;
+  padding: 16px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
+  background-color: #3a3a3c;
 }
 
 .chat-msg {
   max-width: 85%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-radius: 14px;
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 12.5px;
+  line-height: 1.4;
 }
 
 .chat-msg-user {
   align-self: flex-end;
-  background-color: #49a329;
+  background-color: #4caf50;
   color: #ffffff;
   border-bottom-right-radius: 2px;
 }
 
 .chat-msg-assistant {
   align-self: flex-start;
-  background-color: #4a4a4a;
-  color: #f3f4f6;
+  background-color: #e5e5ea;
+  color: #000000;
   border-bottom-left-radius: 2px;
-  border: 1px solid #5a5a5a;
 }
 
 .chat-msg-system {
@@ -440,21 +471,21 @@
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 10.5px;
 }
 
 .chat-input-area {
-  padding: 16px;
-  background-color: #353535;
-  border-top: 1px solid #4a4a4a;
+  padding: 12px;
+  background-color: #2b2b2d;
+  border-top: 1px solid #4a4a4c;
 }
 
 .chat-input-wrapper {
   display: flex;
-  background-color: #2b2b2b;
-  border-radius: 24px;
-  border: 1px solid #5a5a5a;
-  padding: 4px 12px;
+  background-color: #3a3a3c;
+  border-radius: 20px;
+  border: 1px solid #5a5a5c;
+  padding: 2px 10px;
   align-items: center;
 }
 
@@ -464,42 +495,42 @@
   background: transparent;
   outline: none;
   color: #ffffff;
-  padding: 8px 4px;
-  font-size: 13px;
+  padding: 6px 2px;
+  font-size: 12px;
 }
 
 .chat-send-btn {
   background: transparent;
   border: none;
-  color: #49a329;
+  color: #4caf50;
   cursor: pointer;
-  padding: 6px;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .chat-send-btn:hover {
-  color: #5cc235;
+  color: #66bb6a;
 }
 
 /* Floating Save Confirmation Banner */
 .save-prompt-banner {
-  position: absolute;
+  position: fixed;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #1f2937;
   border: 1px solid #374151;
   border-radius: 16px;
-  padding: 14px 24px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   gap: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   z-index: 105;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 13px;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -509,21 +540,21 @@
 }
 
 .save-prompt-banner button {
-  padding: 6px 16px;
+  padding: 6px 14px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   border: none;
 }
 
 .save-btn-confirm {
-  background-color: #49a329;
+  background-color: #4caf50;
   color: #ffffff;
 }
 
 .save-btn-confirm:hover {
-  background-color: #3f8e23;
+  background-color: #439e47;
 }
 
 .save-btn-discard {
@@ -581,8 +612,8 @@
 
 .modal-prompt-textarea:focus {
   outline: none;
-  border-color: #49a329;
-  box-shadow: 0 0 0 3px rgba(73, 163, 41, 0.15);
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
 }
 
 .modal-actions {
@@ -593,26 +624,26 @@
 
 /* Floating Robot Chat Toggle */
 .chatbot-toggle-btn {
-  position: absolute;
+  position: fixed;
   bottom: 24px;
   right: 24px;
   width: 56px;
   height: 56px;
   border-radius: 28px;
-  background-color: #49a329;
+  background-color: #4caf50;
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 90;
+  z-index: 110;
   transition: transform 0.2s, background-color 0.2s;
 }
 
 .chatbot-toggle-btn:hover {
   transform: scale(1.05);
-  background-color: #3f8e23;
+  background-color: #439e47;
 }
 
 .loader-spinner {
@@ -629,51 +660,12 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Reports Sidebar List */
+/* Reports Sidebar List - HIDDEN since we moved it to navbar selector */
 .reports-list-sidebar {
-  width: 250px;
-  background-color: #333333;
-  border-right: 1px solid #4a4a4a;
-  display: flex;
-  flex-direction: column;
-  color: #ffffff;
+  display: none !important;
 }
 
-.sidebar-header {
-  padding: 16px;
-  border-bottom: 1px solid #4a4a4a;
-  font-weight: bold;
-}
-
-.reports-menu-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.report-item {
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background-color 0.2s;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.report-item:hover, .report-item.active {
-  background-color: #4a4a4a;
-}
-
-.report-item.active {
-  border-left: 3px solid #49a329;
-}
-
-/* PRINT MEDIA STYLES - Hides Chatbot & Sidebar during PDF Generation */
+/* PRINT MEDIA STYLES - Hides Chatbot & Navbar during PDF Generation */
 @media print {
   body {
     background-color: #ffffff !important;
@@ -687,11 +679,11 @@
   .top-nav,
   .chatbot-sidebar,
   .chatbot-toggle-btn,
-  .reports-list-sidebar,
   .add-row-container,
   .row-actions-td,
   .delete-row-btn,
   .save-prompt-banner,
+  .risk-score-selectors,
   th:last-child,
   td:last-child {
     display: none !important;
@@ -723,3 +715,4 @@
     -webkit-appearance: none !important;
   }
 }
+
