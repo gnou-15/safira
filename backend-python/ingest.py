@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from sentence_transformers import SentenceTransformer
@@ -32,13 +33,64 @@ if not os.path.exists(DOCS_DIR):
     sys.exit(0)
 
 
-def chunk_text(text: str, chunk_size: int = 800, overlap: int = 150) -> list:
+def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 200) -> list:
+    # 1. Split text into paragraphs first to preserve context layout
+    paragraphs = text.split("\n\n")
     chunks = []
-    start = 0
-    while start < len(text):
-        end = start + chunk_size
-        chunks.append(text[start:end])
-        start += chunk_size - overlap
+    current_chunk = []
+    current_length = 0
+    
+    for para in paragraphs:
+        para = para.strip()
+        if not para:
+            continue
+            
+        # If a single paragraph exceeds chunk size, split it into sentences
+        if len(para) > chunk_size:
+            # Split by sentence markers [.!?] followed by whitespace
+            sentences = re.split(r'(?<=[.!?])\s+', para)
+            for sentence in sentences:
+                if current_length + len(sentence) > chunk_size:
+                    if current_chunk:
+                        chunks.append(" ".join(current_chunk))
+                    
+                    # Overlap logic: keep last few words/sentences within overlap length
+                    overlap_sentences = []
+                    overlap_len = 0
+                    for s in reversed(current_chunk):
+                        if overlap_len + len(s) < overlap:
+                            overlap_sentences.insert(0, s)
+                            overlap_len += len(s)
+                        else:
+                            break
+                    current_chunk = overlap_sentences + [sentence]
+                    current_length = sum(len(x) for x in current_chunk) + len(current_chunk)
+                else:
+                    current_chunk.append(sentence)
+                    current_length += len(sentence) + 1
+        else:
+            if current_length + len(para) > chunk_size:
+                if current_chunk:
+                    chunks.append(" ".join(current_chunk))
+                
+                # Overlap logic
+                overlap_sentences = []
+                overlap_len = 0
+                for s in reversed(current_chunk):
+                    if overlap_len + len(s) < overlap:
+                        overlap_sentences.insert(0, s)
+                        overlap_len += len(s)
+                    else:
+                        break
+                current_chunk = overlap_sentences + [para]
+                current_length = sum(len(x) for x in current_chunk) + len(current_chunk)
+            else:
+                current_chunk.append(para)
+                current_length += len(para) + 2  # spacing
+                
+    if current_chunk:
+        chunks.append(" ".join(current_chunk))
+        
     return chunks
 
 

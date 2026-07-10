@@ -83,17 +83,18 @@ def search_safety_guidelines(query: str, limit: int = 3) -> str:
         query_vector = embedding_model.encode(query).tolist()
         
         # Call Supabase stored procedure (match_documents)
+        # Raised match_threshold to 0.55 to filter out completely unrelated manuals
         response = supabase.rpc(
             "match_documents",
             {
                 "query_embedding": query_vector,
-                "match_threshold": 0.4,
+                "match_threshold": 0.55,
                 "match_count": limit
             }
         ).execute()
         
         if not response.data:
-            return "No matching guidelines found in database."
+            return "No matching local safety guidelines found for this specific query."
         
         contexts = []
         for doc in response.data:
@@ -146,6 +147,9 @@ Notes for scoring:
 
 Reference Safety Regulations (RAG Context):
 """ + rag_context + """
+
+Important Instruction for RAG Context:
+If the RAG Context above states that no matching guidelines were found, or contains topics completely unrelated to the user's prompt (e.g. runway/airside topics for terminal/baggage queries), do NOT use them. Instead, rely on standard airport safety protocols, ICAO/FAA guidelines, and generic best practices corresponding to the user's requested scenario.
 
 Provide exactly the JSON array. Do not wrap the JSON output in backticks, markdown markers, or write introductory/concluding remarks. Only output the JSON array.
 """
