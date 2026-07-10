@@ -174,14 +174,53 @@ app.put('/api/reports/:id/rows', async (req, res) => {
       return res.json({ message: 'Rows cleared successfully.' });
     }
 
-    // 2. Prepare rows for insertion
+    // Helper: validate a date string or return null
+    const parseDate = (val) => {
+      if (!val || typeof val !== 'string') return null;
+      // Only accept YYYY-MM-DD format
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val.trim())) return val.trim();
+      return null; // "Ongoing", free text, etc. become null
+    };
+
+    // Helper: clamp integer between 1 and 5
+    const clampScore = (val, fallback = 3) => {
+      const n = parseInt(val);
+      if (isNaN(n)) return fallback;
+      return Math.max(1, Math.min(5, n));
+    };
+
+    // 2. Prepare rows for insertion — only include columns that exist in the DB schema
     const rowsToInsert = rows.map((row, index) => {
-      // Stripping ID to avoid conflicts, letting Supabase generate new ones
-      const { id: _, created_at: __, ...cleanRow } = row;
+      const il = clampScore(row.initial_likelihood, 3);
+      const is_ = clampScore(row.initial_severity, 3);
+      const rl = clampScore(row.residual_likelihood, 2);
+      const rs = clampScore(row.residual_severity, 2);
+
+      const calcRiskLevel = (score) => {
+        if (score <= 4) return 'Low';
+        if (score <= 12) return 'Medium';
+        return 'High';
+      };
+
       return {
-        ...cleanRow,
         report_id: id,
-        row_order: index + 1
+        row_order: index + 1,
+        operation_type: String(row.operation_type || 'Operations'),
+        generic_hazard: String(row.generic_hazard || 'Hazard'),
+        risks: String(row.risks || 'Risks'),
+        existing_defenses: String(row.existing_defenses || 'Defenses'),
+        initial_likelihood: il,
+        initial_severity: is_,
+        initial_risk_score: il * is_,
+        initial_risk_index: calcRiskLevel(il * is_),
+        mitigating_actions: String(row.mitigating_actions || ''),
+        residual_likelihood: rl,
+        residual_severity: rs,
+        residual_risk_score: rl * rs,
+        residual_risk_index: calcRiskLevel(rl * rs),
+        remarks: row.remarks ? String(row.remarks) : null,
+        target_date: parseDate(row.target_date),
+        department_responsible: row.department_responsible ? String(row.department_responsible) : null
       };
     });
 

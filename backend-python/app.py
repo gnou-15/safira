@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from groq import Groq
 from supabase import create_client, Client
 from sentence_transformers import SentenceTransformer
-from dotenv import load_dotenv
+
 
 # Load environment variables
 load_dotenv()
@@ -192,6 +192,13 @@ Provide exactly the JSON array. Do not wrap the JSON output in backticks, markdo
             row["residual_risk_score"] = res_score
             row["residual_risk_index"] = calculate_risk_level(res_score)
             row["row_order"] = i + 1
+            
+            # Sanitize target_date: only keep YYYY-MM-DD, convert everything else to None
+            td = row.get("target_date", "")
+            if td and isinstance(td, str):
+                import re
+                if not re.match(r'^\d{4}-\d{2}-\d{2}$', td.strip()):
+                    row["target_date"] = None
             
         return rows
         
