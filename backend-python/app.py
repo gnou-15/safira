@@ -145,7 +145,7 @@ Provide exactly the JSON array. Do not wrap the JSON output in backticks, markdo
 
     try:
         response = groq_client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"Generate a detailed HIRAC table for this scenario: {req.incident_prompt} at location {req.location} for {req.department} department."}
@@ -252,7 +252,7 @@ Be helpful, professional, and precise. Always reference standard procedures from
 
     try:
         response = groq_client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             messages=messages,
             temperature=0.3,
             max_tokens=1500,
