@@ -953,23 +953,25 @@
     overflow: visible !important;
   }
 
-  /* ===== TEXTAREA/INPUT — KILL ALL SCROLLBARS AND FIXED HEIGHTS ===== */
+  /* ===== TEXTAREA/INPUT — KILL ALL SCROLLBARS, ARROWS, AND RESIZE GRIPS ===== */
   .cell-editable,
   .hirac-table textarea,
   .hirac-table input,
   .sig-name-input,
   .sig-role-input,
   .sig-remarks-box textarea,
-  .sig-remarks-box .cell-editable {
+  .sig-remarks-box .cell-editable,
+  textarea,
+  input[type="text"] {
     border: none !important;
     background: transparent !important;
     color: #000000 !important;
     font-size: 10px !important;
+    font-family: inherit !important;
     line-height: 1.3 !important;
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
-    /* These MUST use height: auto to override inline styles from JS */
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
@@ -982,13 +984,33 @@
     display: block !important;
     appearance: none !important;
     -webkit-appearance: none !important;
+    -moz-appearance: none !important;
     outline: none !important;
     box-shadow: none !important;
+    scrollbar-width: none !important;  /* Firefox: hide scrollbar */
   }
 
-  /* ===== HIDE SELECT DROPDOWN ARROWS ===== */
-  select {
+  /* Webkit browsers (Chrome/Edge): hide all scrollbar parts */
+  textarea::-webkit-scrollbar,
+  input::-webkit-scrollbar,
+  .cell-editable::-webkit-scrollbar {
     display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Kill the textarea resize grip triangle */
+  textarea::-webkit-resizer,
+  .cell-editable::-webkit-resizer {
+    display: none !important;
+  }
+
+  /* ===== HIDE ALL SELECT ELEMENTS AND THEIR ARROWS ===== */
+  select,
+  .cell-select-compact,
+  .risk-score-selectors select {
+    display: none !important;
+    visibility: hidden !important;
   }
 
   /* ===== RISK CELLS ===== */
