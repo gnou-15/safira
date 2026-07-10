@@ -495,21 +495,26 @@ function App() {
               <table className="meta-table">
                 <tbody>
                   <tr>
-                    <td className="meta-label">B Title:</td>
-                    <td className="meta-value">
+                    <td className="meta-label" style={{ width: '15%' }}>B TITLE:</td>
+                    <td className="meta-value" colSpan={3} style={{ width: '65%' }}>
                       <input
                         type="text"
+                        className="screen-only"
                         value={currentReport.title || ''}
                         onChange={(e) => handleMetaEdit('title', e.target.value)}
                       />
+                      <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.title || ''}</div>
                     </td>
-                    <td className="meta-label">HIRAC Ref No:</td>
-                    <td className="meta-value">
+                    <td className="meta-value-sidebar" rowSpan={2} style={{ width: '20%' }}>
+                      <div className="sidebar-label">HIRAC Ref. No.:</div>
                       <input
                         type="text"
+                        className="sidebar-input screen-only"
                         value={currentReport.ref_no || ''}
                         onChange={(e) => handleMetaEdit('ref_no', e.target.value)}
                       />
+                      <div className="print-only cell-print-text" style={{ fontWeight: 'bold', fontSize: '10px' }}>{currentReport.ref_no || ''}</div>
+                      <div className="sidebar-subtext">(Refer to SSQA Risk Registry Database)</div>
                     </td>
                   </tr>
                   <tr>
@@ -517,35 +522,42 @@ function App() {
                     <td className="meta-value">
                       <input
                         type="text"
+                        className="screen-only"
                         value={currentReport.department || ''}
                         onChange={(e) => handleMetaEdit('department', e.target.value)}
                       />
+                      <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.department || ''}</div>
                     </td>
-                    <td className="meta-label">Location:</td>
-                    <td className="meta-value">
+                    <td className="meta-label" style={{ width: '15%' }}>Location:</td>
+                    <td className="meta-value" style={{ width: '25%' }}>
                       <input
                         type="text"
+                        className="screen-only"
                         value={currentReport.location || ''}
                         onChange={(e) => handleMetaEdit('location', e.target.value)}
                       />
+                      <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.location || ''}</div>
                     </td>
                   </tr>
                   <tr>
                     <td className="meta-label">Activity/Area being assessed:</td>
-                    <td className="meta-value">
+                    <td className="meta-value" colSpan={3}>
                       <input
                         type="text"
+                        className="screen-only"
                         value={currentReport.activity_assessed || ''}
                         onChange={(e) => handleMetaEdit('activity_assessed', e.target.value)}
                       />
+                      <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.activity_assessed || ''}</div>
                     </td>
-                    <td className="meta-label">Assessor(s)/Team:</td>
-                    <td className="meta-value">
-                      <input
-                        type="text"
+                    <td className="meta-value-sidebar" rowSpan={2}>
+                      <div className="sidebar-label">Assessor(s)/Team:</div>
+                      <textarea
+                        className="sidebar-textarea screen-only"
                         value={currentReport.assessor_team || ''}
                         onChange={(e) => handleMetaEdit('assessor_team', e.target.value)}
                       />
+                      <div className="print-only cell-print-text" style={{ fontWeight: 'bold', fontSize: '10px' }}>{currentReport.assessor_team || ''}</div>
                     </td>
                   </tr>
                   <tr>
@@ -553,19 +565,21 @@ function App() {
                     <td className="meta-value">
                       <input
                         type="text"
-                        placeholder="YYYY-MM-DD"
+                        className="screen-only"
                         value={currentReport.date_created || ''}
                         onChange={(e) => handleMetaEdit('date_created', e.target.value)}
                       />
+                      <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.date_created || ''}</div>
                     </td>
                     <td className="meta-label">Date Reviewed:</td>
                     <td className="meta-value">
                       <input
                         type="text"
-                        placeholder="YYYY-MM-DD"
+                        className="screen-only"
                         value={currentReport.date_reviewed || ''}
                         onChange={(e) => handleMetaEdit('date_reviewed', e.target.value)}
                       />
+                      <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.date_reviewed || ''}</div>
                     </td>
                   </tr>
                 </tbody>
@@ -597,39 +611,44 @@ function App() {
                       <tr key={idx}>
                         <td className="op-type-text">
                           <AutoResizeTextarea
-                            className="cell-editable op-type-text"
+                            className="cell-editable op-type-text screen-only"
                             value={row.operation_type || ''}
                             onChange={(e) => handleCellEdit(idx, 'operation_type', e.target.value)}
                           />
+                          <div className="print-only cell-print-text op-type-text">{row.operation_type || ''}</div>
                         </td>
                         <td>
                           <AutoResizeTextarea
-                            className="cell-editable"
+                            className="cell-editable screen-only"
                             value={row.generic_hazard || ''}
                             onChange={(e) => handleCellEdit(idx, 'generic_hazard', e.target.value)}
                           />
+                          <div className="print-only cell-print-text">{row.generic_hazard || ''}</div>
                         </td>
                         <td>
                           <AutoResizeTextarea
-                            className="cell-editable"
+                            className="cell-editable screen-only"
                             value={row.risks || ''}
                             onChange={(e) => handleCellEdit(idx, 'risks', e.target.value)}
                           />
+                          <div className="print-only cell-print-text">{row.risks || ''}</div>
                         </td>
                         <td>
                           <AutoResizeTextarea
-                            className="cell-editable"
+                            className="cell-editable screen-only"
                             value={row.existing_defenses || ''}
                             onChange={(e) => handleCellEdit(idx, 'existing_defenses', e.target.value)}
                           />
+                          <div className="print-only cell-print-text">{row.existing_defenses || ''}</div>
                         </td>
                         
                         {/* Interactive Safety Risk Index (Single cell with internal score controls) */}
                         <td className={`risk-index-cell risk-${(row.initial_risk_index || 'Low').toLowerCase()}`}>
-                          <div className="risk-cell-content">
+                          {/* Screen: full interactive widget */}
+                          <div className="risk-cell-content screen-only">
                             <div className="risk-level-label">
-                              {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}<br/>
-                              ({row.initial_risk_score || 0})
+                              {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
+                              <span className="risk-score-number"><br/>({row.initial_risk_score || 0})</span>
                             </div>
                             <div className="risk-score-selectors">
                               <label>L:
@@ -652,22 +671,28 @@ function App() {
                               </label>
                             </div>
                           </div>
+                          {/* Print: solid-colored badge — divs always print backgrounds */}
+                          <div className={`print-only risk-print-badge risk-print-${(row.initial_risk_index || 'low').toLowerCase()}`}>
+                            {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
+                          </div>
                         </td>
 
                         <td>
                           <AutoResizeTextarea
-                            className="cell-editable"
+                            className="cell-editable screen-only"
                             value={row.mitigating_actions || ''}
                             onChange={(e) => handleCellEdit(idx, 'mitigating_actions', e.target.value)}
                           />
+                          <div className="print-only cell-print-text">{row.mitigating_actions || ''}</div>
                         </td>
 
                         {/* Interactive Residual Risk Index (Single cell with internal score controls) */}
                         <td className={`risk-index-cell risk-${(row.residual_risk_index || 'Low').toLowerCase()}`}>
-                          <div className="risk-cell-content">
+                          {/* Screen: full interactive widget */}
+                          <div className="risk-cell-content screen-only">
                             <div className="risk-level-label">
-                              {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}<br/>
-                              ({row.residual_risk_score || 0})
+                              {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
+                              <span className="risk-score-number"><br/>({row.residual_risk_score || 0})</span>
                             </div>
                             <div className="risk-score-selectors">
                               <label>L:
@@ -690,29 +715,36 @@ function App() {
                               </label>
                             </div>
                           </div>
+                          {/* Print: solid-colored badge — divs always print backgrounds */}
+                          <div className={`print-only risk-print-badge risk-print-${(row.residual_risk_index || 'low').toLowerCase()}`}>
+                            {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
+                          </div>
                         </td>
 
                         <td>
                           <AutoResizeTextarea
-                            className="cell-editable"
+                            className="cell-editable screen-only"
                             value={row.remarks || ''}
                             onChange={(e) => handleCellEdit(idx, 'remarks', e.target.value)}
                           />
+                          <div className="print-only cell-print-text">{row.remarks || ''}</div>
                         </td>
                         <td>
                           <AutoResizeTextarea
-                            className="cell-editable"
+                            className="cell-editable screen-only"
                             style={{ textAlign: 'center' }}
                             value={row.target_date || ''}
                             onChange={(e) => handleCellEdit(idx, 'target_date', e.target.value)}
                           />
+                          <div className="print-only cell-print-text" style={{ textAlign: 'center' }}>{row.target_date || ''}</div>
                         </td>
                         <td>
                           <AutoResizeTextarea
-                            className="cell-editable"
+                            className="cell-editable screen-only"
                             value={row.department_responsible || ''}
                             onChange={(e) => handleCellEdit(idx, 'department_responsible', e.target.value)}
                           />
+                          <div className="print-only cell-print-text">{row.department_responsible || ''}</div>
                         </td>
                         <td className="row-actions-td">
                           <button
@@ -741,18 +773,20 @@ function App() {
                   <div>
                     <input
                       type="text"
-                      className="sig-name-input"
+                      className="sig-name-input screen-only"
                       placeholder="Name & Signature"
                       value={currentReport.prepared_by_name || ''}
                       onChange={(e) => handleMetaEdit('prepared_by_name', e.target.value)}
                     />
+                    <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.prepared_by_name || ''}</div>
                     <input
                       type="text"
-                      className="sig-role-input"
+                      className="sig-role-input screen-only"
                       placeholder="Role (e.g. S.H.E Specialist)"
                       value={currentReport.prepared_by_role || ''}
                       onChange={(e) => handleMetaEdit('prepared_by_role', e.target.value)}
                     />
+                    <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.prepared_by_role || ''}</div>
                   </div>
                 </div>
                 <div className="sig-box">
@@ -760,18 +794,20 @@ function App() {
                   <div>
                     <input
                       type="text"
-                      className="sig-name-input"
+                      className="sig-name-input screen-only"
                       placeholder="Name & Signature"
                       value={currentReport.approved_by_name || ''}
                       onChange={(e) => handleMetaEdit('approved_by_name', e.target.value)}
                     />
+                    <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.approved_by_name || ''}</div>
                     <input
                       type="text"
-                      className="sig-role-input"
+                      className="sig-role-input screen-only"
                       placeholder="Role (e.g. VP Safety)"
                       value={currentReport.approved_by_role || ''}
                       onChange={(e) => handleMetaEdit('approved_by_role', e.target.value)}
                     />
+                    <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.approved_by_role || ''}</div>
                   </div>
                 </div>
                 <div className="sig-box">
@@ -779,29 +815,32 @@ function App() {
                   <div>
                     <input
                       type="text"
-                      className="sig-name-input"
+                      className="sig-name-input screen-only"
                       placeholder="Name & Signature"
                       value={currentReport.acknowledged_by_name || ''}
                       onChange={(e) => handleMetaEdit('acknowledged_by_name', e.target.value)}
                     />
+                    <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.acknowledged_by_name || ''}</div>
                     <input
                       type="text"
-                      className="sig-role-input"
+                      className="sig-role-input screen-only"
                       placeholder="Role (e.g. GSE Manager)"
                       value={currentReport.acknowledged_by_role || ''}
                       onChange={(e) => handleMetaEdit('acknowledged_by_role', e.target.value)}
                     />
+                    <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.acknowledged_by_role || ''}</div>
                   </div>
                 </div>
                 <div className="sig-remarks-box">
                   <strong>Remarks / Notes:</strong>
                   <AutoResizeTextarea
-                    className="cell-editable"
+                    className="cell-editable screen-only"
                     placeholder="General report remarks or comments..."
                     style={{ marginTop: '10px' }}
                     value={currentReport.footer_remarks || ''}
                     onChange={(e) => handleMetaEdit('footer_remarks', e.target.value)}
                   />
+                  <div className="print-only cell-print-text" style={{ marginTop: '6px' }}>{currentReport.footer_remarks || ''}</div>
                 </div>
               </div>
             </div>
