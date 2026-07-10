@@ -1,0 +1,176 @@
+import { supabase } from '../config/supabase.js';
+
+// Helper: validate a date string or return null
+const parseDate = (val) => {
+  if (!val || typeof val !== 'string') return null;
+  // Only accept YYYY-MM-DD format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(val.trim())) return val.trim();
+  return null; // "Ongoing", free text, etc. become null
+};
+
+// Helper: clamp integer between 1 and 5
+const clampScore = (val, fallback = 3) => {
+  const n = parseInt(val);
+  if (isNaN(n)) return fallback;
+  return Math.max(1, Math.min(5, n));
+};
+
+// Helper: calculate risk index level
+const calcRiskLevel = (score) => {
+  if (score <= 4) return 'Low';
+  if (score <= 12) return 'Medium';
+  return 'High';
+};
+
+export const ReportModel = {
+  // Fetch all reports
+  async getAll() {
+    const { data, error } = await supabase
+      .from('hirac_reports')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Fetch report details by id
+  async getById(id) {
+    const { data: report, error: reportError } = await supabase
+      .from('hirac_reports')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (reportError) throw reportError;
+
+    const { data: rows, error: rowsError } = await supabase
+      .from('hirac_rows')
+      .select('*')
+      .eq('report_id', id)
+      .order('row_order', { ascending: true });
+
+    if (rowsError) throw rowsError;
+
+    return { ...report, rows };
+  },
+
+  // Create a new report metadata entry
+  async create(reportData) {
+    const {
+      title,
+      ref_no,
+      location,
+      activity_assessed,
+      assessor_team,
+      department,
+      prepared_by_name,
+      prepared_by_role,
+      approved_by_name,
+      approved_by_role,
+      acknowledged_by_name,
+      acknowledged_by_role,
+      footer_remarks
+    } = reportData;
+
+    const { data, error } = await supabase
+      .from('hirac_reports')
+      .insert([{
+        title: title || 'New HIRAC Report',
+        ref_no: ref_no || `CSC-${Date.now().toString().slice(-6)}`,
+        location: location || 'Airport Terminal',
+        activity_assessed: activity_assessed || 'Safety Assessment',
+        assessor_team: assessor_team || 'SSQA Team',
+        department: department || 'Operations',
+        prepared_by_name,
+        prepared_by_role,
+        approved_by_name,
+        approved_by_role,
+        acknowledged_by_name,
+        acknowledged_by_role,
+        footer_remarks
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Update report metadata entry
+  async update(id, updateData) {
+    const { data, error } = await supabase
+      .from('hirac_reports')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Delete report entry
+  async delete(id) {
+    const { error } = await supabase
+      .from('hirac_reports')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return { message: 'Report deleted successfully' };
+  },
+
+  // Clear and rewrite all rows for a report (bulk upsert)
+  async upsertRows(id, rows) {
+    // 1. Clear existing rows
+    const { error: deleteError } = await supabase
+      .from('hirac_rows')
+      .delete()
+      .eq('report_id', id);
+
+    if (deleteError) throw deleteError;
+
+    if (!rows || rows.length === 0) {
+      return { message: 'Rows cleared successfully.' };
+    }
+
+    // 2. Format rows to database schema
+    const rowsToInsert = rows.map((row, index) => {
+      const il = clampScore(row.initial_likelihood, 3);
+      const is_ = clampScore(row.initial_severity, 3);
+      const rl = clampScore(row.residual_likelihood, 2);
+      const rs = clampScore(row.residual_severity, 2);
+
+      return {
+        report_id: id,
+        row_order: index + 1,
+        operation_type: String(row.operation_type || 'Operations'),
+        generic_hazard: String(row.generic_hazard || 'Hazard'),
+        risks: String(row.risks || 'Risks'),
+        existing_defenses: String(row.existing_defenses || 'Defenses'),
+        initial_likelihood: il,
+        initial_severity: is_,
+        initial_risk_score: il * is_,
+        initial_risk_index: calcRiskLevel(il * is_),
+        mitigating_actions: String(row.mitigating_actions || ''),
+        residual_likelihood: rl,
+        residual_severity: rs,
+        residual_risk_score: rl * rs,
+        residual_risk_index: calcRiskLevel(rl * rs),
+        remarks: row.remarks ? String(row.remarks) : null,
+        target_date: parseDate(row.target_date),
+        department_responsible: row.department_responsible ? String(row.department_responsible) : null
+      };
+    });
+
+    // 3. Insert new rows
+    const { data, error: insertError } = await supabase
+      .from('hirac_rows')
+      .insert(rowsToInsert)
+      .select();
+
+    if (insertError) throw insertError;
+    return data;
+  }
+};

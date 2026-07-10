@@ -125,7 +125,14 @@ Each row object MUST follow this schema exactly:
   "existing_defenses": "Current safety barriers and SOPs active before further mitigations",
   "initial_likelihood": 1-5 integer representing likelihood,
   "initial_severity": 1-5 integer representing severity,
-  "mitigating_actions": "Actions to further reduce risks, formatted like: (c) Install barricades (d) Conduct safety briefings (e) Wear high-visibility vests",
+  "mitigating_actions": "Actions to further reduce risks. Each action MUST start with its corresponding Hierarchy of Controls category letter:
+    - (a) for Elimination (removing hazard)
+    - (b) for Substitution (replacing hazard)
+    - (c) for Engineering controls (guards, barricades, isolation, design)
+    - (d) for Administrative controls (SOPs, training, schedules, signs, briefings)
+    - (e) for PPE (goggles, vests, gloves, boots)
+    DO NOT use alphabetical lists (like f, g, h, i, j, k, l, m, n, o, p, etc.) to list mitigations. Every action must start with exactly one of: (a), (b), (c), (d), or (e).
+    Example: \"(c) Install safety barriers (d) Conduct safety training (e) Wear safety boots\"",
   "residual_likelihood": 1-5 integer representing likelihood after mitigations,
   "residual_severity": 1-5 integer representing severity after mitigations,
   "remarks": "Additional notes, audit targets, or standard SOP codes",
@@ -228,10 +235,18 @@ The current table has the following data (represented in JSON format):
 We also queried our airport safety manuals (RAG Context):
 """ + rag_context + """
 
+When suggesting edits, generating new rows, or modifying mitigating actions, you MUST prefix each mitigation action with its corresponding Hierarchy of Controls category letter:
+- (a) for Elimination (removing hazard)
+- (b) for Substitution (replacing hazard)
+- (c) for Engineering controls (guards, barricades, isolation, design)
+- (d) for Administrative controls (SOPs, training, schedules, signs, briefings)
+- (e) for PPE (goggles, vests, gloves, boots)
+DO NOT use alphabetical lists (like f, g, h, i, j, k, l, m, n, o, p, etc.) to list mitigations. Every action must start with exactly one of: (a), (b), (c), (d), or (e).
+
 Your responses can:
 1. Explain safety rules, ICAO/FAA regulations, or risk classifications.
 2. Suggest edits to the table rows.
-3. Generate direct table modification payloads. If the user asks you to change information in the table (e.g. "change residual risk of row 1 to Low", "add a new row for bird strikes", "modify mitigating actions for row 2"), you must answer the user, and ALSO include a special JSON command block at the end of your message.
+3. Generate direct table modification payloads. If the user asks you to change information in the table (e.g. "change residual risk of row 1 to Low", "add a new row for bird strikes", "modify mitigating actions for row 2", "fix control letters on row 1"), you must answer the user, and ALSO include a special JSON command block at the end of your message.
 
 The JSON command block should look like this (starts and ends with unique boundary tags):
 [TABLE_UPDATE_PAYLOAD]
@@ -239,7 +254,7 @@ The JSON command block should look like this (starts and ends with unique bounda
   "action": "modify_row" | "add_row" | "delete_row",
   "row_index": 0-indexed index of row (for modify_row or delete_row),
   "data": {
-    ... (fields you want to update in the row, e.g. "residual_likelihood": 2, or full fields for add_row)
+    ... (fields you want to update in the row, e.g. "residual_likelihood": 2, or full fields for add_row, with mitigating_actions correctly prefixed as described above)
   }
 }
 [/TABLE_UPDATE_PAYLOAD]
