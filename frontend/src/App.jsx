@@ -558,20 +558,20 @@ function App() {
                 <table className="hirac-table">
                   <thead>
                     <tr>
-                      <th style={{ width: '13%' }}>Type of Operation or Activity</th>
-                      <th style={{ width: '13%' }}>Generic Hazard</th>
-                      <th style={{ width: '13%' }}>Risks (Consequences of the Hazard)</th>
-                      <th style={{ width: '14%' }}>Existing Defenses to Control Safety Risks</th>
-                      <th style={{ width: '8%' }}>Safety Risk Index</th>
-                      <th style={{ width: '16%' }}>
+                      <th style={{ width: '12%' }}>Type of Operation or Activity</th>
+                      <th style={{ width: '12%' }}>Generic Hazard</th>
+                      <th style={{ width: '12%' }}>Risks (Consequences of the Hazard)</th>
+                      <th style={{ width: '12%' }}>Existing Defenses to Control Safety Risks</th>
+                      <th style={{ width: '7%' }}>Safety Risk Index</th>
+                      <th style={{ width: '14%' }}>
                         Mitigating Actions to Further Reduce Safety Risks
                         <div className="header-subtext">(a) Elimination (b) Substitution (c) Engineering control (d) Administrative (e) PPE</div>
                       </th>
-                      <th style={{ width: '8%' }}>Residual Risk Index</th>
+                      <th style={{ width: '7%' }}>Residual Risk Index</th>
                       <th style={{ width: '8%' }}>Remarks</th>
-                      <th style={{ width: '6%' }}>Target Date</th>
-                      <th style={{ width: '8%' }}>Dept Responsible</th>
-                      <th className="row-actions-td">Actions</th>
+                      <th style={{ width: '8%' }}>Target Date</th>
+                      <th style={{ width: '12%' }}>Dept Responsible</th>
+                      <th className="row-actions-td" style={{ width: '6%' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -682,19 +682,16 @@ function App() {
                           />
                         </td>
                         <td>
-                          <input
-                            type="text"
+                          <AutoResizeTextarea
                             className="cell-editable"
-                            style={{ minHeight: 'auto', textAlign: 'center' }}
+                            style={{ textAlign: 'center' }}
                             value={row.target_date || ''}
                             onChange={(e) => handleCellEdit(idx, 'target_date', e.target.value)}
                           />
                         </td>
                         <td>
-                          <input
-                            type="text"
+                          <AutoResizeTextarea
                             className="cell-editable"
-                            style={{ minHeight: 'auto' }}
                             value={row.department_responsible || ''}
                             onChange={(e) => handleCellEdit(idx, 'department_responsible', e.target.value)}
                           />
