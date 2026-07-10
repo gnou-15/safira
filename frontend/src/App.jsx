@@ -3,6 +3,42 @@ import './App.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+function AutoResizeTextarea({ value, onChange, className, style, placeholder }) {
+  const textareaRef = useRef(null);
+
+  const adjustHeight = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, []);
+
+  useEffect(() => {
+    adjustHeight();
+  }, [value, adjustHeight]);
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={value || ''}
+      onChange={(e) => {
+        onChange(e);
+        adjustHeight();
+      }}
+      className={className}
+      placeholder={placeholder}
+      style={{ 
+        ...style, 
+        resize: 'none', 
+        overflowY: 'hidden',
+        minHeight: 'auto',
+        height: 'auto'
+      }}
+    />
+  );
+}
+
 function App() {
   // App State
   const [reports, setReports] = useState([]);
@@ -542,28 +578,28 @@ function App() {
                     {rows.map((row, idx) => (
                       <tr key={idx}>
                         <td className="op-type-text">
-                          <textarea
+                          <AutoResizeTextarea
                             className="cell-editable op-type-text"
                             value={row.operation_type || ''}
                             onChange={(e) => handleCellEdit(idx, 'operation_type', e.target.value)}
                           />
                         </td>
                         <td>
-                          <textarea
+                          <AutoResizeTextarea
                             className="cell-editable"
                             value={row.generic_hazard || ''}
                             onChange={(e) => handleCellEdit(idx, 'generic_hazard', e.target.value)}
                           />
                         </td>
                         <td>
-                          <textarea
+                          <AutoResizeTextarea
                             className="cell-editable"
                             value={row.risks || ''}
                             onChange={(e) => handleCellEdit(idx, 'risks', e.target.value)}
                           />
                         </td>
                         <td>
-                          <textarea
+                          <AutoResizeTextarea
                             className="cell-editable"
                             value={row.existing_defenses || ''}
                             onChange={(e) => handleCellEdit(idx, 'existing_defenses', e.target.value)}
@@ -601,7 +637,7 @@ function App() {
                         </td>
 
                         <td>
-                          <textarea
+                          <AutoResizeTextarea
                             className="cell-editable"
                             value={row.mitigating_actions || ''}
                             onChange={(e) => handleCellEdit(idx, 'mitigating_actions', e.target.value)}
@@ -639,7 +675,7 @@ function App() {
                         </td>
 
                         <td>
-                          <textarea
+                          <AutoResizeTextarea
                             className="cell-editable"
                             value={row.remarks || ''}
                             onChange={(e) => handleCellEdit(idx, 'remarks', e.target.value)}
