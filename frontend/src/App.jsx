@@ -49,7 +49,7 @@ function App() {
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   
   // Chat Sidebar State
-  const [chatOpen, setChatOpen] = useState(true);
+  const [chatOpen, setChatOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([
     { role: 'assistant', content: 'Hello! I am SAFIRA, your airport safety AI assistant. Describe an incident or select a report to get started. I can help explain regulations or make inline edits to your report.' }
   ]);
@@ -845,9 +845,9 @@ function App() {
               </div>
             </div>
           ) : (
-            <div className="loading-state-placeholder" style={{ color: '#ffffff', textAlign: 'center', marginTop: '100px' }}>
-              <h3>No Report Loaded</h3>
-              <p>Click "Generate New HIRAC" in the header to create a report via AI.</p>
+            <div className="loading-state-placeholder" style={{ textAlign: 'center', marginTop: '100px' }}>
+              <h3 style={{ color: 'var(--text-primary)', marginBottom: '10px' }}>No Report Loaded</h3>
+              <p style={{ color: 'var(--text-muted)' }}>Click "Generate New HIRAC" in the header to create a report via AI.</p>
             </div>
           )}
         </section>
