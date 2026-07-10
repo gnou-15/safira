@@ -785,9 +785,21 @@
 
 /* PRINT MEDIA STYLES */
 @media print {
+  @page {
+    size: landscape;
+    margin: 10mm 15mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-sizing: border-box !important;
+  }
+
   body {
     background-color: #ffffff !important;
     color: #000000 !important;
+    font-size: 11px !important;
   }
   
   .app-container {
@@ -803,6 +815,8 @@
   .delete-row-btn,
   .save-prompt-banner,
   .risk-score-selectors,
+  .save-btn-confirm,
+  .save-btn-discard,
   th:last-child,
   td:last-child {
     display: none !important;
@@ -812,12 +826,14 @@
     height: auto !important;
     overflow: visible !important;
     background-color: #ffffff !important;
+    display: block !important;
   }
 
   .document-workspace {
     padding: 0 !important;
     background-color: #ffffff !important;
     overflow: visible !important;
+    display: block !important;
   }
 
   .document-sheet {
@@ -827,13 +843,103 @@
     max-width: 100% !important;
     width: 100% !important;
     min-height: 0 !important;
+    background-color: #ffffff !important;
   }
-  
-  input, select, textarea {
+
+  /* Sharp table borders for high legibility on print */
+  .meta-table, 
+  .meta-table td, 
+  .hirac-table, 
+  .hirac-table th, 
+  .hirac-table td, 
+  .doc-footer-signatures, 
+  .sig-box, 
+  .sig-remarks-box {
+    border: 1px solid #000000 !important;
+    border-collapse: collapse !important;
+  }
+
+  /* Table Header formatting */
+  .hirac-table th {
+    background-color: #5c5c5c !important; /* Solid grey header */
+    color: #ffffff !important;
+    font-weight: bold !important;
+    font-size: 10.5px !important;
+    padding: 8px 4px !important;
+  }
+
+  /* Metadata formatting */
+  .meta-label {
+    background-color: #7f7f7f !important; /* Darker grey header label */
+    color: #ffffff !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    font-size: 10px !important;
+  }
+
+  .meta-value input {
     border: none !important;
     background: transparent !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
+    font-weight: bold !important;
+    color: #000000 !important;
+    font-size: 11px !important;
+  }
+
+  /* Textareas and cell formatting */
+  .cell-editable, 
+  textarea, 
+  input {
+    border: none !important;
+    background: transparent !important;
+    color: #000000 !important;
+    width: 100% !important;
+    padding: 2px !important;
+    font-size: 11px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    resize: none !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    display: block !important;
+  }
+
+  /* Clean table rows page splits */
+  .hirac-table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .doc-footer-signatures {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* High-contrast solid Risk Category Badge coloring in Print */
+  .risk-index-cell {
+    text-align: center !important;
+    vertical-align: middle !important;
+    padding: 8px 4px !important;
+  }
+
+  .risk-level-label {
+    font-weight: bold !important;
+    font-size: 10.5px !important;
+    line-height: 1.2 !important;
+  }
+
+  .risk-low {
+    background-color: #00b050 !important; /* Solid printable green */
+    color: #ffffff !important;
+  }
+
+  .risk-medium {
+    background-color: #ffff00 !important; /* Solid printable yellow */
+    color: #000000 !important;
+  }
+
+  .risk-high {
+    background-color: #ff0000 !important; /* Solid printable red */
+    color: #ffffff !important;
   }
 }
-
