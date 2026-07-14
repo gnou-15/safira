@@ -593,21 +593,7 @@ function App() {
               <span className="landing-nav-link">Service</span>
               <span className="landing-nav-link">Contact</span>
             </div>
-            <div className="landing-nav-actions">
-              <span className="landing-nav-signin">Sign in</span>
-              <button 
-                className="btn-nav-get-started"
-                onClick={() => {
-                  if (reports.length > 0) {
-                    loadReport(reports[0].id);
-                  } else {
-                    setShowModal(true);
-                  }
-                }}
-              >
-                Get Started
-              </button>
-            </div>
+
           </>
         ) : (
           <>
@@ -1065,16 +1051,9 @@ function App() {
             </div>
           ) : (
             <div className="landing-page-container">
-              {/* Glowing Crescent Light Arc Horizon */}
-              <div className="landing-light-arc"></div>
-              
               <div className="landing-page-content">
                 {/* Hero Centered Section */}
                 <div className="landing-hero-section">
-                  <div className="landing-beta-badge">
-                    <span className="sparkle-icon">✨</span> Early Access Beta
-                  </div>
-                  
                   <h1 className="landing-main-heading">
                     Assess Aviation Risks <br />
                     <span className="heading-gradient">With SAFIRA Insights</span>
@@ -1095,7 +1074,7 @@ function App() {
                         }
                       }}
                     >
-                      Get Started
+                      Get to Work
                     </button>
                     <button className="btn-demo-hero" onClick={handleOpenManualsModal}>
                       Safety Manuals
