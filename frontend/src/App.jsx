@@ -119,10 +119,6 @@ function App() {
       if (res.ok) {
         const data = await res.json();
         setReports(data);
-        // Load first report if available
-        if (data.length > 0 && !currentReport) {
-          loadReport(data[0].id);
-        }
       }
     } catch (err) {
       console.error('Failed to fetch reports:', err);
@@ -1035,8 +1031,17 @@ function App() {
                     )}
                   </div>
 
-                  <button className="btn-get-to-work" onClick={() => setShowModal(true)}>
-                    Let's get to work
+                  <button 
+                    className="btn-get-to-work" 
+                    onClick={() => {
+                      if (reports.length > 0) {
+                        loadReport(reports[0].id);
+                      } else {
+                        setShowModal(true);
+                      }
+                    }}
+                  >
+                    Get back to work
                   </button>
                 </div>
 
