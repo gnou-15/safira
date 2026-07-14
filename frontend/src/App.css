@@ -1420,7 +1420,7 @@ div.screen-only {
 
 .landing-active .top-nav {
   background-color: transparent !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: none !important;
   box-shadow: none !important;
 }
 
@@ -1477,16 +1477,32 @@ div.screen-only {
   align-items: center;
 }
 
-/* Static Grain Background from Attached Image */
+/* High-Fidelity Vector Background with Custom Spotlights */
 .landing-active .main-workspace {
-  background-image: url('./assets/background.jpg') !important;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
-  background-color: #070a13 !important;
+  background: 
+    radial-gradient(circle at 5% 5%, rgba(56, 189, 248, 0.16) 0%, transparent 40%),
+    radial-gradient(circle at 95% 95%, rgba(30, 64, 175, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, transparent 100%),
+    #050814 !important;
   position: relative;
   overflow: hidden;
   transition: background 0.3s ease;
+}
+
+/* Noise/grain overlay div */
+.landing-active .main-workspace::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 1;
+}
+
+.landing-page-content > * {
+  position: relative;
+  z-index: 2; /* Put above noise */
 }
 
 /* Left Column: Recent Logs and indicator */
@@ -1500,10 +1516,10 @@ div.screen-only {
 
 .landing-pill-indicator {
   width: 10px;
-  background: linear-gradient(to bottom, #ffffff 0%, rgba(147, 197, 253, 0.3) 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #38bdf8 50%, rgba(56, 189, 248, 0.1) 100%);
   border-radius: 20px;
   flex-shrink: 0;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
 }
 
 .landing-left-content {
