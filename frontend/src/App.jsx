@@ -593,6 +593,21 @@ function App() {
               <span className="landing-nav-link">Service</span>
               <span className="landing-nav-link">Contact</span>
             </div>
+            <div className="landing-nav-actions">
+              <span className="landing-nav-signin">Sign in</span>
+              <button 
+                className="btn-nav-get-started"
+                onClick={() => {
+                  if (reports.length > 0) {
+                    loadReport(reports[0].id);
+                  } else {
+                    setShowModal(true);
+                  }
+                }}
+              >
+                Get Started
+              </button>
+            </div>
           </>
         ) : (
           <>
@@ -1050,34 +1065,28 @@ function App() {
             </div>
           ) : (
             <div className="landing-page-container">
+              {/* Glowing Crescent Light Arc Horizon */}
+              <div className="landing-light-arc"></div>
+              
               <div className="landing-page-content">
-                {/* Left Side: Recent Reports Logs */}
-                 <div className="landing-left-column">
-                  <div className="landing-pill-indicator"></div>
-                  <div className="landing-left-content">
-                    <h3 className="landing-logs-title">Recent Reports Logs</h3>
-                    
-                    <div className="landing-logs-list">
-                      {reports.length === 0 ? (
-                        <div className="landing-log-item empty-log">
-                          <span className="log-bullet">•</span>
-                          <p>No reports found in database. Let's get started and create your first report!</p>
-                        </div>
-                      ) : (
-                        reports.slice(0, 3).map((report) => (
-                          <div key={report.id} className="landing-log-item clickable-log" onClick={() => loadReport(report.id)}>
-                            <span className="log-bullet">•</span>
-                            <div className="log-details">
-                              <span className="log-text">You recently worked on <strong>{report.title}</strong></span>
-                              <span className="log-meta">Created {formatTimestamp(report.created_at)}</span>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-
+                {/* Hero Centered Section */}
+                <div className="landing-hero-section">
+                  <div className="landing-beta-badge">
+                    <span className="sparkle-icon">✨</span> Early Access Beta
+                  </div>
+                  
+                  <h1 className="landing-main-heading">
+                    Assess Aviation Risks <br />
+                    <span className="heading-gradient">With SAFIRA Insights</span>
+                  </h1>
+                  
+                  <p className="landing-tagline-centered">
+                    A minimal AI-powered system that transforms complex workflows into clear, glowing, effortless structures — helping you ship safety ideas faster.
+                  </p>
+                  
+                  <div className="landing-hero-actions">
                     <button 
-                      className="btn-get-to-work" 
+                      className="btn-get-started-hero"
                       onClick={() => {
                         if (reports.length > 0) {
                           loadReport(reports[0].id);
@@ -1086,19 +1095,36 @@ function App() {
                         }
                       }}
                     >
-                      Let's get to work
+                      Get Started
+                    </button>
+                    <button className="btn-demo-hero" onClick={handleOpenManualsModal}>
+                      Safety Manuals
                     </button>
                   </div>
                 </div>
 
-                {/* Right Side: Mascot & Tagline */}
-                <div className="landing-right-column">
-                  <div className="safira-mascot-wrapper">
-                    <img src={mascotImg} className="safira-mascot-img" alt="SAFIRA Mascot" />
+                {/* Bottom Segment: Recent Reports Logs */}
+                <div className="landing-recent-section">
+                  <h4 className="recent-section-title">Recent Reports Logs</h4>
+                  <div className="recent-section-grid">
+                    {reports.length === 0 ? (
+                      <div className="recent-card empty">
+                        <p>No reports found. Create your first report to get started!</p>
+                      </div>
+                    ) : (
+                      reports.slice(0, 3).map((report) => (
+                        <div key={report.id} className="recent-card" onClick={() => loadReport(report.id)}>
+                          <div className="recent-card-body">
+                            <span className="recent-card-bullet">•</span>
+                            <div className="recent-card-details">
+                              <span className="recent-card-title">{report.title}</span>
+                              <span className="recent-card-date">Created {formatTimestamp(report.created_at)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
-                  <p className="landing-tagline">
-                    Your global companion on providing safe air: intelligent hazard identification, risk assessment, and compliance analytics.
-                  </p>
                 </div>
               </div>
             </div>
