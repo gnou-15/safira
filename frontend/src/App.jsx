@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import mascotImg from './assets/mascot.png';
 import './App.css';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
@@ -555,54 +556,96 @@ function App() {
     <div className={`app-container ${!currentReport ? 'landing-active' : ''}`}>
       {/* Top Navbar */}
       <header className="top-nav">
-        <div className="logo-container" onClick={() => fetchReports()} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-          <div className="safira-logo-wrapper">
-            <svg viewBox="0 0 100 100" className="safira-logo" width="34" height="34">
-              <defs>
-                <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#fbbf24" />
-                  <stop offset="50%" stopColor="#f59e0b" />
-                  <stop offset="100%" stopColor="#d97706" />
-                </linearGradient>
-                <linearGradient id="gold-wing" x1="0%" y1="100%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#b45309" />
-                  <stop offset="50%" stopColor="#d97706" />
-                  <stop offset="100%" stopColor="#fef08a" />
-                </linearGradient>
-              </defs>
-              {/* Back wing */}
-              <path d="M 35 65 C 20 40, 30 18, 50 10 C 42 28, 40 48, 52 62 Z" fill="url(#gold-wing)" />
-              {/* Middle wing */}
-              <path d="M 42 62 C 30 35, 42 12, 60 5 C 52 26, 48 48, 60 58 Z" fill="url(#gold-grad)" />
-              {/* Main front wing */}
-              <path d="M 48 58 C 40 38, 50 20, 68 12 C 58 32, 54 50, 68 54 Z" fill="url(#gold-wing)" />
-              {/* Body & Head */}
-              <path d="M 25 80 C 35 78, 52 70, 60 58 C 68 54, 74 46, 78 38 C 80 34, 82 32, 86 34 C 90 36, 92 34, 95 32 C 90 38, 86 42, 82 48 C 74 60, 65 72, 52 82 C 42 85, 32 83, 25 80 Z" fill="url(#gold-grad)" />
-              {/* Eye */}
-              <circle cx="82" cy="38" r="2.5" fill="#1e293b" />
-            </svg>
-          </div>
-          <span className="brand-text">SAFIRA</span>
-        </div>  
-          {reports.length > 0 && (
-            <select
-              className="report-select-dropdown"
-              value={currentReport?.id || ''}
-              onChange={(e) => loadReport(e.target.value)}
-            >
-              <option value="" disabled>Select a Report...</option>
-              {reports.map((report) => (
-                <option key={report.id} value={report.id}>
-                  {report.title}
-                </option>
-              ))}
-            </select>
-          )}
-        <div className="nav-actions">
-          <button className="btn-secondary btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
-          <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
-          <button className="btn-primary" onClick={handlePrint}>EXPORT</button>
-        </div>
+        {!currentReport ? (
+          <>
+            <div className="logo-container" onClick={() => fetchReports()}>
+              <div className="safira-logo-wrapper">
+                <svg viewBox="0 0 100 100" className="safira-logo" width="34" height="34">
+                  <defs>
+                    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#fbbf24" />
+                      <stop offset="50%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#d97706" />
+                    </linearGradient>
+                    <linearGradient id="gold-wing" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#b45309" />
+                      <stop offset="50%" stopColor="#d97706" />
+                      <stop offset="100%" stopColor="#fef08a" />
+                    </linearGradient>
+                  </defs>
+                  {/* Back wing */}
+                  <path d="M 35 65 C 20 40, 30 18, 50 10 C 42 28, 40 48, 52 62 Z" fill="url(#gold-wing)" />
+                  {/* Middle wing */}
+                  <path d="M 42 62 C 30 35, 42 12, 60 5 C 52 26, 48 48, 60 58 Z" fill="url(#gold-grad)" />
+                  {/* Main front wing */}
+                  <path d="M 48 58 C 40 38, 50 20, 68 12 C 58 32, 54 50, 68 54 Z" fill="url(#gold-wing)" />
+                  {/* Body & Head */}
+                  <path d="M 25 80 C 35 78, 52 70, 60 58 C 68 54, 74 46, 78 38 C 80 34, 82 32, 86 34 C 90 36, 92 34, 95 32 C 90 38, 86 42, 82 48 C 74 60, 65 72, 52 82 C 42 85, 32 83, 25 80 Z" fill="url(#gold-grad)" />
+                  {/* Eye */}
+                  <circle cx="82" cy="38" r="2.5" fill="#1e293b" />
+                </svg>
+              </div>
+              <span className="brand-text">SAFIRA <span className="brand-subtext">by Nezer</span></span>
+            </div>
+            <div className="landing-nav-links">
+              <span className="landing-nav-link active">Home</span>
+              <span className="landing-nav-link">About Us</span>
+              <span className="landing-nav-link">Service</span>
+              <span className="landing-nav-link">Contact</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="logo-container" onClick={() => setCurrentReport(null)} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+              <div className="safira-logo-wrapper">
+                <svg viewBox="0 0 100 100" className="safira-logo" width="34" height="34">
+                  <defs>
+                    <linearGradient id="gold-grad-ed" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#fbbf24" />
+                      <stop offset="50%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#d97706" />
+                    </linearGradient>
+                    <linearGradient id="gold-wing-ed" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#b45309" />
+                      <stop offset="50%" stopColor="#d97706" />
+                      <stop offset="100%" stopColor="#fef08a" />
+                    </linearGradient>
+                  </defs>
+                  {/* Back wing */}
+                  <path d="M 35 65 C 20 40, 30 18, 50 10 C 42 28, 40 48, 52 62 Z" fill="url(#gold-wing-ed)" />
+                  {/* Middle wing */}
+                  <path d="M 42 62 C 30 35, 42 12, 60 5 C 52 26, 48 48, 60 58 Z" fill="url(#gold-grad-ed)" />
+                  {/* Main front wing */}
+                  <path d="M 48 58 C 40 38, 50 20, 68 12 C 58 32, 54 50, 68 54 Z" fill="url(#gold-wing-ed)" />
+                  {/* Body & Head */}
+                  <path d="M 25 80 C 35 78, 52 70, 60 58 C 68 54, 74 46, 78 38 C 80 34, 82 32, 86 34 C 90 36, 92 34, 95 32 C 90 38, 86 42, 82 48 C 74 60, 65 72, 52 82 C 42 85, 32 83, 25 80 Z" fill="url(#gold-grad-ed)" />
+                  {/* Eye */}
+                  <circle cx="82" cy="38" r="2.5" fill="#1e293b" />
+                </svg>
+              </div>
+              <span className="brand-text">SAFIRA</span>
+            </div>
+            {reports.length > 0 && (
+              <select
+                className="report-select-dropdown"
+                value={currentReport?.id || ''}
+                onChange={(e) => loadReport(e.target.value)}
+              >
+                <option value="" disabled>Select a Report...</option>
+                {reports.map((report) => (
+                  <option key={report.id} value={report.id}>
+                    {report.title}
+                  </option>
+                ))}
+              </select>
+            )}
+            <div className="nav-actions">
+              <button className="btn-secondary btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
+              <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
+              <button className="btn-primary" onClick={handlePrint}>EXPORT</button>
+            </div>
+          </>
+        )}
       </header>
 
       {/* Main Container */}
@@ -1009,69 +1052,49 @@ function App() {
             <div className="landing-page-container">
               <div className="landing-page-content">
                 {/* Left Side: Recent Reports Logs */}
-                <div className="landing-left-column">
-                  <h3 className="landing-logs-title">Recent Reports Logs</h3>
-                  
-                  <div className="landing-logs-list">
-                    {reports.length === 0 ? (
-                      <div className="landing-log-item empty-log">
-                        <span className="log-bullet">•</span>
-                        <p>No reports found in database. Let's get started and create your first report!</p>
-                      </div>
-                    ) : (
-                      reports.slice(0, 3).map((report) => (
-                        <div key={report.id} className="landing-log-item clickable-log" onClick={() => loadReport(report.id)}>
+                 <div className="landing-left-column">
+                  <div className="landing-pill-indicator"></div>
+                  <div className="landing-left-content">
+                    <h3 className="landing-logs-title">Recent Reports Logs</h3>
+                    
+                    <div className="landing-logs-list">
+                      {reports.length === 0 ? (
+                        <div className="landing-log-item empty-log">
                           <span className="log-bullet">•</span>
-                          <div className="log-details">
-                            <span className="log-text">You recently worked on <strong>{report.title}</strong></span>
-                            <span className="log-meta">Created {formatTimestamp(report.created_at)}</span>
-                          </div>
+                          <p>No reports found in database. Let's get started and create your first report!</p>
                         </div>
-                      ))
-                    )}
-                  </div>
+                      ) : (
+                        reports.slice(0, 3).map((report) => (
+                          <div key={report.id} className="landing-log-item clickable-log" onClick={() => loadReport(report.id)}>
+                            <span className="log-bullet">•</span>
+                            <div className="log-details">
+                              <span className="log-text">You recently worked on <strong>{report.title}</strong></span>
+                              <span className="log-meta">Created {formatTimestamp(report.created_at)}</span>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
 
-                  <button 
-                    className="btn-get-to-work" 
-                    onClick={() => {
-                      if (reports.length > 0) {
-                        loadReport(reports[0].id);
-                      } else {
-                        setShowModal(true);
-                      }
-                    }}
-                  >
-                    Get back to work
-                  </button>
+                    <button 
+                      className="btn-get-to-work" 
+                      onClick={() => {
+                        if (reports.length > 0) {
+                          loadReport(reports[0].id);
+                        } else {
+                          setShowModal(true);
+                        }
+                      }}
+                    >
+                      Let's get to work
+                    </button>
+                  </div>
                 </div>
 
-                {/* Right Side: Bird Logo & Tagline */}
+                {/* Right Side: Mascot & Tagline */}
                 <div className="landing-right-column">
-                  <div className="safira-landing-logo-wrapper">
-                    <svg viewBox="0 0 100 100" className="safira-landing-logo" width="180" height="180">
-                      <defs>
-                        <linearGradient id="gold-grad-lg" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#fbbf24" />
-                          <stop offset="50%" stopColor="#f59e0b" />
-                          <stop offset="100%" stopColor="#d97706" />
-                        </linearGradient>
-                        <linearGradient id="gold-wing-lg" x1="0%" y1="100%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#b45309" />
-                          <stop offset="50%" stopColor="#d97706" />
-                          <stop offset="100%" stopColor="#fef08a" />
-                        </linearGradient>
-                      </defs>
-                      {/* Back wing */}
-                      <path d="M 35 65 C 20 40, 30 18, 50 10 C 42 28, 40 48, 52 62 Z" fill="url(#gold-wing-lg)" />
-                      {/* Middle wing */}
-                      <path d="M 42 62 C 30 35, 42 12, 60 5 C 52 26, 48 48, 60 58 Z" fill="url(#gold-grad-lg)" />
-                      {/* Main front wing */}
-                      <path d="M 48 58 C 40 38, 50 20, 68 12 C 58 32, 54 50, 68 54 Z" fill="url(#gold-wing-lg)" />
-                      {/* Body & Head */}
-                      <path d="M 25 80 C 35 78, 52 70, 60 58 C 68 54, 74 46, 78 38 C 80 34, 82 32, 86 34 C 90 36, 92 34, 95 32 C 90 38, 86 42, 82 48 C 74 60, 65 72, 52 82 C 42 85, 32 83, 25 80 Z" fill="url(#gold-grad-lg)" />
-                      {/* Eye */}
-                      <circle cx="82" cy="38" r="2.5" fill="#1e293b" />
-                    </svg>
+                  <div className="safira-mascot-wrapper">
+                    <img src={mascotImg} className="safira-mascot-img" alt="SAFIRA Mascot" />
                   </div>
                   <p className="landing-tagline">
                     Your global companion on providing safe air: intelligent hazard identification, risk assessment, and compliance analytics.
