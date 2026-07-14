@@ -40,5 +40,49 @@ export const AiController = {
       const detail = error.response?.data?.detail || 'AI Service communication error';
       res.status(status).json({ error: detail });
     }
+  },
+
+  // GET /api/ai/documents
+  async listDocuments(req, res) {
+    try {
+      const response = await axios.get(`${PYTHON_SERVICE_URL}/documents`);
+      res.json(response.data);
+    } catch (error) {
+      console.error('Error listing documents in proxy:', error.message);
+      const status = error.response?.status || 500;
+      const detail = error.response?.data?.detail || 'AI Service communication error';
+      res.status(status).json({ error: detail });
+    }
+  },
+
+  // DELETE /api/ai/documents
+  async deleteDocument(req, res) {
+    const { name } = req.query;
+    try {
+      const response = await axios.delete(`${PYTHON_SERVICE_URL}/documents/${encodeURIComponent(name)}`);
+      res.json(response.data);
+    } catch (error) {
+      console.error(`Error deleting document ${name} in proxy:`, error.message);
+      const status = error.response?.status || 500;
+      const detail = error.response?.data?.detail || 'AI Service communication error';
+      res.status(status).json({ error: detail });
+    }
+  },
+
+  // POST /api/ai/upload
+  async uploadDocument(req, res) {
+    const { filename, base64_data } = req.body;
+    try {
+      const response = await axios.post(`${PYTHON_SERVICE_URL}/upload-document`, {
+        filename,
+        base64_data
+      });
+      res.json(response.data);
+    } catch (error) {
+      console.error('Error uploading document in proxy:', error.message);
+      const status = error.response?.status || 500;
+      const detail = error.response?.data?.detail || 'AI Service communication error';
+      res.status(status).json({ error: detail });
+    }
   }
 };

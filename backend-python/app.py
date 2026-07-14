@@ -1,13 +1,15 @@
 import os
 import json
+import io
 from typing import List, Dict, Any, Optional
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from groq import Groq
 from supabase import create_client, Client
 from sentence_transformers import SentenceTransformer
+from pypdf import PdfReader
 
 
 # Load environment variables
@@ -71,6 +73,11 @@ class ChatRequest(BaseModel):
     message: str
     chat_history: List[Dict[str, str]]
     current_table: List[Dict[str, Any]]
+
+class UploadDocumentRequest(BaseModel):
+    filename: str
+    base64_data: str
+
 
 
 # Helper: perform RAG search
@@ -294,3 +301,126 @@ Be helpful, professional, and precise. Always reference standard procedures from
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "supabase_connected": supabase is not None, "groq_connected": groq_client is not None}
+
+
+def chunk_text(text: str, chunk_size: int = 800, overlap: int = 150) -> list:
+    chunks = []
+    start = 0
+    while start < len(text):
+        end = start + chunk_size
+        chunks.append(text[start:end])
+        start += chunk_size - overlap
+    return chunks
+
+
+def extract_text_from_pdf_bytes(pdf_bytes: bytes) -> str:
+    try:
+        reader = PdfReader(io.BytesIO(pdf_bytes))
+        full_text = []
+        for i, page in enumerate(reader.pages):
+            text = page.extract_text()
+            if text:
+                full_text.append(text)
+        return "\n".join(full_text)
+    except Exception as e:
+        print(f"Error extracting text from PDF: {e}")
+        return ""
+
+
+@app.post("/upload-document")
+async def upload_document(req: UploadDocumentRequest):
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Supabase client is not configured.")
+    if not embedding_model:
+        raise HTTPException(status_code=500, detail="Embedding model is not configured.")
+
+    filename = req.filename
+    if not filename.lower().endswith(('.pdf', '.txt')):
+        raise HTTPException(status_code=400, detail="Only PDF and TXT files are supported.")
+
+    try:
+        import base64
+        # Decode base64 data
+        base64_str = req.base64_data
+        if "," in base64_str:
+            base64_str = base64_str.split(",")[1]
+            
+        content_bytes = base64.b64decode(base64_str)
+        
+        # Extract text content
+        if filename.lower().endswith('.pdf'):
+            text_content = extract_text_from_pdf_bytes(content_bytes)
+        else:
+            text_content = content_bytes.decode('utf-8', errors='ignore')
+
+        if not text_content.strip():
+            raise HTTPException(status_code=400, detail="No readable text extracted from the file.")
+
+
+        # Chunk the text
+        chunks = chunk_text(text_content)
+        if not chunks:
+            raise HTTPException(status_code=400, detail="File content is too short to process.")
+
+        # Clear old chunks to prevent duplicates
+        try:
+            supabase.table("safety_documents").delete().eq("document_name", filename).execute()
+        except Exception as e:
+            print(f"Warning: Failed to delete old chunks for {filename}: {e}")
+
+        # Ingest and embed chunks
+        rows_to_insert = []
+        for i, chunk in enumerate(chunks):
+            embedding_vector = embedding_model.encode(chunk).tolist()
+            rows_to_insert.append({
+                "document_name": filename,
+                "content": chunk,
+                "embedding": embedding_vector,
+                "metadata": {"chunk_index": i, "total_chunks": len(chunks)}
+            })
+
+        # Insert in batches of 50 to avoid payload size errors
+        batch_size = 50
+        for offset in range(0, len(rows_to_insert), batch_size):
+            batch = rows_to_insert[offset:offset + batch_size]
+            supabase.table("safety_documents").insert(batch).execute()
+
+        return {"status": "success", "document": filename, "chunks": len(chunks)}
+        
+    except Exception as e:
+        print(f"Error in upload-document endpoint: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/documents")
+async def list_documents():
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Supabase client is not configured.")
+    
+    try:
+        # Fetch distinct document names
+        response = supabase.table("safety_documents").select("document_name").execute()
+        if not response.data:
+            return []
+            
+        # Extract and unique-ify document names
+        doc_names = list(set([doc['document_name'] for doc in response.data]))
+        return doc_names
+    except Exception as e:
+        print(f"Error listing documents: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/documents/{document_name}")
+async def delete_document(document_name: str):
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Supabase client is not configured.")
+        
+    try:
+        # Delete matching rows
+        response = supabase.table("safety_documents").delete().eq("document_name", document_name).execute()
+        return {"status": "success", "message": f"Deleted {document_name} from database."}
+    except Exception as e:
+        print(f"Error deleting document {document_name}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
