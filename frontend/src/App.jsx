@@ -530,9 +530,35 @@ function App() {
     <div className="app-container">
       {/* Top Navbar */}
       <header className="top-nav">
-        <div className="logo-container">
-          <button className="brand-btn" onClick={() => fetchReports()}>SAFIRA</button>
-          
+        <div className="logo-container" onClick={() => fetchReports()} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+          <div className="safira-logo-wrapper">
+            <svg viewBox="0 0 100 100" className="safira-logo" width="34" height="34">
+              <defs>
+                <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#fbbf24" />
+                  <stop offset="50%" stopColor="#f59e0b" />
+                  <stop offset="100%" stopColor="#d97706" />
+                </linearGradient>
+                <linearGradient id="gold-wing" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#b45309" />
+                  <stop offset="50%" stopColor="#d97706" />
+                  <stop offset="100%" stopColor="#fef08a" />
+                </linearGradient>
+              </defs>
+              {/* Back wing */}
+              <path d="M 35 65 C 20 40, 30 18, 50 10 C 42 28, 40 48, 52 62 Z" fill="url(#gold-wing)" />
+              {/* Middle wing */}
+              <path d="M 42 62 C 30 35, 42 12, 60 5 C 52 26, 48 48, 60 58 Z" fill="url(#gold-grad)" />
+              {/* Main front wing */}
+              <path d="M 48 58 C 40 38, 50 20, 68 12 C 58 32, 54 50, 68 54 Z" fill="url(#gold-wing)" />
+              {/* Body & Head */}
+              <path d="M 25 80 C 35 78, 52 70, 60 58 C 68 54, 74 46, 78 38 C 80 34, 82 32, 86 34 C 90 36, 92 34, 95 32 C 90 38, 86 42, 82 48 C 74 60, 65 72, 52 82 C 42 85, 32 83, 25 80 Z" fill="url(#gold-grad)" />
+              {/* Eye */}
+              <circle cx="82" cy="38" r="2.5" fill="#1e293b" />
+            </svg>
+          </div>
+          <span className="brand-text">SAFIRA</span>
+        </div>  
           {reports.length > 0 && (
             <select
               className="report-select-dropdown"
@@ -547,7 +573,6 @@ function App() {
               ))}
             </select>
           )}
-        </div>
         <div className="nav-actions">
           <button className="btn-secondary btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
           <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
@@ -956,9 +981,40 @@ function App() {
               </div>
             </div>
           ) : (
-            <div className="loading-state-placeholder" style={{ textAlign: 'center', marginTop: '100px' }}>
-              <h3 style={{ color: 'var(--text-primary)', marginBottom: '10px' }}>No Report Loaded</h3>
-              <p style={{ color: 'var(--text-muted)' }}>Click "Generate New HIRAC" in the header to create a report via AI.</p>
+            <div className="loading-state-placeholder" style={{ textAlign: 'center', marginTop: '120px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="safira-landing-logo-wrapper" style={{ marginBottom: '24px' }}>
+                <svg viewBox="0 0 100 100" className="safira-landing-logo" width="100" height="100">
+                  <defs>
+                    <linearGradient id="gold-grad-lg" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#fbbf24" />
+                      <stop offset="50%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#d97706" />
+                    </linearGradient>
+                    <linearGradient id="gold-wing-lg" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#b45309" />
+                      <stop offset="50%" stopColor="#d97706" />
+                      <stop offset="100%" stopColor="#fef08a" />
+                    </linearGradient>
+                  </defs>
+                  {/* Back wing */}
+                  <path d="M 35 65 C 20 40, 30 18, 50 10 C 42 28, 40 48, 52 62 Z" fill="url(#gold-wing-lg)" />
+                  {/* Middle wing */}
+                  <path d="M 42 62 C 30 35, 42 12, 60 5 C 52 26, 48 48, 60 58 Z" fill="url(#gold-grad-lg)" />
+                  {/* Main front wing */}
+                  <path d="M 48 58 C 40 38, 50 20, 68 12 C 58 32, 54 50, 68 54 Z" fill="url(#gold-wing-lg)" />
+                  {/* Body & Head */}
+                  <path d="M 25 80 C 35 78, 52 70, 60 58 C 68 54, 74 46, 78 38 C 80 34, 82 32, 86 34 C 90 36, 92 34, 95 32 C 90 38, 86 42, 82 48 C 74 60, 65 72, 52 82 C 42 85, 32 83, 25 80 Z" fill="url(#gold-grad-lg)" />
+                  {/* Eye */}
+                  <circle cx="82" cy="38" r="2.5" fill="#1e293b" />
+                </svg>
+              </div>
+              <h2 style={{ color: 'var(--text-primary)', marginBottom: '8px', fontSize: '24px', fontWeight: '800', letterSpacing: '0.5px' }}>Welcome to SAFIRA</h2>
+              <p style={{ color: 'var(--text-muted)', maxWidth: '400px', lineHeight: '1.6', fontSize: '14px', margin: '0 auto 20px auto' }}>
+                Automated aviation Hazard Identification, Risk Assessment & Control (HIRAC) report generator and safety guidelines assistant.
+              </p>
+              <button className="btn-secondary" style={{ padding: '10px 24px' }} onClick={() => setShowModal(true)}>
+                + Create First HIRAC Report
+              </button>
             </div>
           )}
         </section>
