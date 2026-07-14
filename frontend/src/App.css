@@ -96,11 +96,14 @@ div.screen-only {
 
 .brand-text {
   font-weight: 900;
-  font-size: 20px;
-  letter-spacing: 1.5px;
-  color: var(--text-primary);
-  font-family: 'Montserrat', 'Inter', sans-serif;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #FFE259 0%, #FFA751 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
 }
 
 .safira-landing-logo {
@@ -1424,17 +1427,15 @@ div.screen-only {
   box-shadow: none !important;
 }
 
-.landing-active .brand-text {
-  color: #ffffff !important;
-}
-
 .brand-subtext {
   font-size: 11px;
   font-weight: 500;
-  color: #38bdf8 !important; /* cyan color to match mockup logo accents */
+  color: rgba(255, 255, 255, 0.4) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.4) !important;
   margin-left: 5px;
   text-transform: none;
   letter-spacing: 0px;
+  display: inline-block;
 }
 
 .landing-nav-links {

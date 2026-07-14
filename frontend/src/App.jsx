@@ -585,7 +585,7 @@ function App() {
                   <circle cx="82" cy="38" r="2.5" fill="#1e293b" />
                 </svg>
               </div>
-              <span className="brand-text">SAFIRA <span className="brand-subtext">by Nezer</span></span>
+              <span className="brand-text">Safira <span className="brand-subtext">by Nezer</span></span>
             </div>
             <div className="landing-nav-links">
               <span className="landing-nav-link active">Home</span>
@@ -624,7 +624,7 @@ function App() {
                   <circle cx="82" cy="38" r="2.5" fill="#1e293b" />
                 </svg>
               </div>
-              <span className="brand-text">SAFIRA</span>
+              <span className="brand-text">Safira</span>
             </div>
             {reports.length > 0 && (
               <select
