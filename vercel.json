@@ -4,6 +4,7 @@
   "outputDirectory": "frontend/dist",
   "installCommand": "cd api && npm install",
   "rewrites": [
+    { "source": "/api/auth/:auth*", "destination": "/api/auth?auth=:auth*" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]

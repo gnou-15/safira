@@ -1,5 +1,5 @@
-import { supabase, setCorsHeaders } from '../_lib/supabase.js';
-import { hashPassword, verifyPassword, generateToken, getAuthenticatedUser } from '../_lib/auth.js';
+import { supabase, setCorsHeaders } from './_lib/supabase.js';
+import { hashPassword, verifyPassword, generateToken, getAuthenticatedUser } from './_lib/auth.js';
 
 export default async function handler(req, res) {
   setCorsHeaders(res);
@@ -8,13 +8,33 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { auth } = req.query;
-  if (!auth || !Array.isArray(auth) || auth.length === 0) {
+  let { auth } = req.query;
+
+  if (!auth) {
+    // Fallback: extract segments from URL path
+    try {
+      const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+      const pathname = url.pathname;
+      const match = pathname.match(/^\/api\/auth\/?(.*)/);
+      if (match && match[1]) {
+        auth = match[1];
+      }
+    } catch (e) {
+      console.error("Failed to parse fallback URL:", e);
+    }
+  }
+
+  if (!auth) {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const action = auth[0];
-  const subAction = auth[1];
+  const segments = Array.isArray(auth) ? auth : auth.split('/');
+  if (segments.length === 0 || !segments[0]) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  const action = segments[0];
+  const subAction = segments[1];
 
   // 1. POST /api/auth/login
   if (action === 'login' && !subAction) {
