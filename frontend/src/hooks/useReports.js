@@ -137,10 +137,13 @@ export default function useReports() {
 
   // Auth Operations
   const handleNavigate = async (pageName) => {
+    if (pageName === 'login' || pageName === 'landing') {
+      setCurrentPage(pageName);
+      return;
+    }
+
     let msg = "Navigating...";
-    if (pageName === 'landing') msg = "Preparing safety dashboard...";
-    else if (pageName === 'login') msg = "Opening login portal...";
-    else if (pageName === 'document') msg = "Loading safety worksheets...";
+    if (pageName === 'document') msg = "Loading safety worksheets...";
     setLoadingMessage(msg);
     setIsPageLoading(true);
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -160,8 +163,6 @@ export default function useReports() {
 
     const loginUser = { token: data.token, ...data.user };
 
-    setLoadingMessage("Verifying credentials...");
-    setIsPageLoading(true);
     setUser(loginUser);
     if (rememberMe) {
       localStorage.setItem('safira_token', data.token);
@@ -170,10 +171,6 @@ export default function useReports() {
       localStorage.removeItem('safira_token');
       localStorage.removeItem('safira_user');
     }
-
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setCurrentPage('landing');
-    setIsPageLoading(false);
     return true;
   };
 
@@ -189,20 +186,14 @@ export default function useReports() {
 
     const loginUser = { token: data.token, ...data.user };
 
-    setLoadingMessage("Creating secure account...");
-    setIsPageLoading(true);
     setUser(loginUser);
     localStorage.setItem('safira_token', data.token);
     localStorage.setItem('safira_user', JSON.stringify(data.user));
-
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setCurrentPage('landing');
-    setIsPageLoading(false);
     return true;
   };
 
   const handleLogout = async () => {
-    setLoadingMessage("Logging out securely...");
+    setLoadingMessage("Till we meet again...");
     setIsPageLoading(true);
     await new Promise(resolve => setTimeout(resolve, 800));
     setUser(null);

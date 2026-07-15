@@ -40,13 +40,13 @@
 }
 
 .brand-text {
-  font-weight: 900;
+  font-weight: 700;
   font-size: 26px;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.2px;
   color: #3a9ad9;
   display: inline-flex;
   align-items: baseline;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 .brand-subtext {

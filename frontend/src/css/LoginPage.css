@@ -9,17 +9,32 @@
 }
 
 .login-page-container {
-  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #cad4da; /* Same as landing page background */
+  background-color: rgba(202, 212, 218, 0.4); /* Semi-transparent matching landing bg */
+  backdrop-filter: blur(12px); /* Glassmorphism blur matching Resora */
+  -webkit-backdrop-filter: blur(12px);
   padding: 1.5rem;
   box-sizing: border-box;
   font-family: 'Inter', sans-serif;
-  position: relative;
+  z-index: 9999; /* Higher than everything else */
   overflow: hidden;
+  animation: modalBackdropFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modalBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .login-split-layout {
@@ -28,16 +43,28 @@
   max-width: 920px;
   height: 680px;
   max-height: 90vh;
-  background-color: #ffffff;
-  border-radius: 0px;
+  background: #ffffff;
+  border-radius: 16px; /* Smooth rounded corners like Resora */
+  border: 1px solid rgba(255, 255, 255, 0.5);
   overflow: hidden;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 20px 45px -5px rgba(0, 0, 0, 0.1),
-    0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15); /* Soft drop shadow */
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 10;
+  animation: modalContentSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+@keyframes modalContentSlideIn {
+  from {
+    transform: translateY(30px) scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+
 
 /* Form Column styling */
 .login-form-column {
@@ -103,10 +130,10 @@
 
 .login-brand-text {
   font-family: 'Outfit', 'Inter', sans-serif;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 1.25rem;
   color: #3a9ad9;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.2px;
 }
 
 .login-back-link-btn {
@@ -983,5 +1010,65 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Inline Loading Animation styles */
+.login-loading-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.login-inline-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2.2px solid rgba(58, 154, 217, 0.2);
+  border-top-color: #3a9ad9;
+  border-radius: 50%;
+  animation: inline-spin 0.85s linear infinite;
+}
+
+@keyframes inline-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-inline-loading-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #3a9ad9;
+  letter-spacing: -0.1px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+/* Modal Exit Animations */
+.login-page-container.closing {
+  animation: modalBackdropFadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modalBackdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.login-split-layout.closing {
+  animation: modalContentSlideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modalContentSlideOut {
+  from {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(30px) scale(0.97);
+    opacity: 0;
+  }
 }
 

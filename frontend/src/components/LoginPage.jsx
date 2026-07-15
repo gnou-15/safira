@@ -28,10 +28,35 @@ export default function LoginPage({
   const [isSuccess, setIsSuccess] = useState(false);
   const [loginDetails, setLoginDetails] = useState({ name: "", email: "" });
   const [localLoading, setLocalLoading] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   // Name fields states
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onBackToHome();
+    }, 300);
+  };
+
+  // Auto-redirect to dashboard on success
+  useEffect(() => {
+    if (isSuccess) {
+      const timer = setTimeout(() => {
+        localStorage.setItem("safira_current_page", "landing");
+        const cachedToken = localStorage.getItem("safira_token");
+        if (cachedToken) {
+          window.location.reload();
+        } else {
+          handleClose();
+        }
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [isSuccess]);
+
 
 
   // Check URL parameters for successful OAuth callback login tokens
@@ -135,48 +160,42 @@ export default function LoginPage({
   }
 
   return (
-    <div className="login-page-container">
-      <div className="login-split-layout">
+    <div className={`login-page-container ${isClosing ? "closing" : ""}`} onClick={handleClose}>
+      <div className={`login-split-layout ${isClosing ? "closing" : ""}`} onClick={(e) => e.stopPropagation()}>
         
         {/* Left Side: Form Column */}
         <div className="login-form-column">
           
           {/* Header branding & back button */}
           <div className="login-header-row">
-            <div className="login-logo-header" onClick={onBackToHome}>
+            <div className="login-logo-header" onClick={handleClose}>
               {/* Safira Aviation Goggles Logo */}
               <svg viewBox="0 0 100 100" className="login-brand-logo" width="34" height="34">
                 <defs>
-                  <filter id="logo-glow-ed" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#00f2fe" floodOpacity="0.3" />
+                  <filter id="goggles-glow" x="-10%" y="-10%" width="120%" height="120%">
+                    <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodColor="#3b82f6" floodOpacity="0.25" />
                   </filter>
                 </defs>
-                <g filter="url(#logo-glow-ed)">
-                  <path d="M 26,44 C 26,62 30,76 50,76 C 70,76 74,62 74,44 Z" fill="#fde0c5" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                  <path d="M 46,65 Q 50,69 54,65" fill="none" stroke="#3b1c14" strokeWidth="2.2" strokeLinecap="round" />
-                  <circle cx="33" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
-                  <circle cx="67" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
-                  <path d="M 18,45 C 18,20 32,10 50,10 C 68,10 82,20 82,45 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                  <path d="M 50,10 L 50,45" stroke="#3b1c14" strokeWidth="2.5" />
-                  <path d="M 22,42 C 16,52 14,64 15,78 C 16,84 20,86 23,83 C 26,80 26,68 26,42 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                  <path d="M 25,44 C 22,50 20,60 21,76 C 21.5,79 23,80 24.5,78 C 26,75 26.5,66 26.5,44 Z" fill="#f6e5b5" stroke="#3b1c14" strokeWidth="1.5" strokeLinejoin="round" />
-                  <path d="M 78,42 C 84,52 86,64 85,78 C 84,84 80,86 77,83 C 74,80 74,68 74,42 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                  <path d="M 75,44 C 78,50 80,60 79,76 C 78.5,79 77,80 75.5,78 C 74,75 73.5,66 73.5,44 Z" fill="#f6e5b5" stroke="#3b1c14" strokeWidth="1.5" strokeLinejoin="round" />
-                  <path d="M 18,52 C 18,52 30,50 50,50 C 70,50 82,52 82,52" stroke="#451c14" strokeWidth="6" strokeLinecap="round" />
-                  <circle cx="39" cy="52" r="10" fill="#e5832a" stroke="#3b1c14" strokeWidth="2" />
-                  <circle cx="39" cy="52" r="7.5" fill="#f9ab55" stroke="#3b1c14" strokeWidth="1.5" />
-                  <circle cx="39" cy="52" r="6" fill="#7cd4d5" stroke="#3b1c14" strokeWidth="1.5" />
-                  <path d="M 36,50 L 38,48" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
-                  <circle cx="61" cy="52" r="10" fill="#e5832a" stroke="#3b1c14" strokeWidth="2" />
-                  <circle cx="61" cy="52" r="7.5" fill="#f9ab55" stroke="#3b1c14" strokeWidth="1.5" />
-                  <circle cx="61" cy="52" r="6" fill="#7cd4d5" stroke="#3b1c14" strokeWidth="1.5" />
-                  <path d="M 58,50 L 60,48" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
+                <g filter="url(#goggles-glow)">
+                  <path d="M 28,45 C 28,60 32,72 50,72 C 68,72 72,60 72,45 Z" fill="#fde0c5" stroke="#1e293b" strokeWidth="2.5" strokeLinejoin="round" />
+                  <path d="M 47,62 Q 50,65 53,62" fill="none" stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
+                  <path d="M 20,46 C 20,24 32,15 50,15 C 68,15 80,24 80,46 Z" fill="#475569" stroke="#1e293b" strokeWidth="2.5" strokeLinejoin="round" />
+                  <path d="M 50,15 L 50,46" stroke="#1e293b" strokeWidth="2.5" />
+                  <path d="M 24,43 C 18,52 16,62 17,74 C 18,79 21,81 24,78 C 27,75 27,65 27,43 Z" fill="#475569" stroke="#1e293b" strokeWidth="2.5" strokeLinejoin="round" />
+                  <path d="M 76,43 C 82,52 84,62 83,74 C 82,79 79,81 76,78 C 73,75 73,65 73,43 Z" fill="#475569" stroke="#1e293b" strokeWidth="2.5" strokeLinejoin="round" />
+                  <path d="M 20,52 C 20,52 30,50 50,50 C 70,50 80,52 80,52" stroke="#1e293b" strokeWidth="5.5" strokeLinecap="round" />
+                  <circle cx="39" cy="52" r="9" fill="#0f172a" stroke="#1e293b" strokeWidth="2" />
+                  <circle cx="39" cy="52" r="5" fill="#38bdf8" stroke="#1e293b" strokeWidth="1.5" />
+                  <path d="M 36,50 L 38,48" stroke="#ffffff" strokeWidth="1" strokeLinecap="round" />
+                  <circle cx="61" cy="52" r="9" fill="#0f172a" stroke="#1e293b" strokeWidth="2" />
+                  <circle cx="61" cy="52" r="5" fill="#38bdf8" stroke="#1e293b" strokeWidth="1.5" />
+                  <path d="M 58,50 L 60,48" stroke="#ffffff" strokeWidth="1" strokeLinecap="round" />
                 </g>
               </svg>
               <span className="login-brand-text">Safira</span>
             </div>
             {!isSuccess && (
-              <button type="button" className="login-back-link-btn" onClick={onBackToHome}>
+              <button type="button" className="login-back-link-btn" onClick={handleClose}>
                 &larr; Back to Home
               </button>
             )}
@@ -212,25 +231,10 @@ export default function LoginPage({
                   </div>
                 </div>
 
-                <button 
-                  type="button" 
-                  className="login-btn-primary" 
-                  style={{ marginTop: "2rem" }}
-                  onClick={() => {
-                    setLocalLoading(true);
-                    localStorage.setItem("safira_current_page", "landing");
-                    setTimeout(() => {
-                      const cachedToken = localStorage.getItem("safira_token");
-                      if (cachedToken) {
-                        window.location.reload();
-                      } else {
-                        onBackToHome();
-                      }
-                    }, 800);
-                  }}
-                >
-                  Go to Dashboard &rarr;
-                </button>
+                <div className="login-loading-inline" style={{ marginTop: "2.5rem" }}>
+                  <div className="login-inline-spinner"></div>
+                  <span className="login-inline-loading-text">Logging you in...</span>
+                </div>
               </div>
             ) : (
               <div className="login-form-content">

@@ -67,21 +67,6 @@ function App() {
     loadingMessage
   } = useReports();
 
-  if (currentPage === 'login') {
-    return (
-      <>
-        <LoginPage 
-          handleLogin={handleLogin}
-          handleSignup={handleSignup}
-          isGenerating={isGenerating}
-          onBackToHome={() => handleNavigate('landing')}
-          setUser={setUser}
-          handleNavigate={handleNavigate}
-        />
-        {isPageLoading && <BufferLoader message={loadingMessage} />}
-      </>
-    );
-  }
 
   return (
     <div className={`app-container ${!currentReport ? 'landing-active' : ''}`}>
@@ -180,6 +165,17 @@ function App() {
         handleUploadFile={handleUploadFile}
         handleDeleteManual={handleDeleteManual}
       />
+
+      {currentPage === 'login' && (
+        <LoginPage 
+          handleLogin={handleLogin}
+          handleSignup={handleSignup}
+          isGenerating={isGenerating}
+          onBackToHome={() => handleNavigate('landing')}
+          setUser={setUser}
+          handleNavigate={handleNavigate}
+        />
+      )}
 
       {isPageLoading && <BufferLoader message={loadingMessage} />}
     </div>

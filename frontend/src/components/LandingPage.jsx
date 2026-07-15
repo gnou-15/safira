@@ -281,6 +281,15 @@ export default function LandingPage({
 
       {/* City Skyline Silhouette */}
       <div className="landing-skyline"></div>
+
+      {/* Footer Version Info */}
+      <footer className="landing-footer">
+        <span className="landing-footer-text">Safira by Nezer &bull;</span>
+        <span className="landing-footer-version">
+          <span className="version-dot"></span>
+          v1.0.0
+        </span>
+      </footer>
     </div>
   );
 }
