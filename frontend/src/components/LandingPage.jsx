@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatTimestampShort } from '../utils/formatTimestampShort';
 import '../css/LandingPage.css';
 
@@ -12,6 +12,25 @@ export default function LandingPage({
 }) {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [lightning, setLightning] = useState(null);
+  const [timeString, setTimeString] = useState('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const timePart = now.toTimeString().split(' ')[0]; // HH:MM:SS
+      const tzPart = now.toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop();
+      const dayPart = now.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+      const monthPart = now.toLocaleDateString('en-US', { month: 'long' }).toUpperCase();
+      const datePart = now.getDate();
+      const yearPart = now.getFullYear();
+
+      setTimeString(`${timePart} ${tzPart} | ${dayPart} : ${monthPart} ${datePart}, ${yearPart}`);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleAction = () => {
     if (!user) {
@@ -209,6 +228,10 @@ export default function LandingPage({
                   filter="url(#lightningGlow)"
                 />
               )}
+              {/* Real-time date, day, and time update */}
+              <text x="160" y="192" fill="#3b1c14" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="600" fontSize="8" letterSpacing="0.2">
+                {timeString}
+              </text>
 
             </svg>
           </div>
