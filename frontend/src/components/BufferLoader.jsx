@@ -7,7 +7,7 @@ const CloudSVG = ({ className }) => (
   </svg>
 );
 
-export default function BufferLoader() {
+export default function BufferLoader({ message = "Preparing safety dashboard..." }) {
   return (
     <div className="buffer-loader-overlay">
       <div className="sky-bg"></div>
@@ -20,14 +20,14 @@ export default function BufferLoader() {
         <CloudSVG className="cloud c4" />
         <CloudSVG className="cloud c5" />
       </div>
-
+ 
       {/* Wind lines */}
       <div className="wind-container">
         <div className="wind-line w1"></div>
         <div className="wind-line w2"></div>
         <div className="wind-line w3"></div>
       </div>
-
+ 
       {/* Airplane Container */}
       <div className="airplane-container">
         <svg viewBox="0 0 100 50" className="airplane-svg">
@@ -45,12 +45,13 @@ export default function BufferLoader() {
           <rect x="38" y="27" width="12" height="5" rx="2.5" fill="#475569" />
         </svg>
       </div>
-
+ 
       {/* Loading Text */}
       <div className="loading-text-container">
         <span className="please-wait-text">PLEASE WAIT</span>
-        <span className="sub-wait-text">Preparing safety dashboard...</span>
+        <span className="sub-wait-text">{message}</span>
       </div>
     </div>
   );
 }
+

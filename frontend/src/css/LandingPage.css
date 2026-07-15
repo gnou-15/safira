@@ -77,15 +77,16 @@
 }
 
 .landing-logout-btn {
-  background-color: transparent;
-  color: #ef4444 !important;
+  background-color: #64748b; /* Slate gray */
+  color: #ffffff !important;
   font-family: inherit;
   font-weight: 700;
   font-size: 14.5px;
   padding: 9px 22px;
   border-radius: 20px;
-  border: 1.5px solid #fca5a5;
+  border: none;
   cursor: pointer;
+  box-shadow: 0 4px 10px rgba(100, 116, 139, 0.15);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
@@ -93,9 +94,9 @@
 }
 
 .landing-logout-btn:hover {
-  background-color: #fef2f2;
-  border-color: #ef4444;
+  background-color: #475569;
   transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(100, 116, 139, 0.25);
 }
 
 .landing-logout-btn:active {
@@ -684,4 +685,64 @@
     transform: translateY(22px);
     opacity: 0;
   }
+}
+
+/* Static description and suggestion bubble styles */
+.landing-app-description {
+  margin-top: 24px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #475569;
+  max-width: 600px;
+  line-height: 1.6;
+  text-align: center;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.login-prompt-bubble {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(254, 243, 199, 0.25); /* Very subtle warm base */
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-top: 22px;
+  max-width: fit-content;
+  align-self: center;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.02);
+}
+
+.tiny-pulse-dot {
+  width: 5px;
+  height: 5px;
+  background-color: #f59e0b;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #f59e0b;
+  flex-shrink: 0;
+  animation: subtle-pulse-dot 2.5s infinite ease-in-out;
+}
+
+@keyframes subtle-pulse-dot {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.6;
+    box-shadow: 0 0 4px #f59e0b;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+    box-shadow: 0 0 8px #f59e0b, 0 0 12px #fbbf24;
+  }
+}
+
+.bubble-text {
+  color: #64748b; /* Muted gray for a less prominent notice */
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: -0.05px;
+  line-height: 1;
+  text-align: center;
 }

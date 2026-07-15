@@ -12,6 +12,7 @@ import './css/App.css';
 function App() {
   const {
     user,
+    setUser,
     currentPage,
     setCurrentPage,
     handleLogin,
@@ -62,7 +63,8 @@ function App() {
     handleCreateReport,
     handleSendMessage,
     handlePrint,
-    handleExitToLanding
+    handleExitToLanding,
+    loadingMessage
   } = useReports();
 
   if (currentPage === 'login') {
@@ -73,8 +75,10 @@ function App() {
           handleSignup={handleSignup}
           isGenerating={isGenerating}
           onBackToHome={() => handleNavigate('landing')}
+          setUser={setUser}
+          handleNavigate={handleNavigate}
         />
-        {isPageLoading && <BufferLoader />}
+        {isPageLoading && <BufferLoader message={loadingMessage} />}
       </>
     );
   }
@@ -177,7 +181,7 @@ function App() {
         handleDeleteManual={handleDeleteManual}
       />
 
-      {isPageLoading && <BufferLoader />}
+      {isPageLoading && <BufferLoader message={loadingMessage} />}
     </div>
   );
 }

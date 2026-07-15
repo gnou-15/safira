@@ -241,34 +241,42 @@ export default function LandingPage({
             Yes There Is!
           </button>
 
-          {!user && (
-            <div style={{ marginTop: '14px', fontSize: '13px', color: '#64748b', fontWeight: 600 }}>
-              To sync your worksheets and access safety manuals, <span style={{ color: '#3a9ad9', cursor: 'pointer', textDecoration: 'underline', fontWeight: 800 }} onClick={() => handleNavigate('login')}>log in here</span>.
-            </div>
-          )}
+          {/* Static app purpose statement */}
+          <p className="landing-app-description">
+            Safira generates comprehensive, regulatory-compliant HIRAC safety reports and risk assessments for airport operations in seconds.
+          </p>
         </div>
 
-        {/* Bottom Segment: Report Logs (Horizontal glassmorphic pills) */}
-        <div className="landing-report-logs-section">
-          <h4 className="report-logs-title">Recent Reports</h4>
-          <div className="report-logs-list">
-            {reports.length === 0 ? (
-              <span className="report-log-link-placeholder">No reports found.</span>
-            ) : (
-              reports.slice(0, 3).map((report) => (
-                <div
-                  key={report.id}
-                  className="report-log-pill"
-                  onClick={() => handleReportClick(report.id)}
-                >
-                  <span className="pill-dot"></span>
-                  <span className="pill-title" title={report.title}>{report.title || 'Untitled Report'}</span>
-                  <span className="pill-date">{formatTimestampShort(report.created_at)}</span>
-                </div>
-              ))
-            )}
+        {/* Conditional rendering for authenticated report list vs unauthenticated prompt bubble */}
+        {user ? (
+          <div className="landing-report-logs-section">
+            <h4 className="report-logs-title">Recent Reports</h4>
+            <div className="report-logs-list">
+              {reports.length === 0 ? (
+                <span className="report-log-link-placeholder">No reports found.</span>
+              ) : (
+                reports.slice(0, 3).map((report) => (
+                  <div
+                    key={report.id}
+                    className="report-log-pill"
+                    onClick={() => handleReportClick(report.id)}
+                  >
+                    <span className="pill-dot"></span>
+                    <span className="pill-title" title={report.title}>{report.title || 'Untitled Report'}</span>
+                    <span className="pill-date">{formatTimestampShort(report.created_at)}</span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="login-prompt-bubble">
+            <span className="tiny-pulse-dot"></span>
+            <span className="bubble-text">
+              Log in to sync worksheets and link safety manuals.
+            </span>
+          </div>
+        )}
       </div>
 
       {/* City Skyline Silhouette */}

@@ -18,7 +18,7 @@ export default function useReports() {
   const [currentPage, setCurrentPage] = useState(() => {
     const cachedPage = localStorage.getItem('safira_current_page');
     const token = localStorage.getItem('safira_token');
-    if (!token) return 'login';
+    if (token && cachedPage === 'login') return 'landing';
     return cachedPage || 'landing';
   });
 
@@ -44,6 +44,8 @@ export default function useReports() {
   const [hasChanges, setHasChanges] = useState(false);
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Preparing safety dashboard...");
+
 
   // Chat Sidebar State
   const [chatOpen, setChatOpen] = useState(false);
@@ -135,6 +137,11 @@ export default function useReports() {
 
   // Auth Operations
   const handleNavigate = async (pageName) => {
+    let msg = "Navigating...";
+    if (pageName === 'landing') msg = "Preparing safety dashboard...";
+    else if (pageName === 'login') msg = "Opening login portal...";
+    else if (pageName === 'document') msg = "Loading safety worksheets...";
+    setLoadingMessage(msg);
     setIsPageLoading(true);
     await new Promise(resolve => setTimeout(resolve, 800));
     setCurrentPage(pageName);
@@ -153,6 +160,7 @@ export default function useReports() {
 
     const loginUser = { token: data.token, ...data.user };
 
+    setLoadingMessage("Verifying credentials...");
     setIsPageLoading(true);
     setUser(loginUser);
     if (rememberMe) {
@@ -181,6 +189,7 @@ export default function useReports() {
 
     const loginUser = { token: data.token, ...data.user };
 
+    setLoadingMessage("Creating secure account...");
     setIsPageLoading(true);
     setUser(loginUser);
     localStorage.setItem('safira_token', data.token);
@@ -193,6 +202,7 @@ export default function useReports() {
   };
 
   const handleLogout = async () => {
+    setLoadingMessage("Logging out securely...");
     setIsPageLoading(true);
     await new Promise(resolve => setTimeout(resolve, 800));
     setUser(null);
@@ -201,7 +211,7 @@ export default function useReports() {
     setReports([]);
     localStorage.removeItem('safira_token');
     localStorage.removeItem('safira_user');
-    localStorage.removeItem('safira_current_page');
+    localStorage.setItem('safira_current_page', 'login');
     localStorage.removeItem('activeReportId');
     localStorage.removeItem('activeReport');
     localStorage.removeItem('activeReportRows');
@@ -222,6 +232,7 @@ export default function useReports() {
   };
 
   const loadReport = async (id) => {
+    setLoadingMessage("Retrieving report data...");
     setIsPageLoading(true);
     try {
       const res = await authedFetch(`${API_URL}/api/reports/${id}`);
@@ -246,6 +257,7 @@ export default function useReports() {
 
   // Transition back to landing page with loader animation
   const handleExitToLanding = async () => {
+    setLoadingMessage("Closing safety worksheet...");
     setIsPageLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -475,6 +487,7 @@ export default function useReports() {
 
   // Redirect to workspace page (load most recent report, or auto-create a default empty report if no reports exist)
   const handleGetToWork = async () => {
+    setLoadingMessage("Loading workspace...");
     setIsPageLoading(true);
     if (reports.length > 0) {
       await loadReport(reports[0].id);
@@ -553,6 +566,7 @@ export default function useReports() {
     e.preventDefault();
     if (!incidentPrompt.trim()) return;
     setIsGenerating(true);
+    setLoadingMessage("Generating safety worksheet...");
     setIsPageLoading(true);
 
     try {

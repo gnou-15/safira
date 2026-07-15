@@ -80,7 +80,7 @@ export default function Header({
             <span className="landing-nav-link">Contact</span>
             {user ? (
               <>
-                <span className="landing-nav-link" style={{ fontWeight: 600, color: '#3a9ad9' }}>👤 {user.username}</span>
+                <span className="landing-nav-link" style={{ fontWeight: 600, color: '#3a9ad9' }}>👤 {user.username ? user.username.split(' ')[0] : ''}</span>
                 <button type="button" className="landing-logout-btn" onClick={handleLogout}>Log Out</button>
               </>
             ) : (
@@ -159,7 +159,7 @@ export default function Header({
           )}
           <div className="nav-actions">
             {user && (
-              <span className="user-greeting" style={{ fontSize: '13px', fontWeight: 600, color: '#64748b', marginRight: '6px' }}>👤 {user.username}</span>
+              <span className="user-greeting" style={{ fontSize: '13px', fontWeight: 600, color: '#64748b', marginRight: '6px' }}>👤 {user.username ? user.username.split(' ')[0] : ''}</span>
             )}
             <button className="btn-secondary btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
             <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
