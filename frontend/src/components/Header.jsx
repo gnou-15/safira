@@ -164,9 +164,6 @@ export default function Header({
             <button className="btn-secondary btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
             <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
             <button className="btn-primary" onClick={handlePrint}>EXPORT</button>
-            {user && (
-              <button className="btn-secondary btn-logout-action" onClick={handleLogout} style={{ color: '#ef4444', borderColor: '#fca5a5' }}>Log Out</button>
-            )}
           </div>
         </>
       )}
