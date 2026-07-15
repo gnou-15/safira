@@ -12,30 +12,8 @@ export default function DocumentSheet({
     <div className="document-sheet">
       {/* Header Box */}
       <div className="doc-header-layout">
-        {/* Simulated aviation logo wings */}
         <div className="logo-placeholder">
-          <svg viewBox="0 0 260 70" width="220" height="60">
-            <g transform="translate(0, 5)">
-              {/* Left stylized wing lines */}
-              <path d="M 10 32 L 70 12 L 70 20 L 20 37 Z" fill="#7d8b99" opacity="0.9" />
-              <path d="M 20 39 L 70 24 L 70 32 L 30 44 Z" fill="#7d8b99" opacity="0.9" />
-              <path d="M 30 46 L 70 35 L 70 42 L 40 49 Z" fill="#7d8b99" opacity="0.9" />
-              
-              {/* Center shield/diamond */}
-              <polygon points="80,5 140,5 145,45 75,45" fill="#5c5c5c" stroke="#4a4a4a" strokeWidth="1" />
-              <text x="110" y="27" dominantBaseline="middle" textAnchor="middle" fontWeight="900" fontSize="20" fill="#ffffff" letterSpacing="1">PAGSS</text>
-              
-              {/* Right stylized wing lines */}
-              <path d="M 210 32 L 150 12 L 150 20 L 200 37 Z" fill="#7d8b99" opacity="0.9" />
-              <path d="M 200 39 L 150 24 L 150 32 L 190 44 Z" fill="#7d8b99" opacity="0.9" />
-              <path d="M 190 46 L 150 35 L 150 42 L 180 49 Z" fill="#7d8b99" opacity="0.9" />
-
-              {/* Subtext below the wings */}
-              <text x="110" y="55" dominantBaseline="middle" textAnchor="middle" fontWeight="700" fontSize="5" fill="#4a4a4a" letterSpacing="0.2">
-                PHILIPPINE AIRPORT GROUND SUPPORT SOLUTIONS, INC.
-              </text>
-            </g>
-          </svg>
+          <img src="/PAGSS.png?v=2" alt="PAGSS Logo" className="pagss-logo" />
         </div>
         <div className="doc-title-container">
           <h2 className="doc-title">Hazard Identification, Risk Assessment & Control Report</h2>
@@ -192,14 +170,14 @@ export default function DocumentSheet({
                   />
                   <div className="print-only cell-print-text">{row.existing_defenses || ''}</div>
                 </td>
-                
+
                 {/* Interactive Safety Risk Index (Single cell with internal score controls) */}
                 <td className={`risk-index-cell risk-${(row.initial_risk_index || 'Low').toLowerCase()}`}>
                   {/* Screen: full interactive widget */}
                   <div className="risk-cell-content screen-only">
                     <div className="risk-level-label">
                       {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
-                      <span className="risk-score-number"><br/>({row.initial_risk_score || 0})</span>
+                      <span className="risk-score-number"><br />({row.initial_risk_score || 0})</span>
                     </div>
                     <div className="risk-score-selectors">
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
@@ -247,7 +225,7 @@ export default function DocumentSheet({
                   <div className="risk-cell-content screen-only">
                     <div className="risk-level-label">
                       {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
-                      <span className="risk-score-number"><br/>({row.residual_risk_score || 0})</span>
+                      <span className="risk-score-number"><br />({row.residual_risk_score || 0})</span>
                     </div>
                     <div className="risk-score-selectors">
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>

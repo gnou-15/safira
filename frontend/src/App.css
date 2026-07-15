@@ -253,6 +253,12 @@ div.screen-only {
   margin-right: 15px;
 }
 
+.pagss-logo {
+  width: 300px;
+  height: auto;
+  display: block;
+}
+
 .doc-title-container {
   text-align: right;
   flex: 1;
@@ -262,7 +268,7 @@ div.screen-only {
   font-size: 20px;
   font-weight: 800;
   margin: 0;
-  color: var(--text-primary);
+  color: #475569;
   letter-spacing: 0.2px;
   text-transform: uppercase;
 }
@@ -486,23 +492,22 @@ div.screen-only {
 
 .risk-low {
   background-color: #dcfce7 !important;
-  /* Soft light green */
   color: #166534 !important;
-  /* Rich green text */
 }
 
-.risk-medium {
+.risk-moderate {
   background-color: #fef9c3 !important;
-  /* Soft light yellow */
   color: #854d0e !important;
-  /* Rich amber text */
 }
 
 .risk-high {
+  background-color: #ffedd5 !important;
+  color: #c2410c !important;
+}
+
+.risk-extreme {
   background-color: #fee2e2 !important;
-  /* Soft light red */
   color: #991b1b !important;
-  /* Rich crimson text */
 }
 
 /* Operation type colored text */
@@ -939,6 +944,7 @@ div.screen-only {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     box-sizing: border-box !important;
+    font-family: 'Arial', 'Helvetica', sans-serif !important;
   }
 
   body {
@@ -948,6 +954,7 @@ div.screen-only {
     line-height: 1.3 !important;
     margin: 0 !important;
     padding: 0 !important;
+    font-family: 'Arial', 'Helvetica', sans-serif !important;
   }
 
   #root {
@@ -1015,7 +1022,7 @@ div.screen-only {
 
   .doc-title {
     font-size: 16px !important;
-    color: #000000 !important;
+    color: #475569 !important;
   }
 
   /* ===== METADATA TABLE ===== */
@@ -1228,12 +1235,12 @@ div.screen-only {
   td.risk-low {
     background: #00b050 !important;
     background-color: #00b050 !important;
-    color: #000000 !important;
+    color: #ffffff !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  td.risk-medium {
+  td.risk-moderate {
     background: #ffff00 !important;
     background-color: #ffff00 !important;
     color: #000000 !important;
@@ -1242,9 +1249,17 @@ div.screen-only {
   }
 
   td.risk-high {
-    background: #ff0000 !important;
+    background: #f97316 !important; /* Orange */
+    background-color: #f97316 !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  td.risk-extreme {
+    background: #ff0000 !important; /* Red */
     background-color: #ff0000 !important;
-    color: #000000 !important;
+    color: #ffffff !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -1456,6 +1471,21 @@ div.screen-only {
   --bg-workspace: transparent !important;
   background: #cad4da !important;
   transition: background 0.2s ease;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.landing-active .main-workspace {
+  height: auto;
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.landing-active .document-workspace {
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
 
 .landing-active .top-nav {
@@ -1501,10 +1531,12 @@ div.screen-only {
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 40px 20px;
+  height: 100%;
+  max-height: 100%;
+  padding: 10px 20px;
   box-sizing: border-box;
   position: relative;
-  min-height: calc(100vh - 70px);
+  overflow: hidden;
 }
 
 .landing-page-content {
@@ -1565,9 +1597,83 @@ div.screen-only {
   font-size: 15.5px;
   font-weight: 800;
   cursor: pointer;
+  font-family: inherit;
   box-shadow: none;
   transition: all 0.2s ease;
-  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Drifting cloud inside button — left cloud */
+.btn-yes-today::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -60px;
+  width: 80px;
+  height: 50px;
+  background: url('/cloud left.png') center / contain no-repeat;
+  opacity: 0.18;
+  z-index: -1;
+  pointer-events: none;
+  animation: btn-cloud-drift-left 8s linear infinite;
+}
+
+/* Drifting cloud inside button — right cloud */
+.btn-yes-today::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -50px;
+  width: 65px;
+  height: 40px;
+  background: url('/cloud right.png') center / contain no-repeat;
+  opacity: 0.15;
+  z-index: -1;
+  pointer-events: none;
+  animation: btn-cloud-drift-right 10s linear infinite;
+  animation-delay: 3s;
+}
+
+@keyframes btn-cloud-drift-left {
+  0% {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.18;
+  }
+
+  90% {
+    opacity: 0.18;
+  }
+
+  100% {
+    transform: translateX(260px);
+    opacity: 0;
+  }
+}
+
+@keyframes btn-cloud-drift-right {
+  0% {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.15;
+  }
+
+  90% {
+    opacity: 0.15;
+  }
+
+  100% {
+    transform: translateX(-260px);
+    opacity: 0;
+  }
 }
 
 .btn-yes-today:hover {
@@ -1774,15 +1880,70 @@ div.screen-only {
 }
 
 @keyframes beacon-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(0.7);
     opacity: 0.2;
   }
+
   50% {
     transform: scale(1.6);
     opacity: 0.85;
     filter: drop-shadow(0 0 3px #ff2a2a);
   }
+}
+
+/* Background Cloud Animations */
+.landing-cloud-bg-left-group {
+  animation: float-cloud-bg-left 10s ease-in-out infinite;
+}
+
+.landing-cloud-bg-right-group {
+  animation: float-cloud-bg-right 12s ease-in-out infinite;
+}
+
+@keyframes float-cloud-bg-left {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-4px) translateX(1px);
+  }
+}
+
+@keyframes float-cloud-bg-right {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-5px) translateX(-2px);
+  }
+}
+
+
+
+/* City Skyline Silhouette Styles */
+.landing-skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 350px;
+  z-index: 1;
+  pointer-events: none;
+  /* Front layer: full-height, normal position */
+  /* Back layer: slightly shorter & offset by half the tile width to cover seams */
+  background-image: url('/building.png'), url('/building.png');
+  background-repeat: repeat-x, repeat-x;
+  background-position: bottom left, bottom 0 left 350px;
+  background-size: auto 100%, auto 85%;
 }
 
 @media (max-width: 800px) {
@@ -1807,4 +1968,418 @@ body,
   /* IE and Edge */
   scrollbar-width: none !important;
   /* Firefox */
+}
+
+@media screen {
+
+  /* Only apply when NOT on the landing page */
+  .app-container:not(.landing-active) {
+    background-color: #cad4da !important;
+  }
+
+  .app-container:not(.landing-active) .main-workspace {
+    background-color: #eef2f6 !important;
+    box-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .document-workspace {
+    padding: 40px 24px 60px 24px !important;
+    background: transparent !important;
+  }
+
+  /* Refined Paper styling for Document Sheet (toned down) */
+  .app-container:not(.landing-active) .document-sheet {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    /* Remove busy grid lines */
+
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 48px !important;
+    box-sizing: border-box !important;
+
+    /* Soft ambient elevation shadows */
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.05),
+      0 10px 25px -5px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+
+  /* Remove Clipboard clamps entirely for a cleaner, modern look */
+  .app-container:not(.landing-active) .document-sheet::before,
+  .app-container:not(.landing-active) .document-sheet::after {
+    display: none !important;
+  }
+
+  /* Top Navigation Bar: Soft flat panel */
+  .app-container:not(.landing-active) .top-nav {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Flat-Tactile EXPORT Button */
+  .app-container:not(.landing-active) .btn-primary {
+    background-color: #10b981 !important;
+    background-image: none !important;
+    border: 1px solid #059669 !important;
+    border-bottom: 3px solid #047857 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.15) !important;
+    text-shadow: none !important;
+    font-weight: 700 !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .app-container:not(.landing-active) .btn-primary:hover {
+    background-color: #059669 !important;
+    border-color: #047857 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.25) !important;
+  }
+
+  .app-container:not(.landing-active) .btn-primary:active {
+    transform: translateY(1.5px) !important;
+    border-bottom-width: 1px !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Flat-Tactile Generate New HIRAC Button */
+  .app-container:not(.landing-active) .btn-secondary:not(.btn-nav-manuals) {
+    background-color: #6366f1 !important;
+    background-image: none !important;
+    border: 1px solid #4f46e5 !important;
+    border-bottom: 3px solid #3730a3 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.15) !important;
+    text-shadow: none !important;
+    font-weight: 700 !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .app-container:not(.landing-active) .btn-secondary:not(.btn-nav-manuals):hover {
+    background-color: #4f46e5 !important;
+    border-color: #3730a3 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.25) !important;
+  }
+
+  .app-container:not(.landing-active) .btn-secondary:not(.btn-nav-manuals):active {
+    transform: translateY(1.5px) !important;
+    border-bottom-width: 1px !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Flat-Tactile Safety Manuals Button */
+  .app-container:not(.landing-active) .btn-nav-manuals {
+    background-color: #475569 !important;
+    background-image: none !important;
+    border: 1px solid #334155 !important;
+    border-bottom: 3px solid #1e293b !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(71, 85, 105, 0.15) !important;
+    text-shadow: none !important;
+    font-weight: 700 !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .app-container:not(.landing-active) .btn-nav-manuals:hover {
+    background-color: #334155 !important;
+    border-color: #1e293b !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(71, 85, 105, 0.25) !important;
+  }
+
+  .app-container:not(.landing-active) .btn-nav-manuals:active {
+    transform: translateY(1.5px) !important;
+    border-bottom-width: 1px !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Clean dropdown design */
+  .app-container:not(.landing-active) .report-select-dropdown {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid #cbd5e1 !important;
+    border-bottom: 2px solid #94a3b8 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    padding: 6px 12px !important;
+  }
+
+  .app-container:not(.landing-active) .report-select-dropdown:hover {
+    border-color: #94a3b8 !important;
+    background-color: #f8fafc !important;
+  }
+
+  /* Document Title Clean Layout */
+  .app-container:not(.landing-active) .doc-header-layout {
+    border-bottom: 2px solid #0f172a !important;
+    margin-bottom: 24px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .app-container:not(.landing-active) .doc-title {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 800 !important;
+    color: #475569 !important;
+    letter-spacing: -0.2px !important;
+  }
+
+  /* Clean Writable Metadata Area */
+  .app-container:not(.landing-active) .meta-table {
+    border: 1px solid #e2e8f0 !important;
+    border-collapse: collapse !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+
+  .app-container:not(.landing-active) .meta-table td {
+    border: 1px solid #e2e8f0 !important;
+    padding: 8px 12px !important;
+  }
+
+  .app-container:not(.landing-active) .meta-label {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.2px !important;
+    box-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .meta-value input {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.15s ease !important;
+    width: 90% !important;
+  }
+
+  .app-container:not(.landing-active) .meta-value input:focus {
+    border-color: #3a9ad9 !important;
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.05),
+      0 0 0 3px rgba(58, 154, 217, 0.15) !important;
+  }
+
+  .app-container:not(.landing-active) .meta-value-sidebar {
+    background-color: #f8fafc !important;
+    padding: 10px 12px !important;
+  }
+
+  .app-container:not(.landing-active) .sidebar-label {
+    font-weight: 700 !important;
+    color: #475569 !important;
+    font-size: 11px !important;
+  }
+
+  .app-container:not(.landing-active) .sidebar-input {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    width: 90% !important;
+  }
+
+  .app-container:not(.landing-active) .sidebar-textarea {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 6px 10px !important;
+    font-size: 12.5px !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    resize: none !important;
+    width: 90% !important;
+  }
+
+  /* Table styling */
+  .app-container:not(.landing-active) .hirac-table-container {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table th {
+    background: #1e293b !important;
+    border: 1px solid #1e293b !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    color: #ffffff !important;
+    padding: 12px 8px !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td {
+    border: 1px solid #e2e8f0 !important;
+    background-color: #ffffff !important;
+  }
+
+  /* Clean editable cells */
+  .app-container:not(.landing-active) .cell-editable {
+    background-color: #ffffff !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    padding: 6px !important;
+    font-size: 12.5px !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .app-container:not(.landing-active) .cell-editable:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  .app-container:not(.landing-active) .cell-editable:focus {
+    background-color: #ffffff !important;
+    border-color: #3a9ad9 !important;
+    box-shadow: 0 0 0 3px rgba(58, 154, 217, 0.15) !important;
+  }
+
+  /* Soft Risk Indicator Badges */
+  .app-container:not(.landing-active) .risk-index-cell {
+    padding: 8px !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td.risk-low {
+    background-color: #dcfce7 !important;
+    border: 1px solid #bbf7d0 !important;
+    color: #166534 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td.risk-moderate {
+    background-color: #fef9c3 !important;
+    border: 1px solid #fef08a !important;
+    color: #854d0e !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td.risk-high {
+    background-color: #ffedd5 !important;
+    border: 1px solid #fed7aa !important;
+    color: #c2410c !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td.risk-extreme {
+    background-color: #fee2e2 !important;
+    border: 1px solid #fecaca !important;
+    color: #991b1b !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Clean Risk Selector Dropdowns */
+  .app-container:not(.landing-active) .cell-select-compact {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 2px 4px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .cell-select-compact:hover {
+    border-color: #94a3b8 !important;
+  }
+
+  /* Clean Delete Row Button */
+  .app-container:not(.landing-active) .delete-row-btn {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 6px !important;
+    color: #ef4444 !important;
+  }
+
+  .app-container:not(.landing-active) .delete-row-btn:hover {
+    background-color: #fee2e2 !important;
+    color: #dc2626 !important;
+    transform: scale(1.1) !important;
+  }
+
+  .app-container:not(.landing-active) .delete-row-btn:active {
+    transform: scale(0.95) !important;
+  }
+
+  /* Soft Add Hazard Row Button */
+  .app-container:not(.landing-active) .btn-add-row {
+    background-color: #ffffff !important;
+    border: 1px dashed #6366f1 !important;
+    border-bottom: 3px solid #4f46e5 !important;
+    border-radius: 8px !important;
+    color: #6366f1 !important;
+    padding: 10px 28px !important;
+    box-shadow: 0 1px 3px rgba(99, 102, 241, 0.05) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .app-container:not(.landing-active) .btn-add-row:hover {
+    background-color: rgba(99, 102, 241, 0.05) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.1) !important;
+  }
+
+  .app-container:not(.landing-active) .btn-add-row:active {
+    transform: translateY(1px) !important;
+    border-bottom-width: 1px !important;
+  }
+
+  /* Soft Sign-off Box Area */
+  .app-container:not(.landing-active) .doc-footer-signatures {
+    margin-top: 40px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  }
+
+  .app-container:not(.landing-active) .sig-box {
+    border-right: 1px solid #e2e8f0 !important;
+    padding: 16px !important;
+  }
+
+  .app-container:not(.landing-active) .sig-box-title {
+    color: #475569 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+  }
+
+  .app-container:not(.landing-active) .sig-name-input {
+    border: none !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    padding: 4px 0 !important;
+  }
+
+  .app-container:not(.landing-active) .sig-name-input:focus {
+    border-bottom-color: #3a9ad9 !important;
+  }
+
+  .app-container:not(.landing-active) .sig-role-input {
+    font-size: 11px !important;
+    color: #64748b !important;
+  }
+
+  .app-container:not(.landing-active) .sig-remarks-box {
+    background-color: #f8fafc !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 16px !important;
+  }
 }

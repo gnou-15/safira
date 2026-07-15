@@ -16,10 +16,28 @@ const clampScore = (val, fallback = 3) => {
 };
 
 // Helper: calculate risk index level
-const calcRiskLevel = (score) => {
-  if (score <= 4) return 'Low';
-  if (score <= 12) return 'Medium';
-  return 'High';
+const calcRiskLevel = (likelihood, severity) => {
+  const L = parseInt(likelihood) || 1;
+  const S = parseInt(severity) || 1;
+  
+  const letters = {
+    5: 'A',
+    4: 'B',
+    3: 'C',
+    2: 'D',
+    1: 'E'
+  };
+  const letter = letters[L] || 'E';
+  const code = `${S}${letter}`;
+  
+  const extremeCodes = ['5A', '5B', '5C', '4A', '4B', '3A'];
+  const highCodes = ['5D', '4C', '3B', '3C', '2A'];
+  const moderateCodes = ['5E', '4D', '4E', '3D', '2B', '2C', '1A'];
+  
+  if (extremeCodes.includes(code)) return 'Extreme';
+  if (highCodes.includes(code)) return 'High';
+  if (moderateCodes.includes(code)) return 'Moderate';
+  return 'Low';
 };
 
 export const ReportModel = {
@@ -152,12 +170,12 @@ export const ReportModel = {
         initial_likelihood: il,
         initial_severity: is_,
         initial_risk_score: il * is_,
-        initial_risk_index: calcRiskLevel(il * is_),
+        initial_risk_index: calcRiskLevel(il, is_),
         mitigating_actions: String(row.mitigating_actions || ''),
         residual_likelihood: rl,
         residual_severity: rs,
         residual_risk_score: rl * rs,
-        residual_risk_index: calcRiskLevel(rl * rs),
+        residual_risk_index: calcRiskLevel(rl, rs),
         remarks: row.remarks ? String(row.remarks) : null,
         target_date: parseDate(row.target_date),
         department_responsible: row.department_responsible ? String(row.department_responsible) : null

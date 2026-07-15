@@ -56,13 +56,25 @@ except Exception as e:
 
 
 # Helpers for Risk Assessment Calculations (5x5 matrix)
-def calculate_risk_level(score: int) -> str:
-    if 1 <= score <= 4:
-        return "Low"
-    elif 5 <= score <= 12:
-        return "Medium"
-    else:
+def calculate_risk_level(likelihood: int, severity: int) -> str:
+    l = int(likelihood)
+    s = int(severity)
+    letters = {5: 'A', 4: 'B', 3: 'C', 2: 'D', 1: 'E'}
+    letter = letters.get(l, 'E')
+    code = f"{s}{letter}"
+    
+    extreme_codes = {'5A', '5B', '5C', '4A', '4B', '3A'}
+    high_codes = {'5D', '4C', '3B', '3C', '2A'}
+    moderate_codes = {'5E', '4D', '4E', '3D', '2B', '2C', '1A'}
+    
+    if code in extreme_codes:
+        return "Extreme"
+    elif code in high_codes:
         return "High"
+    elif code in moderate_codes:
+        return "Moderate"
+    else:
+        return "Low"
 
 
 # Request & Response Schemas
@@ -223,12 +235,12 @@ Provide exactly the JSON array. Do not wrap the JSON output in backticks, markdo
             row["initial_likelihood"] = init_l
             row["initial_severity"] = init_s
             row["initial_risk_score"] = init_score
-            row["initial_risk_index"] = calculate_risk_level(init_score)
+            row["initial_risk_index"] = calculate_risk_level(init_l, init_s)
             
             row["residual_likelihood"] = res_l
             row["residual_severity"] = res_s
             row["residual_risk_score"] = res_score
-            row["residual_risk_index"] = calculate_risk_level(res_score)
+            row["residual_risk_index"] = calculate_risk_level(res_l, res_s)
             row["row_order"] = i + 1
             
             # Sanitize target_date: only keep YYYY-MM-DD, convert everything else to None

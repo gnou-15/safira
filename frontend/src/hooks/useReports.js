@@ -280,13 +280,12 @@ export default function useReports() {
     const updated = [...rows];
     updated[index] = { ...updated[index], [field]: value };
 
-    // Automatically recalculate Risk Levels if L or S changes
     if (field === 'initial_likelihood' || field === 'initial_severity') {
       const l = parseInt(updated[index].initial_likelihood) || 1;
       const s = parseInt(updated[index].initial_severity) || 1;
       const score = l * s;
       updated[index].initial_risk_score = score;
-      updated[index].initial_risk_index = getRiskLevel(score);
+      updated[index].initial_risk_index = getRiskLevel(l, s);
     }
 
     if (field === 'residual_likelihood' || field === 'residual_severity') {
@@ -294,7 +293,7 @@ export default function useReports() {
       const s = parseInt(updated[index].residual_severity) || 1;
       const score = l * s;
       updated[index].residual_risk_score = score;
-      updated[index].residual_risk_index = getRiskLevel(score);
+      updated[index].residual_risk_index = getRiskLevel(l, s);
     }
 
     setRows(updated);
@@ -453,13 +452,13 @@ export default function useReports() {
           const l = parseInt(updated[row_index].initial_likelihood) || 1;
           const s = parseInt(updated[row_index].initial_severity) || 1;
           updated[row_index].initial_risk_score = l * s;
-          updated[row_index].initial_risk_index = getRiskLevel(l * s);
+          updated[row_index].initial_risk_index = getRiskLevel(l, s);
         }
         if ('residual_likelihood' in data || 'residual_severity' in data) {
           const l = parseInt(updated[row_index].residual_likelihood) || 1;
           const s = parseInt(updated[row_index].residual_severity) || 1;
           updated[row_index].residual_risk_score = l * s;
-          updated[row_index].residual_risk_index = getRiskLevel(l * s);
+          updated[row_index].residual_risk_index = getRiskLevel(l, s);
         }
         setChatHistory(h => [...h, { role: 'system', content: `Applied edit to Row ${row_index + 1}` }]);
         markChanged();
@@ -473,12 +472,12 @@ export default function useReports() {
           initial_likelihood: data.initial_likelihood || 3,
           initial_severity: data.initial_severity || 3,
           initial_risk_score: (data.initial_likelihood || 3) * (data.initial_severity || 3),
-          initial_risk_index: getRiskLevel((data.initial_likelihood || 3) * (data.initial_severity || 3)),
+          initial_risk_index: getRiskLevel(data.initial_likelihood || 3, data.initial_severity || 3),
           mitigating_actions: data.mitigating_actions || '',
           residual_likelihood: data.residual_likelihood || 2,
           residual_severity: data.residual_severity || 2,
           residual_risk_score: (data.residual_likelihood || 2) * (data.residual_severity || 2),
-          residual_risk_index: getRiskLevel((data.residual_likelihood || 2) * (data.residual_severity || 2)),
+          residual_risk_index: getRiskLevel(data.residual_likelihood || 2, data.residual_severity || 2),
           remarks: data.remarks || '',
           target_date: data.target_date || '',
           department_responsible: data.department_responsible || 'Safety'

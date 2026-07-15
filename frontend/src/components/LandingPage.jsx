@@ -24,17 +24,25 @@ export default function LandingPage({
               {/* Ground Line */}
               <line x1="160" y1="180" x2="640" y2="180" stroke="#3b1c14" strokeWidth="2.5" strokeLinecap="round" />
 
-              {/* Airplane (rendered behind clouds/port) */}
+              {/* Background Clouds (rendered behind the plane) */}
+              <g className="landing-cloud-bg-left-group">
+                <image href="/cloud left.png" x="190" y="-60" width="160" height="100" opacity="0.65" />
+              </g>
+              <g className="landing-cloud-bg-right-group">
+                <image href="/cloud right.png" x="470" y="-70" width="180" height="110" opacity="0.65" />
+              </g>
+
+              {/* Airplane (rendered in front of background clouds, but behind foreground clouds/port) */}
               <g className="animating-plane-group">
                 <image href="/plane.png" x="0" y="0" width="115" height="82" />
               </g>
 
-              {/* Left Cloud (rendered on top of plane) */}
+              {/* Foreground Left Cloud (rendered on top of plane) */}
               <g className="landing-cloud-left-group">
                 <image href="/cloud left.png" x="-70" y="-40" width="300" height="200" />
               </g>
 
-              {/* Right Cloud (rendered on top of plane) */}
+              {/* Foreground Right Cloud (rendered on top of plane) */}
               <g className="landing-cloud-right-group">
                 <image href="/cloud right.png" x="600" y="-80" width="350" height="250" />
               </g>
@@ -76,6 +84,9 @@ export default function LandingPage({
           </div>
         </div>
       </div>
+
+      {/* City Skyline Silhouette */}
+      <div className="landing-skyline"></div>
     </div>
   );
 }
