@@ -1,0 +1,687 @@
+/* Refined Landing Page Styles */
+.landing-active {
+  --bg-app: #cad4da !important;
+  --bg-workspace: transparent !important;
+  background: #cad4da !important;
+  transition: background 0.2s ease;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.landing-active .main-workspace {
+  height: auto;
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.landing-active .document-workspace {
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.landing-active .top-nav {
+  background-color: #cad4da !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  padding: 28px 70px 14px 70px !important;
+}
+
+.landing-nav-links {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+}
+
+.landing-nav-link {
+  color: rgba(15, 23, 42, 0.65);
+  font-weight: 700;
+  font-size: 14.5px;
+  letter-spacing: -0.1px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.landing-nav-link:hover,
+.landing-nav-link.active {
+  color: #0f172a;
+}
+
+/* Landing Page Header Buttons */
+.landing-login-btn {
+  background-color: #3a9ad9;
+  color: #ffffff !important;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14.5px;
+  padding: 10px 24px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(58, 154, 217, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-login-btn:hover {
+  background-color: #2b85bf;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(58, 154, 217, 0.35);
+}
+
+.landing-login-btn:active {
+  transform: translateY(0);
+}
+
+.landing-logout-btn {
+  background-color: transparent;
+  color: #ef4444 !important;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14.5px;
+  padding: 9px 22px;
+  border-radius: 20px;
+  border: 1.5px solid #fca5a5;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-logout-btn:hover {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.landing-logout-btn:active {
+  transform: translateY(0);
+}
+
+.landing-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  margin-top: -95px;
+}
+
+/* Centered Hero Section */
+.landing-hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.landing-main-heading {
+  color: #0f172a;
+  font-size: 72px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin: 0 0 20px 0;
+  text-align: center;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.hero-blue-text {
+  color: #3a9ad9;
+}
+
+.landing-hero-scene {
+  width: 100%;
+  max-width: 950px;
+  margin: 10px auto 8px auto;
+}
+
+.landing-scene-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  display: block;
+}
+
+.safira-landing-logo {
+  animation: landing-float 4s ease-in-out infinite;
+  filter: drop-shadow(0 10px 15px rgba(245, 158, 11, 0.15));
+}
+
+@keyframes landing-float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+.btn-yes-today {
+  background-color: #eaeff2;
+  color: #0f172a;
+  border: 2.5px solid #0f172a;
+  padding: 12px 52px;
+  border-radius: 24px;
+  font-size: 15.5px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Drifting cloud inside button — left cloud */
+.btn-yes-today::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -60px;
+  width: 80px;
+  height: 50px;
+  background: url('/cloud left.png') center / contain no-repeat;
+  opacity: 0.18;
+  z-index: -1;
+  pointer-events: none;
+  animation: btn-cloud-drift-left 8s linear infinite;
+}
+
+/* Drifting cloud inside button — right cloud */
+.btn-yes-today::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -50px;
+  width: 65px;
+  height: 40px;
+  background: url('/cloud right.png') center / contain no-repeat;
+  opacity: 0.15;
+  z-index: -1;
+  pointer-events: none;
+  animation: btn-cloud-drift-right 10s linear infinite;
+  animation-delay: 3s;
+}
+
+@keyframes btn-cloud-drift-left {
+  0% {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.18;
+  }
+
+  90% {
+    opacity: 0.18;
+  }
+
+  100% {
+    transform: translateX(260px);
+    opacity: 0;
+  }
+}
+
+@keyframes btn-cloud-drift-right {
+  0% {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.15;
+  }
+
+  90% {
+    opacity: 0.15;
+  }
+
+  100% {
+    transform: translateX(-260px);
+    opacity: 0;
+  }
+}
+
+.btn-yes-today:hover {
+  background-color: #d1d5db;
+  transform: scale(1.02);
+}
+
+.btn-yes-today:active {
+  transform: scale(0.98);
+}
+
+/* Bottom Segment: Report Logs */
+.landing-report-logs-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 6px;
+  width: 100%;
+  max-width: 760px;
+  box-sizing: border-box;
+}
+
+.report-logs-title {
+  color: rgba(15, 23, 42, 0.45);
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0 0 8px 0;
+  text-align: center;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.report-logs-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.report-log-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 3px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+  max-width: 150px;
+}
+
+.report-log-pill:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(58, 154, 217, 0.4);
+  box-shadow: 0 4px 10px rgba(58, 154, 217, 0.1);
+  transform: translateY(-1px);
+}
+
+.pill-dot {
+  width: 5px;
+  height: 5px;
+  background-color: #3a9ad9;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #3a9ad9;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.report-log-pill:hover .pill-dot {
+  transform: scale(1.2);
+  background-color: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
+}
+
+.pill-title {
+  color: #0f172a;
+  font-size: 9.5px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 65px;
+  transition: color 0.2s ease;
+}
+
+.report-log-pill:hover .pill-title {
+  color: #3a9ad9;
+}
+
+.pill-date {
+  color: rgba(15, 23, 42, 0.55);
+  font-size: 8px;
+  font-weight: 600;
+  border-left: 1px solid rgba(15, 23, 42, 0.15);
+  padding-left: 6px;
+  flex-shrink: 0;
+}
+
+.report-log-link-placeholder {
+  color: rgba(15, 23, 42, 0.5);
+  font-size: 13.5px;
+  font-weight: 750;
+}
+
+/* Landing Page Animations */
+.landing-cloud-left-group {
+  animation: float-cloud-left 7s ease-in-out infinite;
+}
+
+.landing-cloud-right-group {
+  animation: float-cloud-right 8s ease-in-out infinite;
+}
+
+.animating-plane-group {
+  animation: flight-path 18s infinite linear;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes float-cloud-left {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-6px) translateX(2px);
+  }
+}
+
+@keyframes float-cloud-right {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-8px) translateX(-3px);
+  }
+}
+
+@keyframes flight-path {
+  0% {
+    transform: translate(-30px, 47px) rotate(15deg);
+    opacity: 0;
+  }
+
+  5% {
+    transform: translate(30px, 77px) rotate(15deg);
+    opacity: 1;
+  }
+
+  15% {
+    transform: translate(165px, 127px) rotate(0deg);
+    opacity: 1;
+  }
+
+  30% {
+    transform: translate(535px, 127px) rotate(0deg);
+    opacity: 1;
+  }
+
+  60% {
+    transform: translate(535px, 127px) rotate(0deg);
+    opacity: 1;
+  }
+
+  62% {
+    transform: translate(535px, 127px) rotate(-14deg);
+    opacity: 1;
+  }
+
+  75% {
+    transform: translate(680px, 30px) rotate(-14deg);
+    opacity: 1;
+  }
+
+  80% {
+    transform: translate(720px, 15px) rotate(-14deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(720px, 15px) rotate(-14deg);
+    opacity: 0;
+  }
+}
+
+/* Warning Beacon Flashing Glow */
+.port-beacon-glow {
+  animation: beacon-pulse 1.5s infinite ease-in-out;
+  transform-origin: 617px 99px;
+}
+
+@keyframes beacon-pulse {
+
+  0%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.2;
+  }
+
+  50% {
+    transform: scale(1.6);
+    opacity: 0.85;
+    filter: drop-shadow(0 0 3px #ff2a2a);
+  }
+}
+
+/* Background Cloud Animations */
+.landing-cloud-bg-left-group {
+  animation: float-cloud-bg-left 10s ease-in-out infinite;
+}
+
+.landing-cloud-bg-right-group {
+  animation: float-cloud-bg-right 12s ease-in-out infinite;
+}
+
+@keyframes float-cloud-bg-left {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-4px) translateX(1px);
+  }
+}
+
+@keyframes float-cloud-bg-right {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-5px) translateX(-2px);
+  }
+}
+
+/* City Skyline Silhouette Styles */
+.landing-skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 350px;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url('/building.png'), url('/building.png');
+  background-repeat: repeat-x, repeat-x;
+  background-position: bottom left, bottom 0 left 350px;
+  background-size: auto 100%, auto 85%;
+}
+
+@media (max-width: 800px) {
+  .landing-main-heading {
+    font-size: 44px;
+    letter-spacing: -1.2px;
+  }
+}
+
+/* Remove default browser focus outlines and tap highlights (blue boxes) on click/active */
+.landing-hero-scene,
+.landing-scene-svg,
+.landing-scene-svg *,
+.landing-cloud-bg-left-group,
+.landing-cloud-bg-right-group,
+.landing-cloud-left-group,
+.landing-cloud-right-group,
+.landing-cloud-bg-left-group *,
+.landing-cloud-bg-right-group *,
+.landing-cloud-left-group *,
+.landing-cloud-right-group * {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
+}
+
+/* --- Interactive Cloud Hover & Rain Animations --- */
+.landing-cloud-bg-left-group image,
+.landing-cloud-bg-right-group image,
+.landing-cloud-left-group image,
+.landing-cloud-right-group image {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, filter 0.3s ease;
+}
+
+.landing-cloud-bg-left-group:hover image,
+.landing-cloud-bg-right-group:hover image,
+.landing-cloud-left-group:hover image,
+.landing-cloud-right-group:hover image {
+  transform: scale(1.06) translateY(-3px);
+  filter: drop-shadow(0 8px 16px rgba(56, 189, 248, 0.3));
+}
+
+.landing-cloud-bg-left-group:hover image,
+.landing-cloud-bg-right-group:hover image {
+  opacity: 0.85;
+}
+
+.landing-cloud-left-group:hover image,
+.landing-cloud-right-group:hover image {
+  opacity: 1;
+}
+
+.cloud-rain-group {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.landing-cloud-bg-left-group:hover .cloud-rain-group,
+.landing-cloud-bg-right-group:hover .cloud-rain-group,
+.landing-cloud-left-group:hover .cloud-rain-group,
+.landing-cloud-right-group:hover .cloud-rain-group {
+  opacity: 1;
+}
+
+.rain-drop {
+  stroke: #38bdf8;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+/* Background clouds rain drops should be thinner to match the smaller cloud scale */
+.landing-cloud-bg-left-group .rain-drop,
+.landing-cloud-bg-right-group .rain-drop {
+  stroke-width: 1.0;
+}
+
+.landing-cloud-left-group:hover .rain-drop,
+.landing-cloud-right-group:hover .rain-drop {
+  animation: rain-fall-loop 0.8s infinite linear;
+}
+
+.landing-cloud-bg-left-group:hover .rain-drop,
+.landing-cloud-bg-right-group:hover .rain-drop {
+  animation: rain-fall-loop-bg 0.8s infinite linear;
+}
+
+.drop-1 {
+  animation-delay: 0s;
+}
+
+.drop-2 {
+  animation-delay: 0.15s;
+}
+
+.drop-3 {
+  animation-delay: 0.35s;
+}
+
+.drop-4 {
+  animation-delay: 0.1s;
+}
+
+.drop-5 {
+  animation-delay: 0.25s;
+}
+
+@keyframes rain-fall-loop {
+  0% {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.85;
+  }
+
+  85% {
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+/* Background clouds rain falls a shorter distance, proportional to their smaller size */
+@keyframes rain-fall-loop-bg {
+  0% {
+    transform: translateY(-5px);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.85;
+  }
+
+  85% {
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: translateY(22px);
+    opacity: 0;
+  }
+}

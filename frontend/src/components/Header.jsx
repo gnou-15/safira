@@ -1,6 +1,13 @@
+import '../css/Header.css';
+
 export default function Header({
+  user,
+  handleLogout,
+  setCurrentPage,
+  handleNavigate,
   currentReport,
   setCurrentReport,
+  handleExitToLanding,
   reports,
   loadReport,
   handleGetToWork,
@@ -17,12 +24,12 @@ export default function Header({
             <div className="safira-logo-wrapper">
               <svg viewBox="0 0 100 100" className="safira-logo" width="30" height="30">
                 <defs>
-                  <filter id="logo-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <filter id="logo-glow-ed" x="-20%" y="-20%" width="140%" height="140%">
                     <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#00f2fe" floodOpacity="0.3" />
                   </filter>
                 </defs>
 
-                <g filter="url(#logo-glow)">
+                <g filter="url(#logo-glow-ed)">
                   {/* Face under the helmet */}
                   <path d="M 26,44 C 26,62 30,76 50,76 C 70,76 74,62 74,44 Z" fill="#fde0c5" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
                   
@@ -71,11 +78,19 @@ export default function Header({
             <span className="landing-nav-link">About Us</span>
             <span className="landing-nav-link">Service</span>
             <span className="landing-nav-link">Contact</span>
+            {user ? (
+              <>
+                <span className="landing-nav-link" style={{ fontWeight: 600, color: '#3a9ad9' }}>👤 {user.username}</span>
+                <button type="button" className="landing-logout-btn" onClick={handleLogout}>Log Out</button>
+              </>
+            ) : (
+              <button type="button" className="landing-login-btn" onClick={() => handleNavigate('login')}>Log In</button>
+            )}
           </div>
         </>
       ) : (
         <>
-          <div className="logo-container" onClick={() => setCurrentReport(null)} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+          <div className="logo-container" onClick={handleExitToLanding} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
             <div className="safira-logo-wrapper">
               <svg viewBox="0 0 100 100" className="safira-logo" width="30" height="30">
                 <defs>
@@ -143,9 +158,15 @@ export default function Header({
             </select>
           )}
           <div className="nav-actions">
+            {user && (
+              <span className="user-greeting" style={{ fontSize: '13px', fontWeight: 600, color: '#64748b', marginRight: '6px' }}>👤 {user.username}</span>
+            )}
             <button className="btn-secondary btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
             <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
             <button className="btn-primary" onClick={handlePrint}>EXPORT</button>
+            {user && (
+              <button className="btn-secondary btn-logout-action" onClick={handleLogout} style={{ color: '#ef4444', borderColor: '#fca5a5' }}>Log Out</button>
+            )}
           </div>
         </>
       )}

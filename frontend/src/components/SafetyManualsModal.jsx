@@ -1,3 +1,5 @@
+import '../css/SafetyManualsModal.css';
+
 export default function SafetyManualsModal({
   showManualsModal,
   setShowManualsModal,

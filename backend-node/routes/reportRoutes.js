@@ -1,7 +1,11 @@
 import express from 'express';
 import { ReportController } from '../controllers/reportController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
+// Secure all endpoints with Bearer auth middleware
+router.use(authMiddleware);
 
 // Define report endpoints
 router.get('/', ReportController.getReports);

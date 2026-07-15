@@ -1,0 +1,992 @@
+/* Document Sheet Workspace Layout */
+.document-workspace {
+  width: 100%;
+  padding: 30px 15px;
+  display: flex;
+  justify-content: center;
+  background-color: var(--bg-workspace);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* Print/Canvas Sheet container mimicking physical A4 wider layout */
+.document-sheet {
+  background-color: var(--bg-card);
+  width: 100%;
+  max-width: 1600px;
+  min-height: 1200px;
+  padding: 36px;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  position: relative;
+  min-width: 0;
+}
+
+/* Document Header Elements */
+.doc-header-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--text-primary);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.logo-placeholder {
+  flex-shrink: 0;
+  margin-right: 15px;
+}
+
+.pagss-logo {
+  width: 300px;
+  height: auto;
+  display: block;
+}
+
+.doc-title-container {
+  text-align: right;
+  flex: 1;
+}
+
+.doc-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  color: #475569;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+/* Metadata Layout Table */
+.meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 12px;
+}
+
+.meta-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  vertical-align: middle;
+}
+
+.meta-label {
+  font-weight: 700;
+  background-color: var(--bg-workspace);
+  width: 18%;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.meta-value {
+  width: 32%;
+}
+
+.meta-value input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 12.5px;
+  font-family: inherit;
+  background: transparent;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 2px 0;
+  transition: all 0.15s ease;
+}
+
+.meta-value input:focus {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.meta-value-sidebar {
+  vertical-align: top !important;
+  background-color: var(--bg-card);
+  padding: 8px 12px !important;
+}
+
+.sidebar-label {
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.sidebar-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 12.5px;
+  font-family: inherit;
+  background: transparent;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 2px 0;
+  border-bottom: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.sidebar-input:focus {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.sidebar-textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  font-family: inherit;
+  background: transparent;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 2px 0;
+  resize: none;
+  min-height: 36px;
+  border-bottom: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.sidebar-textarea:focus {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.sidebar-subtext {
+  font-size: 8px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  line-height: 1.2;
+}
+
+/* Main HIRAC Table */
+.hirac-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.hirac-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 1150px;
+}
+
+.hirac-table th {
+  border: 1px solid var(--border-color);
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 12px 8px;
+  font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
+  text-transform: uppercase;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.header-subtext {
+  font-size: 9px;
+  font-weight: 400;
+  text-transform: none;
+  margin-top: 4px;
+  opacity: 0.85;
+}
+
+.hirac-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  vertical-align: middle;
+  text-align: center;
+  position: relative;
+  background-color: var(--bg-card);
+}
+
+/* Inline Edit Field */
+.cell-editable {
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 6px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: transparent;
+  transition: all 0.15s ease;
+  resize: vertical;
+  min-height: 60px;
+  text-align: center;
+}
+
+.cell-editable:hover {
+  border-color: var(--border-color);
+  background-color: var(--bg-app);
+}
+
+.cell-editable:focus {
+  outline: none;
+  background-color: var(--bg-card);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-bg-light);
+}
+
+/* Compact Probability and Severity Selectors */
+.cell-select-compact {
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 2px 4px;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cell-select-compact:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Screen Interactive Risk Widget Layout */
+.risk-cell-content.screen-only {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 4px 0 !important;
+}
+
+/* Risk Score Index Formatting */
+.risk-index-cell {
+  text-align: center;
+  vertical-align: middle !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 11px;
+  transition: background-color 0.2s ease;
+}
+
+.risk-low {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+.risk-moderate {
+  background-color: #fef9c3 !important;
+  color: #854d0e !important;
+}
+
+.risk-high {
+  background-color: #ffedd5 !important;
+  color: #c2410c !important;
+}
+
+.risk-extreme {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+/* Operation type colored text */
+.op-type-text {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+
+/* Table modification controls */
+.row-actions-td {
+  vertical-align: middle !important;
+  text-align: center;
+  width: 50px;
+}
+
+.delete-row-btn {
+  background: transparent;
+  border: none;
+  color: var(--danger-color);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 6px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.delete-row-btn:hover {
+  background-color: var(--danger-light);
+  color: var(--danger-hover);
+  transform: scale(1.1);
+}
+
+.add-row-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.btn-add-row {
+  background-color: var(--bg-card);
+  color: var(--primary-color);
+  border: 1px dashed var(--primary-color);
+  padding: 10px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.btn-add-row:hover {
+  background-color: var(--primary-bg-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Sign-off Footer Section */
+.doc-footer-signatures {
+  margin-top: 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sig-box {
+  padding: 16px;
+  border-right: 1px solid var(--border-color);
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--bg-card);
+}
+
+.sig-box:last-child {
+  border-right: none;
+}
+
+.sig-box-title {
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  font-size: 10.5px;
+  letter-spacing: 0.5px;
+}
+
+.sig-name-input {
+  width: 85%;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  outline: none;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 4px 0;
+  background: transparent;
+  font-size: 12.5px;
+}
+
+.sig-name-input:focus {
+  border-bottom-color: var(--primary-color);
+}
+
+.sig-role-input {
+  width: 85%;
+  border: none;
+  outline: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-top: 4px;
+  background: transparent;
+}
+
+.sig-remarks-box {
+  grid-column: span 2;
+  border-top: 1px solid var(--border-color);
+  padding: 16px;
+  background-color: var(--bg-app);
+}
+
+/* Interactive Screen Overrides for Document Sheet */
+@media screen {
+  .app-container:not(.landing-active) .main-workspace {
+    background-color: #eef2f6 !important;
+    box-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .document-workspace {
+    padding: 40px 24px 60px 24px !important;
+    background: transparent !important;
+  }
+
+  /* Refined Paper styling for Document Sheet (toned down) */
+  .app-container:not(.landing-active) .document-sheet {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 48px !important;
+    box-sizing: border-box !important;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.05),
+      0 10px 25px -5px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .app-container:not(.landing-active) .document-sheet::before,
+  .app-container:not(.landing-active) .document-sheet::after {
+    display: none !important;
+  }
+
+  .app-container:not(.landing-active) .doc-header-layout {
+    border-bottom: 2px solid #0f172a !important;
+    margin-bottom: 24px !important;
+    padding-bottom: 16px !important;
+  }
+
+  .app-container:not(.landing-active) .doc-title {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 800 !important;
+    color: #475569 !important;
+    letter-spacing: -0.2px !important;
+  }
+
+  .app-container:not(.landing-active) .meta-table {
+    border: 1px solid #e2e8f0 !important;
+    border-collapse: collapse !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+  }
+
+  .app-container:not(.landing-active) .meta-table td {
+    border: 1px solid #e2e8f0 !important;
+    padding: 8px 12px !important;
+  }
+
+  .app-container:not(.landing-active) .meta-label {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.2px !important;
+    box-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .meta-value input {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.15s ease !important;
+    width: 90% !important;
+  }
+
+  .app-container:not(.landing-active) .meta-value input:focus {
+    border-color: #3a9ad9 !important;
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.05),
+      0 0 0 3px rgba(58, 154, 217, 0.15) !important;
+  }
+
+  .app-container:not(.landing-active) .meta-value-sidebar {
+    background-color: #f8fafc !important;
+    padding: 10px 12px !important;
+  }
+
+  .app-container:not(.landing-active) .sidebar-label {
+    font-weight: 700 !important;
+    color: #475569 !important;
+    font-size: 11px !important;
+  }
+
+  .app-container:not(.landing-active) .sidebar-input {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 5px 10px !important;
+    font-size: 13px !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    width: 90% !important;
+  }
+
+  .app-container:not(.landing-active) .sidebar-textarea {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 6px 10px !important;
+    font-size: 12.5px !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    resize: none !important;
+    width: 90% !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table-container {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table th {
+    background: #1e293b !important;
+    border: 1px solid #1e293b !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    color: #ffffff !important;
+    padding: 12px 8px !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td {
+    border: 1px solid #e2e8f0 !important;
+    background-color: #ffffff !important;
+  }
+
+  .app-container:not(.landing-active) .cell-editable {
+    background-color: #ffffff !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    padding: 6px !important;
+    font-size: 12.5px !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .app-container:not(.landing-active) .cell-editable:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  .app-container:not(.landing-active) .cell-editable:focus {
+    background-color: #ffffff !important;
+    border-color: #3a9ad9 !important;
+    box-shadow: 0 0 0 3px rgba(58, 154, 217, 0.15) !important;
+  }
+
+  .app-container:not(.landing-active) .risk-index-cell {
+    padding: 8px !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td.risk-low {
+    background-color: #dcfce7 !important;
+    border: 1px solid #bbf7d0 !important;
+    color: #166534 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td.risk-moderate {
+    background-color: #fef9c3 !important;
+    border: 1px solid #fef08a !important;
+    color: #854d0e !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td.risk-high {
+    background-color: #ffedd5 !important;
+    border: 1px solid #fed7aa !important;
+    color: #c2410c !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .hirac-table td.risk-extreme {
+    background-color: #fee2e2 !important;
+    border: 1px solid #fecaca !important;
+    color: #991b1b !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .cell-select-compact {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 2px 4px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+  }
+
+  .app-container:not(.landing-active) .cell-select-compact:hover {
+    border-color: #94a3b8 !important;
+  }
+
+  .app-container:not(.landing-active) .delete-row-btn {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 6px !important;
+    color: #ef4444 !important;
+  }
+
+  .app-container:not(.landing-active) .delete-row-btn:hover {
+    background-color: #fee2e2 !important;
+    color: #dc2626 !important;
+    transform: scale(1.1) !important;
+  }
+
+  .app-container:not(.landing-active) .delete-row-btn:active {
+    transform: scale(0.95) !important;
+  }
+
+  .app-container:not(.landing-active) .btn-add-row {
+    background-color: #ffffff !important;
+    border: 1px dashed #6366f1 !important;
+    border-bottom: 3px solid #4f46e5 !important;
+    border-radius: 8px !important;
+    color: #6366f1 !important;
+    padding: 10px 28px !important;
+    box-shadow: 0 1px 3px rgba(99, 102, 241, 0.05) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .app-container:not(.landing-active) .btn-add-row:hover {
+    background-color: rgba(99, 102, 241, 0.05) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.1) !important;
+  }
+
+  .app-container:not(.landing-active) .btn-add-row:active {
+    transform: translateY(1px) !important;
+    border-bottom-width: 1px !important;
+  }
+
+  .app-container:not(.landing-active) .doc-footer-signatures {
+    margin-top: 40px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  }
+
+  .app-container:not(.landing-active) .sig-box {
+    border-right: 1px solid #e2e8f0 !important;
+    padding: 16px !important;
+  }
+
+  .app-container:not(.landing-active) .sig-box-title {
+    color: #475569 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+  }
+
+  .app-container:not(.landing-active) .sig-name-input {
+    border: none !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    padding: 4px 0 !important;
+  }
+
+  .app-container:not(.landing-active) .sig-name-input:focus {
+    border-bottom-color: #3a9ad9 !important;
+  }
+
+  .app-container:not(.landing-active) .sig-role-input {
+    font-size: 11px !important;
+    color: #64748b !important;
+  }
+
+  .app-container:not(.landing-active) .sig-remarks-box {
+    background-color: #f8fafc !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 16px !important;
+  }
+}
+
+/* Print Overrides for Document Sheet */
+@media print {
+  .document-workspace {
+    padding: 5mm 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  .document-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  .doc-header-layout {
+    border-bottom: 2px solid #000000 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .doc-title {
+    font-size: 16px !important;
+    color: #475569 !important;
+  }
+
+  .meta-table {
+    border-collapse: collapse !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+  }
+
+  .meta-table td {
+    border: 1px solid #000000 !important;
+    padding: 3px 6px !important;
+    font-size: 10px !important;
+  }
+
+  .meta-label {
+    background-color: #5c5c5c !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    font-size: 9px !important;
+  }
+
+  .meta-value {
+    background: #ffffff !important;
+  }
+
+  .meta-value input {
+    border: none !important;
+    background: transparent !important;
+    font-weight: 600 !important;
+    color: #000000 !important;
+    font-size: 10px !important;
+    padding: 0 !important;
+    height: auto !important;
+    display: inline !important;
+  }
+
+  .meta-value-sidebar {
+    background: #ffffff !important;
+    vertical-align: top !important;
+    padding: 4px 6px !important;
+  }
+
+  .sidebar-label {
+    font-weight: bold !important;
+    font-size: 9px !important;
+    color: #000000 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .sidebar-input,
+  .sidebar-textarea {
+    font-weight: bold !important;
+    color: #000000 !important;
+    font-size: 10px !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    width: 100% !important;
+  }
+
+  .sidebar-subtext {
+    font-size: 7.5px !important;
+    color: #444444 !important;
+    margin-top: 6px !important;
+    line-height: 1.1 !important;
+  }
+
+  .hirac-table-container {
+    overflow: visible !important;
+    border-radius: 0 !important;
+    border: none !important;
+    width: 100% !important;
+    margin-bottom: 15px !important;
+  }
+
+  .hirac-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    font-size: 10px !important;
+  }
+
+  .hirac-table th {
+    border: 1px solid #000000 !important;
+    background-color: #5c5c5c !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    font-size: 9px !important;
+    padding: 6px 3px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .hirac-table td {
+    border: 1px solid #000000 !important;
+    padding: 4px !important;
+    vertical-align: middle !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: visible !important;
+    text-align: center !important;
+  }
+
+  .hirac-table td:not(.risk-index-cell) {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+  }
+
+  .cell-editable,
+  .hirac-table textarea,
+  .hirac-table input,
+  .sig-name-input,
+  .sig-role-input,
+  .sig-remarks-box textarea,
+  .sig-remarks-box .cell-editable,
+  textarea,
+  input[type="text"] {
+    border: none !important;
+    background: transparent !important;
+    color: #000000 !important;
+    font-size: 10px !important;
+    font-family: inherit !important;
+    line-height: 1.3 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
+    resize: none !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    display: block !important;
+    appearance: none !important;
+  }
+
+  .risk-index-cell {
+    text-align: center !important;
+    vertical-align: middle !important;
+    padding: 8px 4px !important;
+  }
+
+  td.risk-low {
+    background: #00b050 !important;
+    background-color: #00b050 !important;
+    color: #ffffff !important;
+  }
+
+  td.risk-moderate {
+    background: #ffff00 !important;
+    background-color: #ffff00 !important;
+    color: #000000 !important;
+  }
+
+  td.risk-high {
+    background: #f97316 !important;
+    background-color: #f97316 !important;
+    color: #ffffff !important;
+  }
+
+  td.risk-extreme {
+    background: #ff0000 !important;
+    background-color: #ff0000 !important;
+    color: #ffffff !important;
+  }
+
+  .risk-print-badge {
+    display: block !important;
+    font-weight: bold !important;
+    font-size: 10px !important;
+    color: #000000 !important;
+    text-align: center !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  .cell-print-text {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+    color: #000000 !important;
+    text-align: center !important;
+  }
+
+  .op-type-text,
+  .op-type-text textarea,
+  td.op-type-text .cell-editable {
+    color: #cc0000 !important;
+    font-weight: bold !important;
+  }
+
+  .hirac-table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .doc-footer-signatures {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0 !important;
+    margin-top: 20px !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .sig-box {
+    border: none !important;
+    background: #ffffff !important;
+    padding: 16px !important;
+    min-height: 110px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .sig-box:nth-child(1),
+  .sig-box:nth-child(3) {
+    border-right: 1px solid #000000 !important;
+  }
+
+  .sig-box:nth-child(1),
+  .sig-box:nth-child(2) {
+    border-bottom: 1px solid #000000 !important;
+  }
+
+  .sig-box-title {
+    color: #000000 !important;
+    font-weight: bold !important;
+  }
+
+  .sig-remarks-box {
+    grid-column: span 2 !important;
+    padding: 16px !important;
+    background: #ffffff !important;
+    border: none !important;
+    border-top: 1px solid #000000 !important;
+  }
+}

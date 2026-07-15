@@ -1,3 +1,5 @@
+import '../css/ChatbotSidebar.css';
+
 export default function ChatbotSidebar({
   chatOpen,
   setChatOpen,

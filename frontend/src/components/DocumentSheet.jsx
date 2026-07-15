@@ -1,5 +1,6 @@
 import AutoResizeTextarea from './AutoResizeTextarea';
 import { getRiskCode } from '../utils/riskCalculations';
+import '../css/DocumentSheet.css';
 
 export default function DocumentSheet({
   currentReport,

@@ -84,3 +84,15 @@ AS $$
   WHERE 1 - (safety_documents.embedding <=> query_embedding) > match_threshold
   ORDER BY safety_documents.embedding <=> query_embedding LIMIT match_count;
 $$;
+
+-- 4. User Profiles Table
+CREATE TABLE IF NOT EXISTS safira_users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Associate Reports with Users
+ALTER TABLE hirac_reports ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES safira_users(id) ON DELETE CASCADE;

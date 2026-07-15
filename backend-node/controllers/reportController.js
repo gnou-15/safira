@@ -4,7 +4,7 @@ export const ReportController = {
   // GET /api/reports
   async getReports(req, res) {
     try {
-      const data = await ReportModel.getAll();
+      const data = await ReportModel.getAll(req.user?.id);
       res.json(data);
     } catch (error) {
       console.error('Error fetching reports:', error);
@@ -16,7 +16,7 @@ export const ReportController = {
   async getReportById(req, res) {
     const { id } = req.params;
     try {
-      const data = await ReportModel.getById(id);
+      const data = await ReportModel.getById(id, req.user?.id);
       res.json(data);
     } catch (error) {
       console.error(`Error fetching report ${id}:`, error);
@@ -27,7 +27,7 @@ export const ReportController = {
   // POST /api/reports
   async createReport(req, res) {
     try {
-      const data = await ReportModel.create(req.body);
+      const data = await ReportModel.create(req.body, req.user?.id);
       res.status(201).json(data);
     } catch (error) {
       console.error('Error creating report:', error);
@@ -39,7 +39,7 @@ export const ReportController = {
   async updateReport(req, res) {
     const { id } = req.params;
     try {
-      const data = await ReportModel.update(id, req.body);
+      const data = await ReportModel.update(id, req.body, req.user?.id);
       res.json(data);
     } catch (error) {
       console.error(`Error updating report ${id}:`, error);
@@ -51,7 +51,7 @@ export const ReportController = {
   async deleteReport(req, res) {
     const { id } = req.params;
     try {
-      const result = await ReportModel.delete(id);
+      const result = await ReportModel.delete(id, req.user?.id);
       res.json(result);
     } catch (error) {
       console.error(`Error deleting report ${id}:`, error);
@@ -64,7 +64,7 @@ export const ReportController = {
     const { id } = req.params;
     const { rows } = req.body;
     try {
-      const data = await ReportModel.upsertRows(id, rows);
+      const data = await ReportModel.upsertRows(id, rows, req.user?.id);
       res.json(data);
     } catch (error) {
       console.error(`Error bulk upserting rows for report ${id}:`, error);

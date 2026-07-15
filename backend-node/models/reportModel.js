@@ -41,19 +41,37 @@ const calcRiskLevel = (likelihood, severity) => {
 };
 
 export const ReportModel = {
-  // Fetch all reports
-  async getAll() {
-    const { data, error } = await supabase
+  // Helper: Verify report ownership or if it is a pre-auth public report
+  async verifyOwnership(reportId, userId) {
+    if (!reportId) return;
+    const { data: report, error } = await supabase
       .from('hirac_reports')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('user_id')
+      .eq('id', reportId)
+      .maybeSingle();
+      
+    if (error) throw error;
+    if (report && report.user_id && report.user_id !== userId) {
+      throw new Error('Access denied: You do not own this report.');
+    }
+  },
 
+  // Fetch all reports accessible to user
+  async getAll(userId) {
+    let query = supabase.from('hirac_reports').select('*');
+    if (userId) {
+      query = query.or(`user_id.eq.${userId},user_id.is.null`);
+    } else {
+      query = query.is('user_id', null);
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw error;
     return data;
   },
 
   // Fetch report details by id
-  async getById(id) {
+  async getById(id, userId) {
     const { data: report, error: reportError } = await supabase
       .from('hirac_reports')
       .select('*')
@@ -61,6 +79,11 @@ export const ReportModel = {
       .single();
 
     if (reportError) throw reportError;
+    
+    // Ownership validation
+    if (report.user_id && report.user_id !== userId) {
+      throw new Error('Access denied: You do not own this report.');
+    }
 
     const { data: rows, error: rowsError } = await supabase
       .from('hirac_rows')
@@ -74,7 +97,7 @@ export const ReportModel = {
   },
 
   // Create a new report metadata entry
-  async create(reportData) {
+  async create(reportData, userId) {
     const {
       title,
       ref_no,
@@ -106,7 +129,8 @@ export const ReportModel = {
         approved_by_role,
         acknowledged_by_name,
         acknowledged_by_role,
-        footer_remarks
+        footer_remarks,
+        user_id: userId
       }])
       .select()
       .single();
@@ -116,7 +140,9 @@ export const ReportModel = {
   },
 
   // Update report metadata entry
-  async update(id, updateData) {
+  async update(id, updateData, userId) {
+    await this.verifyOwnership(id, userId);
+
     const { data, error } = await supabase
       .from('hirac_reports')
       .update(updateData)
@@ -129,7 +155,9 @@ export const ReportModel = {
   },
 
   // Delete report entry
-  async delete(id) {
+  async delete(id, userId) {
+    await this.verifyOwnership(id, userId);
+
     const { error } = await supabase
       .from('hirac_reports')
       .delete()
@@ -140,7 +168,9 @@ export const ReportModel = {
   },
 
   // Clear and rewrite all rows for a report (bulk upsert)
-  async upsertRows(id, rows) {
+  async upsertRows(id, rows, userId) {
+    await this.verifyOwnership(id, userId);
+
     // 1. Clear existing rows
     const { error: deleteError } = await supabase
       .from('hirac_rows')

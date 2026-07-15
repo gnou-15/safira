@@ -1,4 +1,5 @@
 import { supabase, setCorsHeaders } from '../_lib/supabase.js';
+import { getAuthenticatedUser } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
   setCorsHeaders(res);
@@ -7,12 +8,19 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // Authenticate user
+  const user = getAuthenticatedUser(req);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid or expired session token' });
+  }
+
   try {
     if (req.method === 'GET') {
       // GET /api/reports — fetch all reports
       const { data, error } = await supabase
         .from('hirac_reports')
         .select('*')
+        .or(`user_id.eq.${user.id},user_id.is.null`)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -39,7 +47,8 @@ export default async function handler(req, res) {
           prepared_by_name, prepared_by_role,
           approved_by_name, approved_by_role,
           acknowledged_by_name, acknowledged_by_role,
-          footer_remarks
+          footer_remarks,
+          user_id: user.id
         }])
         .select()
         .single();

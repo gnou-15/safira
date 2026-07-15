@@ -4,6 +4,24 @@ import { getRiskLevel } from '../utils/riskCalculations';
 const API_URL = import.meta.env.VITE_API_URL || '';
 
 export default function useReports() {
+  // Auth State
+  const [user, setUser] = useState(() => {
+    try {
+      const cachedToken = localStorage.getItem('safira_token');
+      const cachedUser = localStorage.getItem('safira_user');
+      return cachedToken && cachedUser ? { token: cachedToken, ...JSON.parse(cachedUser) } : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const [currentPage, setCurrentPage] = useState(() => {
+    const cachedPage = localStorage.getItem('safira_current_page');
+    const token = localStorage.getItem('safira_token');
+    if (!token) return 'login';
+    return cachedPage || 'landing';
+  });
+
   // App State
   const [reports, setReports] = useState([]);
   const [currentReport, setCurrentReport] = useState(() => {
@@ -25,7 +43,8 @@ export default function useReports() {
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [showSavePrompt, setShowSavePrompt] = useState(false);
-  
+  const [isPageLoading, setIsPageLoading] = useState(false);
+
   // Chat Sidebar State
   const [chatOpen, setChatOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([
@@ -57,14 +76,21 @@ export default function useReports() {
   // Ref to track the 5-second idle timer
   const idleTimerRef = useRef(null);
 
-  // Fetch list of all reports on mount and restore active report session in background
+  // Sync page state to localStorage
   useEffect(() => {
-    fetchReports();
-    const storedId = localStorage.getItem('activeReportId');
-    if (storedId) {
-      loadReport(storedId);
+    localStorage.setItem('safira_current_page', currentPage);
+  }, [currentPage]);
+
+  // Fetch list of all reports and restore active report session in background
+  useEffect(() => {
+    if (user) {
+      fetchReports();
+      const storedId = localStorage.getItem('activeReportId');
+      if (storedId) {
+        loadReport(storedId);
+      }
     }
-  }, []);
+  }, [user]);
 
   // Persist active report session and metadata in localStorage
   useEffect(() => {
@@ -97,9 +123,95 @@ export default function useReports() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  // Authenticated Fetch wrapper helper
+  const authedFetch = async (url, options = {}) => {
+    const token = user?.token || localStorage.getItem('safira_token');
+    const headers = { ...options.headers };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return fetch(url, { ...options, headers });
+  };
+
+  // Auth Operations
+  const handleNavigate = async (pageName) => {
+    setIsPageLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setCurrentPage(pageName);
+    setIsPageLoading(false);
+  };
+
+  const handleLogin = async (email, password, rememberMe) => {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+
+    const loginUser = { token: data.token, ...data.user };
+
+    setIsPageLoading(true);
+    setUser(loginUser);
+    if (rememberMe) {
+      localStorage.setItem('safira_token', data.token);
+      localStorage.setItem('safira_user', JSON.stringify(data.user));
+    } else {
+      localStorage.removeItem('safira_token');
+      localStorage.removeItem('safira_user');
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setCurrentPage('landing');
+    setIsPageLoading(false);
+    return true;
+  };
+
+  const handleSignup = async (username, email, password) => {
+    const res = await fetch(`${API_URL}/api/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Signup failed');
+
+    const loginUser = { token: data.token, ...data.user };
+
+    setIsPageLoading(true);
+    setUser(loginUser);
+    localStorage.setItem('safira_token', data.token);
+    localStorage.setItem('safira_user', JSON.stringify(data.user));
+
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setCurrentPage('landing');
+    setIsPageLoading(false);
+    return true;
+  };
+
+  const handleLogout = async () => {
+    setIsPageLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setUser(null);
+    setCurrentReport(null);
+    setRows([]);
+    setReports([]);
+    localStorage.removeItem('safira_token');
+    localStorage.removeItem('safira_user');
+    localStorage.removeItem('safira_current_page');
+    localStorage.removeItem('activeReportId');
+    localStorage.removeItem('activeReport');
+    localStorage.removeItem('activeReportRows');
+    setCurrentPage('login');
+    setIsPageLoading(false);
+  };
+
   const fetchReports = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/reports`);
+      const res = await authedFetch(`${API_URL}/api/reports`);
       if (res.ok) {
         const data = await res.json();
         setReports(data);
@@ -110,11 +222,14 @@ export default function useReports() {
   };
 
   const loadReport = async (id) => {
+    setIsPageLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/reports/${id}`);
+      const res = await authedFetch(`${API_URL}/api/reports/${id}`);
       if (res.ok) {
         const data = await res.json();
         const { rows: fetchedRows, ...meta } = data;
+        // 1s delay to show transition animation
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setCurrentReport(meta);
         setRows(fetchedRows || []);
         setHasChanges(false);
@@ -124,6 +239,19 @@ export default function useReports() {
       }
     } catch (err) {
       console.error(`Failed to load report ${id}:`, err);
+    } finally {
+      setIsPageLoading(false);
+    }
+  };
+
+  // Transition back to landing page with loader animation
+  const handleExitToLanding = async () => {
+    setIsPageLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setCurrentReport(null);
+    } finally {
+      setIsPageLoading(false);
     }
   };
 
@@ -154,7 +282,7 @@ export default function useReports() {
 
     try {
       // 1. Update report metadata
-      const metaRes = await fetch(`${API_URL}/api/reports/${currentReport.id}`, {
+      const metaRes = await authedFetch(`${API_URL}/api/reports/${currentReport.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(currentReport)
@@ -163,7 +291,7 @@ export default function useReports() {
       if (!metaRes.ok) throw new Error('Failed to save report headers');
 
       // 2. Update report rows
-      const rowsRes = await fetch(`${API_URL}/api/reports/${currentReport.id}/rows`, {
+      const rowsRes = await authedFetch(`${API_URL}/api/reports/${currentReport.id}/rows`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rows })
@@ -225,7 +353,7 @@ export default function useReports() {
   const fetchManuals = async () => {
     setIsLoadingManuals(true);
     try {
-      const res = await fetch(`${API_URL}/api/ai/documents`);
+      const res = await authedFetch(`${API_URL}/api/ai/documents`);
       if (res.ok) {
         const data = await res.json();
         setManuals(data || []);
@@ -268,7 +396,7 @@ export default function useReports() {
 
     try {
       const base64Data = await fileToBase64(file);
-      const res = await fetch(`${API_URL}/api/ai/upload`, {
+      const res = await authedFetch(`${API_URL}/api/ai/upload`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -298,7 +426,7 @@ export default function useReports() {
 
     setManualsAlert({ type: 'info', message: `Deleting ${filename}...` });
     try {
-      const res = await fetch(`${API_URL}/api/ai/documents?name=${encodeURIComponent(filename)}`, {
+      const res = await authedFetch(`${API_URL}/api/ai/documents?name=${encodeURIComponent(filename)}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -347,8 +475,10 @@ export default function useReports() {
 
   // Redirect to workspace page (load most recent report, or auto-create a default empty report if no reports exist)
   const handleGetToWork = async () => {
+    setIsPageLoading(true);
     if (reports.length > 0) {
-      loadReport(reports[0].id);
+      await loadReport(reports[0].id);
+      setIsPageLoading(false);
     } else {
       setIsGenerating(true);
       try {
@@ -359,7 +489,7 @@ export default function useReports() {
         const assessor_team = 'Safety Team';
         const ref_no = `CSC-${Date.now().toString().slice(-6)}`;
 
-        const metaRes = await fetch(`${API_URL}/api/reports`, {
+        const metaRes = await authedFetch(`${API_URL}/api/reports`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -396,7 +526,7 @@ export default function useReports() {
           department_responsible: 'Safety'
         };
 
-        const rowsRes = await fetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
+        const rowsRes = await authedFetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ rows: [defaultRow] })
@@ -404,6 +534,8 @@ export default function useReports() {
 
         if (!rowsRes.ok) throw new Error('Failed to save default row');
 
+        // 1s delay to show transition animation
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setReports([savedReportMeta, ...reports]);
         setCurrentReport(savedReportMeta);
         setRows([defaultRow]);
@@ -411,6 +543,7 @@ export default function useReports() {
         alert(`Error creating blank report: ${err.message}`);
       } finally {
         setIsGenerating(false);
+        setIsPageLoading(false);
       }
     }
   };
@@ -420,10 +553,11 @@ export default function useReports() {
     e.preventDefault();
     if (!incidentPrompt.trim()) return;
     setIsGenerating(true);
+    setIsPageLoading(true);
 
     try {
       // 1. Generate Rows using Groq Proxy
-      const aiRes = await fetch(`${API_URL}/api/ai/generate`, {
+      const aiRes = await authedFetch(`${API_URL}/api/ai/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -437,7 +571,7 @@ export default function useReports() {
       const generatedRows = await aiRes.json();
 
       // 2. Save metadata and get report ID
-      const metaRes = await fetch(`${API_URL}/api/reports`, {
+      const metaRes = await authedFetch(`${API_URL}/api/reports`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -454,7 +588,7 @@ export default function useReports() {
       const savedReportMeta = await metaRes.json();
 
       // 3. Save generated rows to Supabase
-      const rowsRes = await fetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
+      const rowsRes = await authedFetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rows: generatedRows })
@@ -462,6 +596,8 @@ export default function useReports() {
 
       if (!rowsRes.ok) throw new Error('Failed to save generated rows');
 
+      // 1s delay to show transition animation
+      await new Promise(resolve => setTimeout(resolve, 1000));
       // Refresh list, load new report, close modal
       setReports([savedReportMeta, ...reports]);
       setCurrentReport(savedReportMeta);
@@ -475,13 +611,14 @@ export default function useReports() {
       alert(`Error generating report: ${err.message}`);
     } finally {
       setIsGenerating(false);
+      setIsPageLoading(false);
     }
   };
 
   // Perform chatbot-driven modifications
   const executeTableUpdate = useCallback((payload) => {
     const { action, row_index, data } = payload;
-    
+
     setRows(prev => {
       let updated = [...prev];
       if (action === 'modify_row' && typeof row_index === 'number' && updated[row_index]) {
@@ -501,7 +638,7 @@ export default function useReports() {
         }
         setChatHistory(h => [...h, { role: 'system', content: `Applied edit to Row ${row_index + 1}` }]);
         markChanged();
-      } 
+      }
       else if (action === 'add_row' && data) {
         const fullNewRow = {
           operation_type: data.operation_type || 'Operations',
@@ -524,7 +661,7 @@ export default function useReports() {
         updated = [...updated, fullNewRow];
         setChatHistory(h => [...h, { role: 'system', content: 'Added a new row to the table.' }]);
         markChanged();
-      } 
+      }
       else if (action === 'delete_row' && typeof row_index === 'number') {
         updated = updated.filter((_, idx) => idx !== row_index);
         markChanged();
@@ -544,7 +681,7 @@ export default function useReports() {
     setIsLoadingChat(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/ai/chat`, {
+      const res = await authedFetch(`${API_URL}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -600,6 +737,14 @@ export default function useReports() {
   };
 
   return {
+    user,
+    setUser,
+    currentPage,
+    setCurrentPage,
+    handleLogin,
+    handleSignup,
+    handleLogout,
+    handleNavigate,
     reports,
     currentReport,
     setCurrentReport,
@@ -607,6 +752,8 @@ export default function useReports() {
     isSaving,
     hasChanges,
     showSavePrompt,
+    isPageLoading,
+    handleExitToLanding,
     chatOpen,
     setChatOpen,
     chatHistory,

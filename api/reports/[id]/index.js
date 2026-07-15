@@ -1,4 +1,5 @@
 import { supabase, setCorsHeaders } from '../../_lib/supabase.js';
+import { getAuthenticatedUser } from '../../_lib/auth.js';
 
 export default async function handler(req, res) {
   setCorsHeaders(res);
@@ -7,9 +8,27 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // Authenticate user
+  const user = getAuthenticatedUser(req);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid or expired session token' });
+  }
+
   const { id } = req.query;
 
   try {
+    // 1. Verify ownership if report has user_id
+    const { data: reportCheck, error: checkError } = await supabase
+      .from('hirac_reports')
+      .select('user_id')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (checkError) throw checkError;
+    if (reportCheck && reportCheck.user_id && reportCheck.user_id !== user.id) {
+      return res.status(403).json({ error: 'Access denied: You do not own this report.' });
+    }
+
     if (req.method === 'GET') {
       // GET /api/reports/[id] — fetch report with rows
       const { data: report, error: reportError } = await supabase

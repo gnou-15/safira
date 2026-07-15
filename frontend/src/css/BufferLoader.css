@@ -1,0 +1,184 @@
+.buffer-loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+/* Clouds Parallax */
+.clouds-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.cloud {
+  position: absolute;
+  fill: #ffffff;
+  filter: drop-shadow(0 4px 6px rgba(255, 255, 255, 0.4));
+  animation: move-cloud linear infinite;
+}
+
+.cloud.c1 {
+  width: 250px;
+  top: 15%;
+  left: 100%;
+  opacity: 0.9;
+  animation-duration: 12s;
+}
+
+.cloud.c2 {
+  width: 180px;
+  top: 45%;
+  left: 100%;
+  opacity: 0.75;
+  animation-duration: 8s;
+  animation-delay: -2s;
+}
+
+.cloud.c3 {
+  width: 320px;
+  top: 60%;
+  left: 100%;
+  opacity: 0.85;
+  animation-duration: 16s;
+  animation-delay: -5s;
+}
+
+.cloud.c4 {
+  width: 150px;
+  top: 75%;
+  left: 100%;
+  opacity: 0.6;
+  animation-duration: 6s;
+  animation-delay: -1s;
+}
+
+.cloud.c5 {
+  width: 200px;
+  top: 5%;
+  left: 100%;
+  opacity: 0.8;
+  animation-duration: 10s;
+  animation-delay: -3s;
+}
+
+/* Wind Lines */
+.wind-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.wind-line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(71, 85, 105, 0.15), transparent);
+  animation: move-wind linear infinite;
+}
+
+.wind-line.w1 {
+  width: 150px;
+  top: 30%;
+  left: 100%;
+  animation-duration: 3s;
+}
+
+.wind-line.w2 {
+  width: 200px;
+  top: 52%;
+  left: 100%;
+  animation-duration: 2.2s;
+  animation-delay: -0.5s;
+}
+
+.wind-line.w3 {
+  width: 120px;
+  top: 70%;
+  left: 100%;
+  animation-duration: 4s;
+  animation-delay: -1.5s;
+}
+
+/* Airplane Bobbing & Turbulence */
+.airplane-container {
+  position: relative;
+  z-index: 10;
+  width: 150px;
+  height: 75px;
+  animation: plane-bob 3s ease-in-out infinite;
+}
+
+.airplane-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 10px 15px rgba(15, 23, 42, 0.08));
+}
+
+/* Loading Text */
+.loading-text-container {
+  margin-top: 32px;
+  text-align: center;
+  z-index: 10;
+}
+
+.please-wait-text {
+  display: block;
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 6px;
+  color: #475569;
+  animation: text-pulse 2s ease-in-out infinite;
+}
+
+.sub-wait-text {
+  display: block;
+  font-weight: 500;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* Animations Keyframes */
+@keyframes move-cloud {
+  from { left: 100%; }
+  to { left: -40%; }
+}
+
+@keyframes move-wind {
+  from { left: 100%; }
+  to { left: -30%; }
+}
+
+@keyframes plane-bob {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(5px) rotate(1deg);
+  }
+}
+
+@keyframes text-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}

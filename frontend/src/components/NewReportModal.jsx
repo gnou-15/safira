@@ -1,3 +1,5 @@
+import '../css/NewReportModal.css';
+
 export default function NewReportModal({
   showModal,
   setShowModal,

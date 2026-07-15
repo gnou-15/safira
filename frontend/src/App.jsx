@@ -5,11 +5,21 @@ import DocumentSheet from './components/DocumentSheet';
 import ChatbotSidebar from './components/ChatbotSidebar';
 import NewReportModal from './components/NewReportModal';
 import SafetyManualsModal from './components/SafetyManualsModal';
-import './App.css';
+import BufferLoader from './components/BufferLoader';
+import LoginPage from './components/LoginPage';
+import './css/App.css';
 
 function App() {
   const {
+    user,
+    currentPage,
+    setCurrentPage,
+    handleLogin,
+    handleSignup,
+    handleLogout,
+    handleNavigate,
     reports,
+    isPageLoading,
     currentReport,
     setCurrentReport,
     rows,
@@ -51,15 +61,35 @@ function App() {
     handleGetToWork,
     handleCreateReport,
     handleSendMessage,
-    handlePrint
+    handlePrint,
+    handleExitToLanding
   } = useReports();
+
+  if (currentPage === 'login') {
+    return (
+      <>
+        <LoginPage 
+          handleLogin={handleLogin}
+          handleSignup={handleSignup}
+          isGenerating={isGenerating}
+          onBackToHome={() => handleNavigate('landing')}
+        />
+        {isPageLoading && <BufferLoader />}
+      </>
+    );
+  }
 
   return (
     <div className={`app-container ${!currentReport ? 'landing-active' : ''}`}>
       {/* Top Navbar */}
       <Header
+        user={user}
+        handleLogout={handleLogout}
+        setCurrentPage={setCurrentPage}
+        handleNavigate={handleNavigate}
         currentReport={currentReport}
         setCurrentReport={setCurrentReport}
+        handleExitToLanding={handleExitToLanding}
         reports={reports}
         loadReport={loadReport}
         handleGetToWork={handleGetToWork}
@@ -85,6 +115,9 @@ function App() {
             />
           ) : (
             <LandingPage
+              user={user}
+              setCurrentPage={setCurrentPage}
+              handleNavigate={handleNavigate}
               reports={reports}
               loadReport={loadReport}
               handleGetToWork={handleGetToWork}
@@ -143,6 +176,8 @@ function App() {
         handleUploadFile={handleUploadFile}
         handleDeleteManual={handleDeleteManual}
       />
+
+      {isPageLoading && <BufferLoader />}
     </div>
   );
 }

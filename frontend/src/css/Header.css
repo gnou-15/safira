@@ -1,0 +1,119 @@
+/* Top Navigation Bar */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px 14px 28px;
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.logo-container:hover {
+  opacity: 0.95;
+}
+
+.safira-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-2px);
+}
+
+.safira-logo {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logo-container:hover .safira-logo {
+  transform: scale(1.1) rotate(2deg);
+}
+
+.brand-text {
+  font-weight: 900;
+  font-size: 26px;
+  letter-spacing: -0.5px;
+  color: #3a9ad9;
+  display: inline-flex;
+  align-items: baseline;
+  font-family: 'Inter', sans-serif;
+}
+
+.brand-subtext {
+  font-size: 12px;
+  font-weight: 550;
+  color: #5a6e7f !important;
+  -webkit-text-fill-color: #5a6e7f !important;
+  margin-left: 6px;
+  text-transform: none;
+  letter-spacing: 0px;
+  display: inline-block;
+}
+
+/* Report Select Dropdown in Navbar */
+.report-select-dropdown {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-dark);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  max-width: 250px;
+  transition: all 0.2s;
+}
+
+.report-select-dropdown:hover {
+  background-color: var(--bg-workspace);
+  border-color: var(--text-muted);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Screen Interactive Overrides for Header */
+@media screen {
+  .app-container:not(.landing-active) .top-nav {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .app-container:not(.landing-active) .report-select-dropdown {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid #cbd5e1 !important;
+    border-bottom: 2px solid #94a3b8 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    padding: 6px 12px !important;
+  }
+
+  .app-container:not(.landing-active) .report-select-dropdown:hover {
+    border-color: #94a3b8 !important;
+    background-color: #f8fafc !important;
+  }
+}
+
+/* Print Overrides for Header */
+@media print {
+  .top-nav {
+    display: none !important;
+  }
+}
