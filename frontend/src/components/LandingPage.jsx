@@ -31,7 +31,7 @@ export default function LandingPage({
 
               {/* Left Cloud (rendered on top of plane) */}
               <g className="landing-cloud-left-group">
-                <image href="/cloud left.png" x="-50" y="-40" width="300" height="200" />
+                <image href="/cloud left.png" x="-70" y="-40" width="300" height="200" />
               </g>
 
               {/* Right Cloud (rendered on top of plane) */}
