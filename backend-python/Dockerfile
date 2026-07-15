@@ -18,8 +18,7 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
     pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the app code
-COPY app.py .
-COPY ingest.py .
+COPY *.py ./
 
 # Railway injects the PORT environment variable
 ENV PORT=8080
