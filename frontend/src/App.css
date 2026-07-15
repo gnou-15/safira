@@ -79,7 +79,7 @@ div.screen-only {
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
@@ -92,6 +92,7 @@ div.screen-only {
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translateY(-2px);
 }
 
 .safira-logo {

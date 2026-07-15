@@ -15,7 +15,7 @@ export default function Header({
         <>
           <div className="logo-container" onClick={() => fetchReports()}>
             <div className="safira-logo-wrapper">
-              <svg viewBox="0 0 100 100" className="safira-logo" width="40" height="40">
+              <svg viewBox="0 0 100 100" className="safira-logo" width="30" height="30">
                 <defs>
                   <filter id="logo-glow" x="-20%" y="-20%" width="140%" height="140%">
                     <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#00f2fe" floodOpacity="0.3" />
@@ -75,9 +75,9 @@ export default function Header({
         </>
       ) : (
         <>
-          <div className="logo-container" onClick={() => setCurrentReport(null)} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+          <div className="logo-container" onClick={() => setCurrentReport(null)} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
             <div className="safira-logo-wrapper">
-              <svg viewBox="0 0 100 100" className="safira-logo" width="40" height="40">
+              <svg viewBox="0 0 100 100" className="safira-logo" width="30" height="30">
                 <defs>
                   <filter id="logo-glow-ed" x="-20%" y="-20%" width="140%" height="140%">
                     <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#00f2fe" floodOpacity="0.3" />
