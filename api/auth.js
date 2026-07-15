@@ -167,7 +167,10 @@ export default async function handler(req, res) {
       }
 
       const { code, error } = req.query;
-      const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const host = req.headers.host;
+      const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+      const protocol = isLocal ? 'http' : 'https';
+      const FRONTEND_URL = process.env.FRONTEND_URL || `${protocol}://${host}`;
       const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
       const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
@@ -182,9 +185,6 @@ export default async function handler(req, res) {
       }
 
       try {
-        const host = req.headers.host;
-        const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
-        const protocol = isLocal ? 'http' : 'https';
         const redirectUri = `${protocol}://${host}/api/auth/google/callback`;
 
         // Exchange authorization code for token
