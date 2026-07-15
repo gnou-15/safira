@@ -1,14 +1,26 @@
+import sys
+from unittest.mock import MagicMock
+sys.modules['scipy.linalg._linalg_pythran'] = MagicMock()
+
 import os
 import json
 import io
 from typing import List, Dict, Any, Optional
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI, HTTPException, File, UploadFile
+# pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel
+# pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
+# pyrefly: ignore [missing-import]
 from groq import Groq
+# pyrefly: ignore [missing-import]
 from supabase import create_client, Client
+# pyrefly: ignore [missing-import]
 from sentence_transformers import SentenceTransformer
+# pyrefly: ignore [missing-import]
 from pypdf import PdfReader
 from prompt_guard import detect_injection_intent, sanitize_user_input
 from response_validator import validate_chat_response, REFUSAL_MESSAGE

@@ -1,5 +1,8 @@
-import os
 import sys
+from unittest.mock import MagicMock
+sys.modules['scipy.linalg._linalg_pythran'] = MagicMock()
+
+import os
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 # pyrefly: ignore [missing-import]
