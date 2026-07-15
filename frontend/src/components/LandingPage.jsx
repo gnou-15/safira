@@ -24,20 +24,9 @@ export default function LandingPage({
               {/* Ground Line */}
               <line x1="160" y1="180" x2="640" y2="180" stroke="#3b1c14" strokeWidth="2.5" strokeLinecap="round" />
 
-              {/* Airplane with spinning wheels overlay (rendered behind clouds/port) */}
+              {/* Airplane (rendered behind clouds/port) */}
               <g className="animating-plane-group">
                 <image href="/plane.png" x="0" y="0" width="115" height="82" />
-                {/* Tiny wheel overlay spokes */}
-                <g className="plane-wheel rear-wheel" transform="translate(26, 67)">
-                  <circle cx="0" cy="0" r="3.5" fill="#0f172a" stroke="#eaeff2" strokeWidth="0.8" />
-                  <line x1="-3" y1="0" x2="3" y2="0" stroke="#eaeff2" strokeWidth="0.6" />
-                  <line x1="0" y1="-3" x2="0" y2="3" stroke="#eaeff2" strokeWidth="0.6" />
-                </g>
-                <g className="plane-wheel front-wheel" transform="translate(76, 70)">
-                  <circle cx="0" cy="0" r="3.5" fill="#0f172a" stroke="#eaeff2" strokeWidth="0.8" />
-                  <line x1="-3" y1="0" x2="3" y2="0" stroke="#eaeff2" strokeWidth="0.6" />
-                  <line x1="0" y1="-3" x2="0" y2="3" stroke="#eaeff2" strokeWidth="0.6" />
-                </g>
               </g>
 
               {/* Left Cloud (rendered on top of plane) */}
@@ -52,6 +41,10 @@ export default function LandingPage({
 
               {/* Airport Control Tower Terminal (rendered on top of plane) */}
               <image href="/port.png" x="535" y="82" width="110" height="115" />
+
+              {/* Flashing Port Warning Beacon (tip of control tower antenna) */}
+              <circle cx="617" cy="99" r="2.2" fill="#ff2a2a" />
+              <circle cx="617" cy="99" r="6" fill="#ff2a2a" className="port-beacon-glow" />
             </svg>
           </div>
 

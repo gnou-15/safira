@@ -2,16 +2,20 @@
 .print-only {
   display: none !important;
 }
+
 /* Keep interactive form elements visible on screen with correct display types */
 input.screen-only {
   display: inline-block !important;
 }
+
 textarea.screen-only {
   display: block !important;
 }
+
 select.screen-only {
   display: inline-block !important;
 }
+
 div.screen-only {
   display: flex !important;
 }
@@ -19,28 +23,32 @@ div.screen-only {
 /* App Container */
 .app-container {
   /* Color System */
-  --bg-app: #f8fafc;
-  --bg-workspace: #f1f5f9;
+  --bg-app: #cad4da;
+  --bg-workspace: #cad4da;
   --bg-card: #ffffff;
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
   --border-dark: #cbd5e1;
-  
-  --primary-color: #6366f1; /* Indigo */
+
+  --primary-color: #6366f1;
+  /* Indigo */
   --primary-hover: #4f46e5;
   --primary-bg-light: rgba(99, 102, 241, 0.08);
-  
-  --success-color: #10b981; /* Emerald */
+
+  --success-color: #10b981;
+  /* Emerald */
   --success-hover: #059669;
-  
-  --danger-color: #ef4444; /* Red */
+
+  --danger-color: #ef4444;
+  /* Red */
   --danger-hover: #dc2626;
   --danger-light: #fee2e2;
-  
-  --warning-color: #f59e0b; /* Amber */
-  
+
+  --warning-color: #f59e0b;
+  /* Amber */
+
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
@@ -71,7 +79,7 @@ div.screen-only {
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
@@ -98,10 +106,7 @@ div.screen-only {
   font-weight: 900;
   font-size: 26px;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #0052d4 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 12px rgba(79, 172, 254, 0.25);
+  color: #3a9ad9;
   display: inline-flex;
   align-items: baseline;
   font-family: 'Inter', sans-serif;
@@ -113,9 +118,17 @@ div.screen-only {
 }
 
 @keyframes landing-float {
-  0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(1deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
 }
 
 /* Report Select Dropdown in Navbar */
@@ -204,7 +217,8 @@ div.screen-only {
   justify-content: center;
   background-color: var(--bg-workspace);
   box-sizing: border-box;
-  min-width: 0; /* Allow container shrinking */
+  min-width: 0;
+  /* Allow container shrinking */
 }
 
 /* Print/Canvas Sheet container mimicking physical A4 wider layout */
@@ -219,7 +233,8 @@ div.screen-only {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   position: relative;
-  min-width: 0; /* Allow card shrinking */
+  min-width: 0;
+  /* Allow card shrinking */
 }
 
 /* Document Header Elements */
@@ -370,7 +385,8 @@ div.screen-only {
 
 .hirac-table th {
   border: 1px solid var(--border-color);
-  background-color: #1e293b; /* Deep slate professional header */
+  background-color: #1e293b;
+  /* Deep slate professional header */
   color: #ffffff;
   padding: 12px 8px;
   font-weight: 700;
@@ -408,7 +424,8 @@ div.screen-only {
   border-radius: 4px;
   padding: 6px;
   width: 100%;
-  min-width: 0; /* Allow inputs to shrink */
+  min-width: 0;
+  /* Allow inputs to shrink */
   box-sizing: border-box;
   background: transparent;
   transition: all 0.15s ease;
@@ -467,18 +484,24 @@ div.screen-only {
 }
 
 .risk-low {
-  background-color: #dcfce7 !important; /* Soft light green */
-  color: #166534 !important; /* Rich green text */
+  background-color: #dcfce7 !important;
+  /* Soft light green */
+  color: #166534 !important;
+  /* Rich green text */
 }
 
 .risk-medium {
-  background-color: #fef9c3 !important; /* Soft light yellow */
-  color: #854d0e !important; /* Rich amber text */
+  background-color: #fef9c3 !important;
+  /* Soft light yellow */
+  color: #854d0e !important;
+  /* Rich amber text */
 }
 
 .risk-high {
-  background-color: #fee2e2 !important; /* Soft light red */
-  color: #991b1b !important; /* Rich crimson text */
+  background-color: #fee2e2 !important;
+  /* Soft light red */
+  color: #991b1b !important;
+  /* Rich crimson text */
 }
 
 /* Operation type colored text */
@@ -753,8 +776,15 @@ div.screen-only {
 }
 
 @keyframes slideUp {
-  from { transform: translate(-50%, 50px); opacity: 0; }
-  to { transform: translate(-50%, 0); opacity: 1; }
+  from {
+    transform: translate(-50%, 50px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
 }
 
 .save-prompt-banner button {
@@ -883,8 +913,13 @@ div.screen-only {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Reports Sidebar List */
@@ -1051,17 +1086,22 @@ div.screen-only {
 
   /* ===== HIRAC TABLE — THE CRITICAL FIX ===== */
   .hirac-table-container {
-    overflow: visible !important;      /* KILLS the scrollbar */
-    border-radius: 0 !important;       /* No rounded corners in print */
-    border: none !important;           /* Table cells handle their own borders */
+    overflow: visible !important;
+    /* KILLS the scrollbar */
+    border-radius: 0 !important;
+    /* No rounded corners in print */
+    border: none !important;
+    /* Table cells handle their own borders */
     width: 100% !important;
     margin-bottom: 15px !important;
   }
 
   .hirac-table {
     width: 100% !important;
-    min-width: 0 !important;           /* REMOVES the 1150px min-width */
-    table-layout: fixed !important;    /* Forces columns to respect widths */
+    min-width: 0 !important;
+    /* REMOVES the 1150px min-width */
+    table-layout: fixed !important;
+    /* Forces columns to respect widths */
     border-collapse: collapse !important;
     font-size: 10px !important;
   }
@@ -1132,7 +1172,8 @@ div.screen-only {
     -moz-appearance: none !important;
     outline: none !important;
     box-shadow: none !important;
-    scrollbar-width: none !important;  /* Firefox: hide scrollbar */
+    scrollbar-width: none !important;
+    /* Firefox: hide scrollbar */
   }
 
   /* Webkit browsers (Chrome/Edge): hide all scrollbar parts */
@@ -1222,6 +1263,7 @@ div.screen-only {
   .print-only {
     display: block !important;
   }
+
   .screen-only,
   div.screen-only,
   input.screen-only,
@@ -1229,6 +1271,7 @@ div.screen-only {
   select.screen-only {
     display: none !important;
   }
+
   .cell-print-text {
     white-space: pre-wrap !important;
     word-break: break-word !important;
@@ -1422,10 +1465,10 @@ div.screen-only {
 }
 
 .brand-subtext {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 550;
-  color: rgba(15, 23, 42, 0.5) !important;
-  -webkit-text-fill-color: rgba(15, 23, 42, 0.5) !important;
+  color: #5a6e7f !important;
+  -webkit-text-fill-color: #5a6e7f !important;
   margin-left: 6px;
   text-transform: none;
   letter-spacing: 0px;
@@ -1651,67 +1694,94 @@ div.screen-only {
   transform-origin: center;
 }
 
-.plane-wheel {
-  animation: spin-wheels 18s infinite linear;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
 @keyframes float-cloud-left {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-6px) translateX(2px); }
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-6px) translateX(2px);
+  }
 }
 
 @keyframes float-cloud-right {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-8px) translateX(-3px); }
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-8px) translateX(-3px);
+  }
 }
 
 @keyframes flight-path {
   0% {
-    transform: translate(-30px, 30px) rotate(15deg);
+    transform: translate(-30px, 47px) rotate(15deg);
     opacity: 0;
   }
+
   5% {
-    transform: translate(30px, 60px) rotate(15deg);
+    transform: translate(30px, 77px) rotate(15deg);
     opacity: 1;
   }
+
   15% {
-    transform: translate(165px, 110px) rotate(0deg);
+    transform: translate(165px, 127px) rotate(0deg);
     opacity: 1;
   }
+
   30% {
-    transform: translate(490px, 110px) rotate(0deg);
+    transform: translate(535px, 127px) rotate(0deg);
     opacity: 1;
   }
+
   60% {
-    transform: translate(490px, 110px) rotate(0deg);
+    transform: translate(535px, 127px) rotate(0deg);
     opacity: 1;
   }
+
   62% {
-    transform: translate(490px, 110px) rotate(-14deg);
+    transform: translate(535px, 127px) rotate(-14deg);
     opacity: 1;
   }
+
   75% {
-    transform: translate(680px, -20px) rotate(-14deg);
+    transform: translate(680px, 30px) rotate(-14deg);
     opacity: 1;
   }
+
   80% {
-    transform: translate(720px, -35px) rotate(-14deg);
+    transform: translate(720px, 15px) rotate(-14deg);
     opacity: 0;
   }
+
   100% {
-    transform: translate(720px, -35px) rotate(-14deg);
+    transform: translate(720px, 15px) rotate(-14deg);
     opacity: 0;
   }
 }
 
-@keyframes spin-wheels {
-  0% { transform: rotate(0deg); }
-  15% { transform: rotate(0deg); }
-  30% { transform: rotate(1440deg); }
-  60% { transform: rotate(1440deg); }
-  100% { transform: rotate(1440deg); }
+
+/* Warning Beacon Flashing Glow */
+.port-beacon-glow {
+  animation: beacon-pulse 1.5s infinite ease-in-out;
+  transform-origin: 617px 99px;
+}
+
+@keyframes beacon-pulse {
+  0%, 100% {
+    transform: scale(0.7);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0.85;
+    filter: drop-shadow(0 0 3px #ff2a2a);
+  }
 }
 
 @media (max-width: 800px) {
@@ -1728,7 +1798,12 @@ div.screen-only {
   height: 0 !important;
 }
 
-html, body, .manuals-scroll-list, .chat-history {
-  -ms-overflow-style: none !important;  /* IE and Edge */
-  scrollbar-width: none !important;  /* Firefox */
+html,
+body,
+.manuals-scroll-list,
+.chat-history {
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
 }
