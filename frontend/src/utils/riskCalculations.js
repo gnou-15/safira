@@ -38,3 +38,18 @@ export const getRiskLevel = (likelihood, severity) => {
   if (moderateCodes.includes(code)) return 'Moderate';
   return 'Low';
 };
+
+export const getRiskCode = (likelihood, severity) => {
+  const L = parseInt(likelihood) || 1;
+  const S = parseInt(severity) || 1;
+  
+  const probabilityLetters = {
+    5: 'A',
+    4: 'B',
+    3: 'C',
+    2: 'D',
+    1: 'E'
+  };
+  const letter = probabilityLetters[L] || 'E';
+  return `${S}${letter}`;
+};

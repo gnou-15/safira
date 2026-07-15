@@ -6,8 +6,22 @@ const API_URL = import.meta.env.VITE_API_URL || '';
 export default function useReports() {
   // App State
   const [reports, setReports] = useState([]);
-  const [currentReport, setCurrentReport] = useState(null);
-  const [rows, setRows] = useState([]);
+  const [currentReport, setCurrentReport] = useState(() => {
+    try {
+      const cached = localStorage.getItem('activeReport');
+      return cached ? JSON.parse(cached) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+  const [rows, setRows] = useState(() => {
+    try {
+      const cached = localStorage.getItem('activeReportRows');
+      return cached ? JSON.parse(cached) : [];
+    } catch (e) {
+      return [];
+    }
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [showSavePrompt, setShowSavePrompt] = useState(false);
@@ -43,10 +57,33 @@ export default function useReports() {
   // Ref to track the 5-second idle timer
   const idleTimerRef = useRef(null);
 
-  // Fetch list of all reports on mount
+  // Fetch list of all reports on mount and restore active report session in background
   useEffect(() => {
     fetchReports();
+    const storedId = localStorage.getItem('activeReportId');
+    if (storedId) {
+      loadReport(storedId);
+    }
   }, []);
+
+  // Persist active report session and metadata in localStorage
+  useEffect(() => {
+    if (currentReport && currentReport.id) {
+      localStorage.setItem('activeReportId', currentReport.id);
+      localStorage.setItem('activeReport', JSON.stringify(currentReport));
+    } else if (currentReport === null) {
+      localStorage.removeItem('activeReportId');
+      localStorage.removeItem('activeReport');
+      localStorage.removeItem('activeReportRows');
+    }
+  }, [currentReport]);
+
+  // Persist active rows in localStorage
+  useEffect(() => {
+    if (currentReport && rows && rows.length > 0) {
+      localStorage.setItem('activeReportRows', JSON.stringify(rows));
+    }
+  }, [rows, currentReport]);
 
   // Track mouse coordinates for subtle interactive background spotlights
   useEffect(() => {
@@ -82,6 +119,8 @@ export default function useReports() {
         setRows(fetchedRows || []);
         setHasChanges(false);
         setShowSavePrompt(false);
+      } else {
+        setCurrentReport(null);
       }
     } catch (err) {
       console.error(`Failed to load report ${id}:`, err);

@@ -1,4 +1,5 @@
 import AutoResizeTextarea from './AutoResizeTextarea';
+import { getRiskCode } from '../utils/riskCalculations';
 
 export default function DocumentSheet({
   currentReport,
@@ -177,18 +178,24 @@ export default function DocumentSheet({
                   <div className="risk-cell-content screen-only">
                     <div className="risk-level-label">
                       {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
-                      <span className="risk-score-number"><br />({row.initial_risk_score || 0})</span>
+                      <span className="risk-score-number"><br />({getRiskCode(row.initial_likelihood, row.initial_severity)})</span>
                     </div>
                     <div className="risk-score-selectors">
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
-                          Likelihood:
+                          Probability:
                           <select
                             className="cell-select-compact"
                             value={row.initial_likelihood || 3}
                             onChange={(e) => handleCellEdit(idx, 'initial_likelihood', parseInt(e.target.value))}
                           >
-                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                            {[
+                              { label: 'A', val: 5 },
+                              { label: 'B', val: 4 },
+                              { label: 'C', val: 3 },
+                              { label: 'D', val: 2 },
+                              { label: 'E', val: 1 }
+                            ].map(opt => <option key={opt.val} value={opt.val}>{opt.label}</option>)}
                           </select>
                         </label>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
@@ -207,6 +214,9 @@ export default function DocumentSheet({
                   {/* Print: solid-colored badge — divs always print backgrounds */}
                   <div className={`print-only risk-print-badge risk-print-${(row.initial_risk_index || 'low').toLowerCase()}`}>
                     {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
+                    <span style={{ display: 'block', fontSize: '9px', marginTop: '2px' }}>
+                      ({getRiskCode(row.initial_likelihood, row.initial_severity)})
+                    </span>
                   </div>
                 </td>
 
@@ -225,18 +235,24 @@ export default function DocumentSheet({
                   <div className="risk-cell-content screen-only">
                     <div className="risk-level-label">
                       {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
-                      <span className="risk-score-number"><br />({row.residual_risk_score || 0})</span>
+                      <span className="risk-score-number"><br />({getRiskCode(row.residual_likelihood, row.residual_severity)})</span>
                     </div>
                     <div className="risk-score-selectors">
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
-                          Likelihood:
+                          Probability:
                           <select
                             className="cell-select-compact"
                             value={row.residual_likelihood || 2}
                             onChange={(e) => handleCellEdit(idx, 'residual_likelihood', parseInt(e.target.value))}
                           >
-                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                            {[
+                              { label: 'A', val: 5 },
+                              { label: 'B', val: 4 },
+                              { label: 'C', val: 3 },
+                              { label: 'D', val: 2 },
+                              { label: 'E', val: 1 }
+                            ].map(opt => <option key={opt.val} value={opt.val}>{opt.label}</option>)}
                           </select>
                         </label>
                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
@@ -255,6 +271,9 @@ export default function DocumentSheet({
                   {/* Print: solid-colored badge — divs always print backgrounds */}
                   <div className={`print-only risk-print-badge risk-print-${(row.residual_risk_index || 'low').toLowerCase()}`}>
                     {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
+                    <span style={{ display: 'block', fontSize: '9px', marginTop: '2px' }}>
+                      ({getRiskCode(row.residual_likelihood, row.residual_severity)})
+                    </span>
                   </div>
                 </td>
 
