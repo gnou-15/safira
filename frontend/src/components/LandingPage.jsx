@@ -12,12 +12,6 @@ export default function LandingPage({
         <div className="landing-hero-section">
           <div className="landing-hero-scene">
             <svg viewBox="0 0 800 200" className="landing-scene-svg">
-              {/* Left Cloud */}
-              <image href="/cloud left.png" x="-50" y="-40" width="300" height="200" />
-
-              {/* Right Cloud */}
-              <image href="/cloud right.png" x="600" y="-80" width="350" height="250" />
-
               {/* Main Centered Text */}
               <text x="400" y="70" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="48" letterSpacing="-1">
                 <tspan fill="#0f172a">ANY </tspan>
@@ -30,10 +24,33 @@ export default function LandingPage({
               {/* Ground Line */}
               <line x1="160" y1="180" x2="640" y2="180" stroke="#3b1c14" strokeWidth="2.5" strokeLinecap="round" />
 
-              {/* Airplane Taking Off */}
-              <image href="/plane.png" x="165" y="102" width="115" height="82" />
+              {/* Airplane with spinning wheels overlay (rendered behind clouds/port) */}
+              <g className="animating-plane-group">
+                <image href="/plane.png" x="0" y="0" width="115" height="82" />
+                {/* Tiny wheel overlay spokes */}
+                <g className="plane-wheel rear-wheel" transform="translate(26, 67)">
+                  <circle cx="0" cy="0" r="3.5" fill="#0f172a" stroke="#eaeff2" strokeWidth="0.8" />
+                  <line x1="-3" y1="0" x2="3" y2="0" stroke="#eaeff2" strokeWidth="0.6" />
+                  <line x1="0" y1="-3" x2="0" y2="3" stroke="#eaeff2" strokeWidth="0.6" />
+                </g>
+                <g className="plane-wheel front-wheel" transform="translate(76, 70)">
+                  <circle cx="0" cy="0" r="3.5" fill="#0f172a" stroke="#eaeff2" strokeWidth="0.8" />
+                  <line x1="-3" y1="0" x2="3" y2="0" stroke="#eaeff2" strokeWidth="0.6" />
+                  <line x1="0" y1="-3" x2="0" y2="3" stroke="#eaeff2" strokeWidth="0.6" />
+                </g>
+              </g>
 
-              {/* Airport Control Tower Terminal */}
+              {/* Left Cloud (rendered on top of plane) */}
+              <g className="landing-cloud-left-group">
+                <image href="/cloud left.png" x="-50" y="-40" width="300" height="200" />
+              </g>
+
+              {/* Right Cloud (rendered on top of plane) */}
+              <g className="landing-cloud-right-group">
+                <image href="/cloud right.png" x="600" y="-80" width="350" height="250" />
+              </g>
+
+              {/* Airport Control Tower Terminal (rendered on top of plane) */}
               <image href="/port.png" x="535" y="82" width="110" height="115" />
             </svg>
           </div>

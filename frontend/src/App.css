@@ -1472,7 +1472,7 @@ div.screen-only {
   text-align: center;
   position: relative;
   z-index: 2;
-  margin-top: -50px;
+  margin-top: -95px;
 }
 
 /* Centered Hero Section */
@@ -1634,6 +1634,84 @@ div.screen-only {
   color: rgba(15, 23, 42, 0.5);
   font-size: 13.5px;
   font-weight: 750;
+}
+
+/* Landing Page Animations */
+.landing-cloud-left-group {
+  animation: float-cloud-left 7s ease-in-out infinite;
+}
+
+.landing-cloud-right-group {
+  animation: float-cloud-right 8s ease-in-out infinite;
+}
+
+.animating-plane-group {
+  animation: flight-path 18s infinite linear;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.plane-wheel {
+  animation: spin-wheels 18s infinite linear;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes float-cloud-left {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-6px) translateX(2px); }
+}
+
+@keyframes float-cloud-right {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-8px) translateX(-3px); }
+}
+
+@keyframes flight-path {
+  0% {
+    transform: translate(-30px, 30px) rotate(15deg);
+    opacity: 0;
+  }
+  5% {
+    transform: translate(30px, 60px) rotate(15deg);
+    opacity: 1;
+  }
+  15% {
+    transform: translate(165px, 110px) rotate(0deg);
+    opacity: 1;
+  }
+  30% {
+    transform: translate(490px, 110px) rotate(0deg);
+    opacity: 1;
+  }
+  60% {
+    transform: translate(490px, 110px) rotate(0deg);
+    opacity: 1;
+  }
+  62% {
+    transform: translate(490px, 110px) rotate(-14deg);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(680px, -20px) rotate(-14deg);
+    opacity: 1;
+  }
+  80% {
+    transform: translate(720px, -35px) rotate(-14deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(720px, -35px) rotate(-14deg);
+    opacity: 0;
+  }
+}
+
+@keyframes spin-wheels {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(0deg); }
+  30% { transform: rotate(1440deg); }
+  60% { transform: rotate(1440deg); }
+  100% { transform: rotate(1440deg); }
 }
 
 @media (max-width: 800px) {
