@@ -1,0 +1,407 @@
+import AutoResizeTextarea from './AutoResizeTextarea';
+
+export default function DocumentSheet({
+  currentReport,
+  rows,
+  handleCellEdit,
+  handleMetaEdit,
+  handleAddRow,
+  handleDeleteRow
+}) {
+  return (
+    <div className="document-sheet">
+      {/* Header Box */}
+      <div className="doc-header-layout">
+        {/* Simulated aviation logo wings */}
+        <div className="logo-placeholder">
+          <svg viewBox="0 0 260 70" width="220" height="60">
+            <g transform="translate(0, 5)">
+              {/* Left stylized wing lines */}
+              <path d="M 10 32 L 70 12 L 70 20 L 20 37 Z" fill="#7d8b99" opacity="0.9" />
+              <path d="M 20 39 L 70 24 L 70 32 L 30 44 Z" fill="#7d8b99" opacity="0.9" />
+              <path d="M 30 46 L 70 35 L 70 42 L 40 49 Z" fill="#7d8b99" opacity="0.9" />
+              
+              {/* Center shield/diamond */}
+              <polygon points="80,5 140,5 145,45 75,45" fill="#5c5c5c" stroke="#4a4a4a" strokeWidth="1" />
+              <text x="110" y="27" dominantBaseline="middle" textAnchor="middle" fontWeight="900" fontSize="20" fill="#ffffff" letterSpacing="1">PAGSS</text>
+              
+              {/* Right stylized wing lines */}
+              <path d="M 210 32 L 150 12 L 150 20 L 200 37 Z" fill="#7d8b99" opacity="0.9" />
+              <path d="M 200 39 L 150 24 L 150 32 L 190 44 Z" fill="#7d8b99" opacity="0.9" />
+              <path d="M 190 46 L 150 35 L 150 42 L 180 49 Z" fill="#7d8b99" opacity="0.9" />
+
+              {/* Subtext below the wings */}
+              <text x="110" y="55" dominantBaseline="middle" textAnchor="middle" fontWeight="700" fontSize="5" fill="#4a4a4a" letterSpacing="0.2">
+                PHILIPPINE AIRPORT GROUND SUPPORT SOLUTIONS, INC.
+              </text>
+            </g>
+          </svg>
+        </div>
+        <div className="doc-title-container">
+          <h2 className="doc-title">Hazard Identification, Risk Assessment & Control Report</h2>
+        </div>
+      </div>
+
+      {/* Metadata Fields */}
+      <table className="meta-table">
+        <tbody>
+          <tr>
+            <td className="meta-label" style={{ width: '15%' }}>REPORT TITLE:</td>
+            <td className="meta-value" colSpan={3} style={{ width: '65%' }}>
+              <input
+                type="text"
+                className="screen-only"
+                value={currentReport.title || ''}
+                onChange={(e) => handleMetaEdit('title', e.target.value)}
+              />
+              <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.title || ''}</div>
+            </td>
+            <td className="meta-value-sidebar" rowSpan={2} style={{ width: '20%' }}>
+              <div className="sidebar-label">HIRAC Ref. No.:</div>
+              <input
+                type="text"
+                className="sidebar-input screen-only"
+                value={currentReport.ref_no || ''}
+                onChange={(e) => handleMetaEdit('ref_no', e.target.value)}
+              />
+              <div className="print-only cell-print-text" style={{ fontWeight: 'bold', fontSize: '10px' }}>{currentReport.ref_no || ''}</div>
+              <div className="sidebar-subtext">(Refer to SSQA Risk Registry Database)</div>
+            </td>
+          </tr>
+          <tr>
+            <td className="meta-label">Department:</td>
+            <td className="meta-value">
+              <input
+                type="text"
+                className="screen-only"
+                value={currentReport.department || ''}
+                onChange={(e) => handleMetaEdit('department', e.target.value)}
+              />
+              <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.department || ''}</div>
+            </td>
+            <td className="meta-label" style={{ width: '15%' }}>Location:</td>
+            <td className="meta-value" style={{ width: '25%' }}>
+              <input
+                type="text"
+                className="screen-only"
+                value={currentReport.location || ''}
+                onChange={(e) => handleMetaEdit('location', e.target.value)}
+              />
+              <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.location || ''}</div>
+            </td>
+          </tr>
+          <tr>
+            <td className="meta-label">Activity/Area being assessed:</td>
+            <td className="meta-value" colSpan={3}>
+              <input
+                type="text"
+                className="screen-only"
+                value={currentReport.activity_assessed || ''}
+                onChange={(e) => handleMetaEdit('activity_assessed', e.target.value)}
+              />
+              <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.activity_assessed || ''}</div>
+            </td>
+            <td className="meta-value-sidebar" rowSpan={2}>
+              <div className="sidebar-label">Assessor(s)/Team:</div>
+              <AutoResizeTextarea
+                className="sidebar-textarea screen-only"
+                value={currentReport.assessor_team || ''}
+                onChange={(e) => handleMetaEdit('assessor_team', e.target.value)}
+              />
+              <div className="print-only cell-print-text" style={{ fontWeight: 'bold', fontSize: '10px' }}>{currentReport.assessor_team || ''}</div>
+            </td>
+          </tr>
+          <tr>
+            <td className="meta-label">Date Created:</td>
+            <td className="meta-value">
+              <input
+                type="text"
+                className="screen-only"
+                value={currentReport.date_created || ''}
+                onChange={(e) => handleMetaEdit('date_created', e.target.value)}
+              />
+              <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.date_created || ''}</div>
+            </td>
+            <td className="meta-label">Date Reviewed:</td>
+            <td className="meta-value">
+              <input
+                type="text"
+                className="screen-only"
+                value={currentReport.date_reviewed || ''}
+                onChange={(e) => handleMetaEdit('date_reviewed', e.target.value)}
+              />
+              <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.date_reviewed || ''}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* Editable HIRAC Grid */}
+      <div className="hirac-table-container">
+        <table className="hirac-table">
+          <thead>
+            <tr>
+              <th style={{ width: '12%' }}>Type of Operation or Activity</th>
+              <th style={{ width: '12%' }}>Generic Hazard</th>
+              <th style={{ width: '12%' }}>Risks (Consequences of the Hazard)</th>
+              <th style={{ width: '12%' }}>Existing Defenses to Control Safety Risks</th>
+              <th style={{ width: '7%' }}>Safety Risk Index</th>
+              <th style={{ width: '14%' }}>
+                Mitigating Actions to Further Reduce Safety Risks
+                <div className="header-subtext">(a) Elimination (b) Substitution (c) Engineering control (d) Administrative (e) PPE</div>
+              </th>
+              <th style={{ width: '7%' }}>Residual Risk Index</th>
+              <th style={{ width: '8%' }}>Remarks</th>
+              <th style={{ width: '8%' }}>Target Date</th>
+              <th style={{ width: '12%' }}>Dept Responsible</th>
+              <th className="row-actions-td" style={{ width: '6%' }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, idx) => (
+              <tr key={idx}>
+                <td className="op-type-text">
+                  <AutoResizeTextarea
+                    className="cell-editable op-type-text screen-only"
+                    value={row.operation_type || ''}
+                    onChange={(e) => handleCellEdit(idx, 'operation_type', e.target.value)}
+                  />
+                  <div className="print-only cell-print-text op-type-text">{row.operation_type || ''}</div>
+                </td>
+                <td>
+                  <AutoResizeTextarea
+                    className="cell-editable screen-only"
+                    value={row.generic_hazard || ''}
+                    onChange={(e) => handleCellEdit(idx, 'generic_hazard', e.target.value)}
+                  />
+                  <div className="print-only cell-print-text">{row.generic_hazard || ''}</div>
+                </td>
+                <td>
+                  <AutoResizeTextarea
+                    className="cell-editable screen-only"
+                    value={row.risks || ''}
+                    onChange={(e) => handleCellEdit(idx, 'risks', e.target.value)}
+                  />
+                  <div className="print-only cell-print-text">{row.risks || ''}</div>
+                </td>
+                <td>
+                  <AutoResizeTextarea
+                    className="cell-editable screen-only"
+                    value={row.existing_defenses || ''}
+                    onChange={(e) => handleCellEdit(idx, 'existing_defenses', e.target.value)}
+                  />
+                  <div className="print-only cell-print-text">{row.existing_defenses || ''}</div>
+                </td>
+                
+                {/* Interactive Safety Risk Index (Single cell with internal score controls) */}
+                <td className={`risk-index-cell risk-${(row.initial_risk_index || 'Low').toLowerCase()}`}>
+                  {/* Screen: full interactive widget */}
+                  <div className="risk-cell-content screen-only">
+                    <div className="risk-level-label">
+                      {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
+                      <span className="risk-score-number"><br/>({row.initial_risk_score || 0})</span>
+                    </div>
+                    <div className="risk-score-selectors">
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                          Likelihood:
+                          <select
+                            className="cell-select-compact"
+                            value={row.initial_likelihood || 3}
+                            onChange={(e) => handleCellEdit(idx, 'initial_likelihood', parseInt(e.target.value))}
+                          >
+                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                          </select>
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                          Severity:
+                          <select
+                            className="cell-select-compact"
+                            value={row.initial_severity || 3}
+                            onChange={(e) => handleCellEdit(idx, 'initial_severity', parseInt(e.target.value))}
+                          >
+                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                          </select>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Print: solid-colored badge — divs always print backgrounds */}
+                  <div className={`print-only risk-print-badge risk-print-${(row.initial_risk_index || 'low').toLowerCase()}`}>
+                    {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
+                  </div>
+                </td>
+
+                <td>
+                  <AutoResizeTextarea
+                    className="cell-editable screen-only"
+                    value={row.mitigating_actions || ''}
+                    onChange={(e) => handleCellEdit(idx, 'mitigating_actions', e.target.value)}
+                  />
+                  <div className="print-only cell-print-text">{row.mitigating_actions || ''}</div>
+                </td>
+
+                {/* Interactive Residual Risk Index */}
+                <td className={`risk-index-cell risk-${(row.residual_risk_index || 'Low').toLowerCase()}`}>
+                  {/* Screen: full interactive widget */}
+                  <div className="risk-cell-content screen-only">
+                    <div className="risk-level-label">
+                      {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
+                      <span className="risk-score-number"><br/>({row.residual_risk_score || 0})</span>
+                    </div>
+                    <div className="risk-score-selectors">
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                          Likelihood:
+                          <select
+                            className="cell-select-compact"
+                            value={row.residual_likelihood || 2}
+                            onChange={(e) => handleCellEdit(idx, 'residual_likelihood', parseInt(e.target.value))}
+                          >
+                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                          </select>
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                          Severity:
+                          <select
+                            className="cell-select-compact"
+                            value={row.residual_severity || 2}
+                            onChange={(e) => handleCellEdit(idx, 'residual_severity', parseInt(e.target.value))}
+                          >
+                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
+                          </select>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Print: solid-colored badge — divs always print backgrounds */}
+                  <div className={`print-only risk-print-badge risk-print-${(row.residual_risk_index || 'low').toLowerCase()}`}>
+                    {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
+                  </div>
+                </td>
+
+                <td>
+                  <AutoResizeTextarea
+                    className="cell-editable screen-only"
+                    value={row.remarks || ''}
+                    onChange={(e) => handleCellEdit(idx, 'remarks', e.target.value)}
+                  />
+                  <div className="print-only cell-print-text">{row.remarks || ''}</div>
+                </td>
+                <td>
+                  <AutoResizeTextarea
+                    className="cell-editable screen-only"
+                    style={{ textAlign: 'center' }}
+                    value={row.target_date || ''}
+                    onChange={(e) => handleCellEdit(idx, 'target_date', e.target.value)}
+                  />
+                  <div className="print-only cell-print-text" style={{ textAlign: 'center' }}>{row.target_date || ''}</div>
+                </td>
+                <td>
+                  <AutoResizeTextarea
+                    className="cell-editable screen-only"
+                    value={row.department_responsible || ''}
+                    onChange={(e) => handleCellEdit(idx, 'department_responsible', e.target.value)}
+                  />
+                  <div className="print-only cell-print-text">{row.department_responsible || ''}</div>
+                </td>
+                <td className="row-actions-td">
+                  <button
+                    type="button"
+                    className="delete-row-btn"
+                    onClick={() => handleDeleteRow(idx)}
+                    title="Delete Row"
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="add-row-container">
+        <button className="btn-add-row" onClick={handleAddRow}>+ Add New Hazard Row</button>
+      </div>
+
+      {/* Document Signatures */}
+      <div className="doc-footer-signatures">
+        <div className="sig-box">
+          <div className="sig-box-title">Prepared by:</div>
+          <div>
+            <input
+              type="text"
+              className="sig-name-input screen-only"
+              placeholder="Name & Signature"
+              value={currentReport.prepared_by_name || ''}
+              onChange={(e) => handleMetaEdit('prepared_by_name', e.target.value)}
+            />
+            <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.prepared_by_name || ''}</div>
+            <input
+              type="text"
+              className="sig-role-input screen-only"
+              placeholder="Role (e.g. S.H.E Specialist)"
+              value={currentReport.prepared_by_role || ''}
+              onChange={(e) => handleMetaEdit('prepared_by_role', e.target.value)}
+            />
+            <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.prepared_by_role || ''}</div>
+          </div>
+        </div>
+        <div className="sig-box">
+          <div className="sig-box-title">Approved by:</div>
+          <div>
+            <input
+              type="text"
+              className="sig-name-input screen-only"
+              placeholder="Name & Signature"
+              value={currentReport.approved_by_name || ''}
+              onChange={(e) => handleMetaEdit('approved_by_name', e.target.value)}
+            />
+            <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.approved_by_name || ''}</div>
+            <input
+              type="text"
+              className="sig-role-input screen-only"
+              placeholder="Role (e.g. VP Safety)"
+              value={currentReport.approved_by_role || ''}
+              onChange={(e) => handleMetaEdit('approved_by_role', e.target.value)}
+            />
+            <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.approved_by_role || ''}</div>
+          </div>
+        </div>
+        <div className="sig-box">
+          <div className="sig-box-title">Acknowledged by:</div>
+          <div>
+            <input
+              type="text"
+              className="sig-name-input screen-only"
+              placeholder="Name & Signature"
+              value={currentReport.acknowledged_by_name || ''}
+              onChange={(e) => handleMetaEdit('acknowledged_by_name', e.target.value)}
+            />
+            <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.acknowledged_by_name || ''}</div>
+            <input
+              type="text"
+              className="sig-role-input screen-only"
+              placeholder="Role (e.g. GSE Manager)"
+              value={currentReport.acknowledged_by_role || ''}
+              onChange={(e) => handleMetaEdit('acknowledged_by_role', e.target.value)}
+            />
+            <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.acknowledged_by_role || ''}</div>
+          </div>
+        </div>
+        <div className="sig-remarks-box">
+          <strong>Remarks / Notes:</strong>
+          <AutoResizeTextarea
+            className="cell-editable screen-only"
+            placeholder="General report remarks or comments..."
+            style={{ marginTop: '10px' }}
+            value={currentReport.footer_remarks || ''}
+            onChange={(e) => handleMetaEdit('footer_remarks', e.target.value)}
+          />
+          <div className="print-only cell-print-text" style={{ marginTop: '6px' }}>{currentReport.footer_remarks || ''}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
