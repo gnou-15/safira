@@ -852,3 +852,18 @@
 .btn-select-type.investigation-type:hover strong {
   color: #f59e0b !important;
 }
+
+/* Safety Manuals SVG Button Hover Micro-animations */
+.landing-svg-manuals-btn rect {
+  transition: fill 0.2s ease, transform 0.2s ease;
+  transform-origin: 600px 191px;
+}
+
+.landing-svg-manuals-btn:hover rect {
+  fill: #2b85bf;
+  transform: scale(1.05);
+}
+
+.landing-svg-manuals-btn:active rect {
+  transform: scale(0.98);
+}

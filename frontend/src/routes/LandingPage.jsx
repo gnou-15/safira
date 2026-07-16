@@ -12,7 +12,8 @@ export default function LandingPage({
   loadInvestigation,
   handleGetToWork,
   handleGetToWorkInvestigation,
-  handleKeyLogin
+  handleKeyLogin,
+  handleOpenManualsModal
 }) {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [lightning, setLightning] = useState(null);
@@ -287,6 +288,34 @@ export default function LandingPage({
               {/* Flashing Port Warning Beacon (tip of control tower antenna) */}
               <circle cx="617" cy="99" r="2.2" fill="#ff2a2a" />
               <circle cx="617" cy="99" r="6" fill="#ff2a2a" className="port-beacon-glow" />
+
+              {/* Safety Manuals Button (under terminal building) */}
+              <g 
+                className="landing-svg-manuals-btn" 
+                onClick={handleOpenManualsModal}
+                style={{ cursor: 'pointer' }}
+              >
+                <rect 
+                  x="560" 
+                  y="185" 
+                  width="80" 
+                  height="15" 
+                  rx="7.5" 
+                  fill="#3a9ad9" 
+                />
+                <text 
+                  x="600" 
+                  y="195" 
+                  textAnchor="middle" 
+                  fill="#ffffff" 
+                  fontFamily="'Outfit', 'Inter', sans-serif" 
+                  fontWeight="800" 
+                  fontSize="7.5"
+                  letterSpacing="0.2"
+                >
+                  Safety Manuals
+                </text>
+              </g>
 
               {/* Glowing Electric Lightning Bolt Overlay */}
               {lightning && (

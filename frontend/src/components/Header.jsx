@@ -272,15 +272,15 @@ export default function Header({
                 <div className="header-save-status">
                   {isSaving ? (
                     <span className="status-saving">
-                      <span className="status-dot pulse-blue"></span> Saving...
+                      Saving...
                     </span>
                   ) : hasChanges ? (
                     <span className="status-pending">
-                      <span className="status-dot pulse-amber"></span> Saving soon...
+                      Saving soon...
                     </span>
                   ) : (
                     <span className="status-saved">
-                      <span className="status-dot green"></span> Saved{lastSaved ? ` at ${lastSaved}` : ''}
+                      Saved{lastSaved ? ` at ${lastSaved}` : ''}
                     </span>
                   )}
                 </div>
@@ -332,11 +332,11 @@ export default function Header({
                 <div className="header-save-status">
                   {hasInvestigationChanges ? (
                     <span className="status-pending">
-                      <span className="status-dot pulse-amber"></span> Saving soon...
+                      Saving soon...
                     </span>
                   ) : (
                     <span className="status-saved">
-                      <span className="status-dot green"></span> Saved
+                      Saved
                     </span>
                   )}
                 </div>
@@ -344,22 +344,32 @@ export default function Header({
             )}
           </div>
           <div className="nav-actions">
-            <button className="btn-nav-action btn-nav-manuals" onClick={handleOpenManualsModal}>Safety Manuals</button>
             {currentReport && (
               <>
                 <button className="btn-nav-action btn-nav-generate" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
-                <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>EXPORT</button>
+                <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>Export</button>
               </>
             )}
             {currentInvestigation && (
               <>
                 <button className="btn-nav-action btn-nav-generate" onClick={() => setShowInvestigationModal(true)}>+ New Investigation</button>
-                <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>EXPORT</button>
+                <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>Export</button>
               </>
             )}
 
+            {/* Back to Home Button when open in workspace */}
+            {(currentReport || currentInvestigation) && (
+              <button 
+                type="button"
+                className="btn-nav-back-home" 
+                onClick={currentReport ? handleExitToLanding : handleExitInvestigation}
+              >
+                ← Back
+              </button>
+            )}
+
             {/* Secure Key Widget */}
-            {user && (
+            {user && !currentReport && !currentInvestigation && (
               <div className="header-key-widget-container">
                 <button 
                   type="button" 
