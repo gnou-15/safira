@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import InteractiveAuthPattern from "./InteractiveAuthPattern";
+import InteractiveAuthPattern from "../components/InteractiveAuthPattern";
 import "../css/LoginPage.css";
 
 export default function LoginPage({

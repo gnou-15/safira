@@ -1,12 +1,12 @@
 import useReports from './hooks/useReports';
 import Header from './components/Header';
-import LandingPage from './components/LandingPage';
-import DocumentSheet from './components/DocumentSheet';
+import LandingPage from './routes/LandingPage';
+import DocumentSheet from './routes/DocumentSheet';
 import ChatbotSidebar from './components/ChatbotSidebar';
 import NewReportModal from './components/NewReportModal';
 import SafetyManualsModal from './components/SafetyManualsModal';
 import BufferLoader from './components/BufferLoader';
-import LoginPage from './components/LoginPage';
+import LoginPage from './routes/LoginPage';
 import DocumentSkeleton from './components/DocumentSkeleton';
 import './css/App.css';
 

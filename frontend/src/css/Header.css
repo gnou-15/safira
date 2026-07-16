@@ -136,15 +136,18 @@
 }
 
 .status-saving {
-  color: #0284c7; /* Sky/Ocean Blue */
+  color: #0284c7;
+  /* Sky/Ocean Blue */
 }
 
 .status-pending {
-  color: #d97706; /* Amber/Orange */
+  color: #d97706;
+  /* Amber/Orange */
 }
 
 .status-saved {
-  color: #16a34a; /* Emerald Green */
+  color: #16a34a;
+  /* Emerald Green */
   font-size: 11.5px;
 }
 
@@ -172,15 +175,31 @@
 }
 
 @keyframes pulse-animation-blue {
-  0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.6); }
-  70% { box-shadow: 0 0 0 5px rgba(2, 132, 199, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.6);
+  }
+
+  70% {
+    box-shadow: 0 0 0 5px rgba(2, 132, 199, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
+  }
 }
 
 @keyframes pulse-animation-amber {
-  0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); }
-  70% { box-shadow: 0 0 0 5px rgba(217, 119, 6, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6);
+  }
+
+  70% {
+    box-shadow: 0 0 0 5px rgba(217, 119, 6, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+  }
 }
 
 /* Print Overrides for Header */
@@ -242,7 +261,8 @@
   box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.15) !important;
 }
 
-.header-key-btn:hover, .header-key-btn.active {
+.header-key-btn:hover,
+.header-key-btn.active {
   background-color: #f8fafc !important;
   transform: translate(-1px, -1px) !important;
   box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.2) !important;
@@ -280,6 +300,7 @@
     opacity: 0;
     transform: translateY(6px) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -413,16 +434,23 @@
 }
 
 @keyframes tooltip-prompt-pulse {
-  0%, 8%, 92%, 100% {
+
+  0%,
+  8%,
+  92%,
+  100% {
     opacity: 0;
     transform: translate(-50%, 8px) scale(0.92);
     visibility: hidden;
   }
-  12%, 26% {
+
+  12%,
+  26% {
     opacity: 1;
     transform: translate(-50%, 0) scale(1);
     visibility: visible;
   }
+
   30% {
     opacity: 0;
     transform: translate(-50%, -6px) scale(0.92);
@@ -594,6 +622,7 @@
     opacity: 0;
     transform: translateY(6px) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);

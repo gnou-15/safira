@@ -1,4 +1,4 @@
-import AutoResizeTextarea from './AutoResizeTextarea';
+import AutoResizeTextarea from '../components/AutoResizeTextarea';
 import { getRiskCode } from '../utils/riskCalculations';
 import '../css/DocumentSheet.css';
 

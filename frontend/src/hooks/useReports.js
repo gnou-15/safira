@@ -16,7 +16,7 @@ export default function useReports() {
   });
 
   const [currentPage, setCurrentPage] = useState(() => {
-    const cachedPage = localStorage.getItem('safira_current_page');
+    const cachedPage = sessionStorage.getItem('safira_current_page');
     const token = localStorage.getItem('safira_token');
     if (token && cachedPage === 'login') return 'landing';
     return cachedPage || 'landing';
@@ -26,7 +26,7 @@ export default function useReports() {
   const [reports, setReports] = useState([]);
   const [currentReport, setCurrentReport] = useState(() => {
     try {
-      const cached = localStorage.getItem('activeReport');
+      const cached = sessionStorage.getItem('activeReport');
       return cached ? JSON.parse(cached) : null;
     } catch (e) {
       return null;
@@ -34,7 +34,7 @@ export default function useReports() {
   });
   const [rows, setRows] = useState(() => {
     try {
-      const cached = localStorage.getItem('activeReportRows');
+      const cached = sessionStorage.getItem('activeReportRows');
       return cached ? JSON.parse(cached) : [];
     } catch (e) {
       return [];
@@ -83,38 +83,38 @@ export default function useReports() {
   // Ref to track the 5-second idle timer
   const idleTimerRef = useRef(null);
 
-  // Sync page state to localStorage
+  // Sync page state to sessionStorage
   useEffect(() => {
-    localStorage.setItem('safira_current_page', currentPage);
+    sessionStorage.setItem('safira_current_page', currentPage);
   }, [currentPage]);
 
   // Fetch list of all reports and restore active report session in background
   useEffect(() => {
     if (user) {
       fetchReports();
-      const storedId = localStorage.getItem('activeReportId');
+      const storedId = sessionStorage.getItem('activeReportId');
       if (storedId) {
         loadReport(storedId);
       }
     }
   }, [user]);
 
-  // Persist active report session and metadata in localStorage
+  // Persist active report session and metadata in sessionStorage
   useEffect(() => {
     if (currentReport && currentReport.id) {
-      localStorage.setItem('activeReportId', currentReport.id);
-      localStorage.setItem('activeReport', JSON.stringify(currentReport));
+      sessionStorage.setItem('activeReportId', currentReport.id);
+      sessionStorage.setItem('activeReport', JSON.stringify(currentReport));
     } else if (currentReport === null) {
-      localStorage.removeItem('activeReportId');
-      localStorage.removeItem('activeReport');
-      localStorage.removeItem('activeReportRows');
+      sessionStorage.removeItem('activeReportId');
+      sessionStorage.removeItem('activeReport');
+      sessionStorage.removeItem('activeReportRows');
     }
   }, [currentReport]);
 
-  // Persist active rows in localStorage
+  // Persist active rows in sessionStorage
   useEffect(() => {
     if (currentReport && rows && rows.length > 0) {
-      localStorage.setItem('activeReportRows', JSON.stringify(rows));
+      sessionStorage.setItem('activeReportRows', JSON.stringify(rows));
     }
   }, [rows, currentReport]);
 
@@ -172,7 +172,7 @@ export default function useReports() {
     localStorage.setItem('safira_token', data.token);
     localStorage.setItem('safira_user', JSON.stringify(data.user));
     localStorage.setItem('safira_remembered_key', cleanKey);
-    localStorage.setItem('safira_current_page', 'landing');
+    sessionStorage.setItem('safira_current_page', 'landing');
     setCurrentPage('landing');
     return true;
   };
@@ -191,7 +191,7 @@ export default function useReports() {
     localStorage.setItem('safira_token', data.token);
     localStorage.setItem('safira_user', JSON.stringify(data.user));
     localStorage.setItem('safira_remembered_key', data.key);
-    localStorage.setItem('safira_current_page', 'landing');
+    sessionStorage.setItem('safira_current_page', 'landing');
     setCurrentPage('landing');
     
     try {
@@ -213,10 +213,10 @@ export default function useReports() {
     setReports([]);
     localStorage.removeItem('safira_token');
     localStorage.removeItem('safira_user');
-    localStorage.setItem('safira_current_page', 'landing');
-    localStorage.removeItem('activeReportId');
-    localStorage.removeItem('activeReport');
-    localStorage.removeItem('activeReportRows');
+    sessionStorage.removeItem('safira_current_page');
+    sessionStorage.removeItem('activeReportId');
+    sessionStorage.removeItem('activeReport');
+    sessionStorage.removeItem('activeReportRows');
     setCurrentPage('landing');
     setIsPageLoading(false);
   };
