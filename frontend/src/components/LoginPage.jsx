@@ -1,38 +1,25 @@
 import React, { useState, useEffect } from "react";
 import InteractiveAuthPattern from "./InteractiveAuthPattern";
-import BufferLoader from "./BufferLoader";
 import "../css/LoginPage.css";
 
-
 export default function LoginPage({
-  handleLogin,
-  handleSignup,
-  isGenerating,
+  handleKeyLogin,
+  handleKeyGenerate,
   onBackToHome,
+  setUser,
+  handleNavigate
 }) {
-  const [isRegisterMode, setIsRegisterMode] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [rememberMe, setRememberMe] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-
+  const [keyInput, setKeyInput] = useState(() => {
+    return localStorage.getItem('safira_remembered_key') || "";
+  });
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [generatedKey, setGeneratedKey] = useState("");
+  const [isUnlocking, setIsUnlocking] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // Focus tracking for floating label effect
-  const [focusFields, setFocusFields] = useState({});
-
-  // Success view states
+  const [copyFeedback, setCopyFeedback] = useState("Copy Key");
   const [isSuccess, setIsSuccess] = useState(false);
-  const [loginDetails, setLoginDetails] = useState({ name: "", email: "" });
-  const [localLoading, setLocalLoading] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-
-  // Name fields states
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
 
   const handleClose = () => {
     setIsClosing(true);
@@ -41,135 +28,122 @@ export default function LoginPage({
     }, 300);
   };
 
-  // Auto-redirect to dashboard on success
+  // Automatically navigate to landing after success if it wasn't a newly generated key
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && !generatedKey) {
       const timer = setTimeout(() => {
-        localStorage.setItem("safira_current_page", "landing");
-        const cachedToken = localStorage.getItem("safira_token");
-        if (cachedToken) {
-          window.location.reload();
-        } else {
-          handleClose();
-        }
-      }, 1200);
+        handleClose();
+      }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [isSuccess]);
+  }, [isSuccess, generatedKey]);
 
-
-
-  // Check URL parameters for successful OAuth callback login tokens
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const oauthToken = params.get("token");
-    const oauthUsername = params.get("username");
-    const oauthEmail = params.get("email");
-    const oauthError = params.get("error");
-
-    if (oauthToken && oauthUsername && oauthEmail) {
-      setSuccessMsg("Welcome back! You are signed in with Google.");
-      setLoginDetails({ name: oauthUsername, email: oauthEmail });
-      setIsSuccess(true);
-      
-      // Persist google session
-      localStorage.setItem("safira_token", oauthToken);
-      localStorage.setItem("safira_user", JSON.stringify({
-        username: oauthUsername,
-        email: oauthEmail
-      }));
-
-      // Strip query parameters for a clean address bar URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (oauthError) {
-      setErrorMsg(`Google login failed: ${oauthError}`);
-      window.history.replaceState({}, document.title, window.location.pathname);
+  // Handle keystrokes to auto-format to AAA-000 (e.g. inject hyphen, force uppercase)
+  const handleKeyInputChange = (e) => {
+    let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    
+    // If length is greater than 3, insert a hyphen
+    if (val.length > 3) {
+      val = val.slice(0, 3) + "-" + val.slice(3, 6);
+    } else {
+      val = val.slice(0, 3);
     }
-  }, []);
-
-  const handleFocus = (fieldName) => {
-    setFocusFields((prev) => ({ ...prev, [fieldName]: true }));
+    
+    setKeyInput(val);
+    setErrorMsg("");
   };
 
-  const handleBlur = (fieldName, value) => {
-    if (!value) {
-      setFocusFields((prev) => ({ ...prev, [fieldName]: false }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleUnlock = async (e) => {
+    if (e) e.preventDefault();
     setErrorMsg("");
     setSuccessMsg("");
 
-    if (!email.trim() || !password || (isRegisterMode && (!firstname.trim() || !lastname.trim()))) {
-      setErrorMsg("Please fill in all required fields.");
+    const normalizedKey = keyInput.trim();
+    if (!normalizedKey) {
+      setErrorMsg("Please enter your secure key.");
+      return;
+    }
+
+    if (!/^[A-Z]{3}-\d{3}$/.test(normalizedKey)) {
+      setErrorMsg("Invalid key format. Must be AAA-000 (e.g. ABC-123).");
       return;
     }
 
     setLoading(true);
+    setIsUnlocking(true);
+
     try {
-      if (isRegisterMode) {
-        const fullName = `${firstname.trim()} ${lastname.trim()}`;
-        const success = await handleSignup(fullName, email.trim(), password);
-        if (success) {
-          setLoginDetails({ name: fullName, email: email.trim() });
-          setSuccessMsg("Your account has been created successfully.");
-          setIsSuccess(true);
-        } else {
-          setErrorMsg("Registration failed. Username or email may already be in use.");
-        }
-      } else {
-        const success = await handleLogin(email.trim(), password, rememberMe);
-        if (success) {
-          setLoginDetails({ name: email.trim(), email: email.trim() });
-          setSuccessMsg("Welcome back to your secure dashboard.");
-          setIsSuccess(true);
-        } else {
-          setErrorMsg("Invalid email or password.");
-        }
+      // Small delay for turning animation effect
+      await new Promise(resolve => setTimeout(resolve, 600));
+      const success = await handleKeyLogin(normalizedKey);
+      if (success) {
+        setSuccessMsg("Access Granted. Unlocking safety dashboard...");
+        setIsSuccess(true);
       }
     } catch (err) {
-      setErrorMsg(err.message || "An unexpected error occurred. Please try again.");
+      setErrorMsg(err.message || "Key not registered or invalid.");
+      setIsUnlocking(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = (e) => {
-    e.preventDefault();
-    const API_URL = import.meta.env.VITE_API_URL || "";
-    // Redirect browser to Google Authorization Route
-    window.location.href = `${API_URL}/api/auth/google`;
-  };
-
-  const toggleMode = () => {
-    setIsRegisterMode(!isRegisterMode);
+  const handleGenerateAndLogin = async () => {
     setErrorMsg("");
     setSuccessMsg("");
-    setEmail("");
-    setPassword("");
-    setUsername("");
-    setFirstname("");
-    setLastname("");
-    setFocusFields({});
+    setLoading(true);
+    setIsUnlocking(true);
+
+    try {
+      // Small delay for key turning animation
+      await new Promise(resolve => setTimeout(resolve, 600));
+      const key = await handleKeyGenerate();
+      if (key) {
+        setGeneratedKey(key);
+        setSuccessMsg("New secure key generated and copied!");
+        setIsSuccess(true);
+        
+        // Trigger clipboard copy
+        try {
+          await navigator.clipboard.writeText(key);
+          setCopyFeedback("Copied!");
+        } catch (e) {
+          console.warn("Auto copy to clipboard failed");
+        }
+      }
+    } catch (err) {
+      setErrorMsg(err.message || "Failed to generate key. Please try again.");
+      setIsUnlocking(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (localLoading) {
-    return <BufferLoader message="Entering secure safety workspace..." />;
-  }
+  const handleCopyGeneratedKey = async () => {
+    if (!generatedKey) return;
+    try {
+      await navigator.clipboard.writeText(generatedKey);
+      setCopyFeedback("Copied!");
+      setTimeout(() => setCopyFeedback("Copy Key"), 2000);
+    } catch (e) {
+      setErrorMsg("Failed to copy to clipboard. Please copy manually.");
+    }
+  };
+
+  const handleEnterDashboard = () => {
+    handleClose();
+  };
 
   return (
     <div className={`login-page-container ${isClosing ? "closing" : ""}`} onClick={handleClose}>
       <div className={`login-split-layout ${isClosing ? "closing" : ""}`} onClick={(e) => e.stopPropagation()}>
         
-        {/* Left Side: Form Column */}
+        {/* Left Side: Keyhole Verification Column */}
         <div className="login-form-column">
           
           {/* Header branding & back button */}
           <div className="login-header-row">
             <div className="login-logo-header" onClick={handleClose}>
-              {/* Safira Aviation Goggles Logo */}
               <svg viewBox="0 0 100 100" className="login-brand-logo" width="34" height="34">
                 <defs>
                   <filter id="goggles-glow" x="-10%" y="-10%" width="120%" height="120%">
@@ -201,9 +175,9 @@ export default function LoginPage({
             )}
           </div>
 
-
           <div className="login-form-wrapper">
-            {isSuccess ? (
+            {isSuccess && generatedKey ? (
+              /* Success view for Generated Key (Allows copying before dashboard enter) */
               <div className="login-form-content login-success-view">
                 <div className="success-icon-container">
                   <div className="success-checkmark-circle">
@@ -213,221 +187,180 @@ export default function LoginPage({
                   </div>
                 </div>
 
-
-                <div className="login-heading-block" style={{ marginTop: "1.5rem", marginBottom: "1.5rem" }}>
-                  <h2 className="login-title">Success!</h2>
+                <div className="login-heading-block" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                  <h2 className="login-title">Your Secure Key</h2>
                   <p className="login-subtitle">
-                    {successMsg}
+                    Safira has created a unique workspace key for you. Copy and keep it safe!
                   </p>
                 </div>
 
-                <div className="user-profile-badge">
-                  <div className="profile-avatar">
-                    {loginDetails.name.slice(0, 2).toUpperCase()}
+                <div className="generated-key-container">
+                  <div className="generated-key-box">{generatedKey}</div>
+                  <button 
+                    type="button" 
+                    className={`key-copy-btn ${copyFeedback === 'Copied!' ? 'copied' : ''}`}
+                    onClick={handleCopyGeneratedKey}
+                  >
+                    {copyFeedback === 'Copied!' ? '✓ Copied' : '📋 Copy Key'}
+                  </button>
+                </div>
+
+                <div className="key-warning-notice">
+                  ⚠️ <strong>Important:</strong> We do not store recovery emails. If you lose this key, you will lose access to your reports.
+                </div>
+
+                <button type="button" className="login-btn-primary" onClick={handleEnterDashboard} style={{ marginTop: '1.5rem' }}>
+                  Enter Dashboard
+                </button>
+              </div>
+            ) : isSuccess ? (
+              /* Simple Success login view */
+              <div className="login-form-content login-success-view">
+                <div className="success-icon-container">
+                  <div className="success-checkmark-circle">
+                    <svg viewBox="0 0 24 24" width="32" height="32" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                   </div>
-                  <div className="profile-info">
-                    <div className="profile-name">{loginDetails.name}</div>
-                    <div className="profile-email">{loginDetails.email}</div>
-                  </div>
+                </div>
+
+                <div className="login-heading-block" style={{ marginTop: "1.5rem", marginBottom: "1.5rem" }}>
+                  <h2 className="login-title">Access Granted</h2>
+                  <p className="login-subtitle">{successMsg}</p>
                 </div>
 
                 <div className="login-loading-inline" style={{ marginTop: "2.5rem" }}>
                   <div className="login-inline-spinner"></div>
-                  <span className="login-inline-loading-text">Logging you in...</span>
+                  <span className="login-inline-loading-text">Opening workspace...</span>
                 </div>
               </div>
             ) : (
+              /* Default Keyhole Entry form */
               <div className="login-form-content">
+                
+                {/* Visual Keyhole */}
+                <div className="keyhole-visual-wrapper" onClick={handleGenerateAndLogin} title="Click keyhole to generate a new key">
+                  <div className={`keyhole-ring-glow ${isUnlocking ? 'spinning' : ''}`}>
+                    {/* Energy Absorption Rings */}
+                    <div className="energy-absorber absorber-1"></div>
+                    <div className="energy-absorber absorber-2"></div>
+                    <div className="energy-absorber absorber-3"></div>
+
+                    <svg viewBox="0 0 100 100" className={`keyhole-svg ${isUnlocking ? 'unlocking' : ''}`} width="80" height="80">
+                      <defs>
+                        <linearGradient id="metal-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#475569" />
+                          <stop offset="50%" stopColor="#1e293b" />
+                          <stop offset="100%" stopColor="#0f172a" />
+                        </linearGradient>
+                        <linearGradient id="gold-ring" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="#fde047" />
+                          <stop offset="50%" stopColor="#ca8a04" />
+                          <stop offset="100%" stopColor="#854d0e" />
+                        </linearGradient>
+                        <radialGradient id="neon-glow" cx="50%" cy="50%" r="50%">
+                          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
+                          <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+                        </radialGradient>
+                      </defs>
+
+                      {/* Outer Glowing Radial */}
+                      <circle cx="50" cy="50" r="48" fill="url(#neon-glow)" className="keyhole-bg-glow" />
+
+                      {/* Outer Brass/Gold Bezel */}
+                      <circle cx="50" cy="50" r="42" fill="url(#gold-ring)" stroke="#0f172a" strokeWidth="2.5" />
+                      <circle cx="50" cy="50" r="38" fill="#1e293b" stroke="#ca8a04" strokeWidth="1" />
+
+                      {/* Mechanical Tick Marks */}
+                      <g stroke="#ca8a04" strokeWidth="1.5" opacity="0.6">
+                        <line x1="50" y1="12" x2="50" y2="15" />
+                        <line x1="50" y1="85" x2="50" y2="88" />
+                        <line x1="12" y1="50" x2="15" y2="50" />
+                        <line x1="85" y1="50" x2="88" y2="50" />
+                        <line x1="23" y1="23" x2="25" y2="25" />
+                        <line x1="75" y1="75" x2="77" y2="77" />
+                        <line x1="23" y1="77" x2="25" y2="75" />
+                        <line x1="75" y1="25" x2="77" y2="27" />
+                      </g>
+
+                      {/* Inner Steel Core Plate */}
+                      <circle cx="50" cy="50" r="33" fill="url(#metal-grad)" stroke="#0f172a" strokeWidth="2" />
+                      
+                      {/* Concentric Cyber Rings */}
+                      <circle cx="50" cy="50" r="24" fill="none" stroke="#38bdf8" strokeWidth="1" strokeDasharray="3 4" opacity="0.4" className="cyber-ring-spin" />
+
+                      {/* Glowing center keyhole recess */}
+                      <circle cx="50" cy="42" r="9" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.5" />
+                      <path d="M 45,46 L 55,46 L 58,64 L 42,64 Z" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.5" strokeLinejoin="round" />
+                      
+                      {/* Inner deep shadow */}
+                      <circle cx="50" cy="42" r="5" fill="#020617" />
+                      <path d="M 47,48 L 53,48 L 55,62 L 45,62 Z" fill="#020617" />
+                    </svg>
+                  </div>
+                  <span className="keyhole-hint-text">Click Keyhole to generate key</span>
+                </div>
+
                 <div className="login-heading-block">
-                  <h2 className="login-title">
-                    {isRegisterMode ? "Create your account" : "Welcome back !"}
-                  </h2>
+                  <h2 className="login-title">Unlock Safira Workspace</h2>
                   <p className="login-subtitle">
-                    {isRegisterMode
-                      ? "Create a Safira workspace account to manage security reports."
-                      : "Enter details to access your reports and manuals."}
+                    Enter your mnemonic key to safely manage safety reports.
                   </p>
                 </div>
 
-                {/* Alert notifications */}
                 {errorMsg && <div className="login-alert-banner login-alert-error">{errorMsg}</div>}
-                {successMsg && <div className="login-alert-banner login-alert-success">{successMsg}</div>}
 
-                <form onSubmit={handleSubmit} className="login-form-el">
-                  {/* First Name & Last Name Fields (Register only) */}
-                  {isRegisterMode && (
-                    <div className="login-names-row">
-                      <div className={`login-input-group ${focusFields.firstname || firstname ? "focused" : ""}`} style={{ flex: 1 }}>
-                        <input
-                          type="text"
-                          id="firstname"
-                          value={firstname}
-                          onChange={(e) => setFirstname(e.target.value)}
-                          onFocus={() => handleFocus("firstname")}
-                          onBlur={() => handleBlur("firstname", firstname)}
-                          required
-                          disabled={loading}
-                          className="login-input-field"
-                        />
-                        <label htmlFor="firstname" className="login-label-el">
-                          First name
-                        </label>
-                      </div>
-                      <div className={`login-input-group ${focusFields.lastname || lastname ? "focused" : ""}`} style={{ flex: 1 }}>
-                        <input
-                          type="text"
-                          id="lastname"
-                          value={lastname}
-                          onChange={(e) => setLastname(e.target.value)}
-                          onFocus={() => handleFocus("lastname")}
-                          onBlur={() => handleBlur("lastname", lastname)}
-                          required
-                          disabled={loading}
-                          className="login-input-field"
-                        />
-                        <label htmlFor="lastname" className="login-label-el">
-                          Last name
-                        </label>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Email Field */}
-                  <div className={`login-input-group ${focusFields.email || email ? "focused" : ""}`}>
+                <form onSubmit={handleUnlock} className="login-form-el">
+                  <div className="login-input-group focused">
                     <input
-                      type="email"
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onFocus={() => handleFocus("email")}
-                      onBlur={() => handleBlur("email", email)}
+                      type="text"
+                      id="mnemonic-key"
+                      placeholder="AAA-000"
+                      value={keyInput}
+                      onChange={handleKeyInputChange}
+                      maxLength="7"
                       required
                       disabled={loading}
-                      className="login-input-field"
+                      className="login-input-field key-input-style"
+                      autoComplete="off"
+                      autoFocus
                     />
-                    <label htmlFor="email" className="login-label-el">
-                      Email address
+                    <label htmlFor="mnemonic-key" className="login-label-el">
+                      Workspace Key
                     </label>
                   </div>
 
-                  {/* Password Field */}
-                  <div className={`login-input-group ${focusFields.password || password ? "focused" : ""}`}>
-                    <label htmlFor="password" className="login-label-el">
-                      Password
-                    </label>
-                    <div className="login-password-wrapper">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onFocus={() => handleFocus("password")}
-                        onBlur={() => handleBlur("password", password)}
-                        required
-                        disabled={loading}
-                        className="login-input-field login-input-password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        disabled={loading}
-                        className="login-password-toggle-btn"
-                        tabIndex="-1"
-                      >
-                        {showPassword ? (
-                          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                            <circle cx="12" cy="12" r="3" />
-                          </svg>
-                        ) : (
-                          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                            <line x1="1" y1="1" x2="23" y2="23" />
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Options Row: Remember Me & Forgot Password */}
-                  {!isRegisterMode && (
-                    <div className="login-actions-row">
-                      <label className="login-checkbox-label">
-                        <input
-                          type="checkbox"
-                          checked={rememberMe}
-                          onChange={(e) => setRememberMe(e.target.checked)}
-                          disabled={loading}
-                          className="login-checkbox-input"
-                        />
-                        <span className="login-checkbox-text">Remember me</span>
-                      </label>
-                      <a
-                        href="#"
-                        className="login-forgot-link"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setErrorMsg("Password recovery is managed by your system administrator.");
-                        }}
-                      >
-                        Forgot your password ?
-                      </a>
-                    </div>
-                  )}
-
-                  {/* Submit Button */}
                   <button type="submit" className="login-btn-primary" disabled={loading}>
-                    {loading ? (
-                      <span className="login-spinner"></span>
-                    ) : (
-                      isRegisterMode ? "Register Account" : "Log In"
-                    )}
+                    {loading ? <span className="login-spinner"></span> : "🔑 Unlock Workspace"}
                   </button>
                 </form>
 
-                {/* Divider */}
                 <div className="login-divider">
-                  <span className="login-divider-text">Or, Login with</span>
+                  <span className="login-divider-text">No workspace key?</span>
                 </div>
 
-                {/* Google Sign In Button */}
                 <button
                   type="button"
-                  className="login-btn-google"
-                  onClick={handleGoogleSignIn}
+                  className="login-btn-generate-key"
+                  onClick={handleGenerateAndLogin}
                   disabled={loading}
                 >
-                  <svg className="google-svg-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
-                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
-                  </svg>
-                  Sign in with Google
+                  🔑 Generate New Key Instantly
                 </button>
-
-                {/* View Switch Footer */}
-                <p className="login-footer-text">
-                  {isRegisterMode ? "Already have an account ?" : "Don't have an account ?"}
-                  {" "}
-                  <button type="button" className="login-link-btn" onClick={toggleMode}>
-                    {isRegisterMode ? "Login here" : "Register here"}
-                  </button>
-                </p>
               </div>
             )}
           </div>
 
           {/* Secure connection footer */}
           <div className="login-column-footer">
-            <span>Secure TLS 1.3 Connection</span>
+            <span>Client-Side Local Storage Auth</span>
             <span className="footer-dot">•</span>
             <span>© {new Date().getFullYear()} Safira</span>
           </div>
 
         </div>
 
-        {/* Right Side: Interactive SVGs (Blue layout pattern) */}
+        {/* Right Side: Interactive Pattern */}
         <div className="login-pattern-column">
           <InteractiveAuthPattern />
         </div>

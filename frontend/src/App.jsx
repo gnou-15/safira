@@ -15,8 +15,8 @@ function App() {
     setUser,
     currentPage,
     setCurrentPage,
-    handleLogin,
-    handleSignup,
+    handleKeyLogin,
+    handleKeyGenerate,
     handleLogout,
     handleNavigate,
     reports,
@@ -90,6 +90,7 @@ function App() {
         isSaving={isSaving}
         hasChanges={hasChanges}
         lastSaved={lastSaved}
+        handleKeyLogin={handleKeyLogin}
       />
 
       {/* Main Workspace */}
@@ -161,9 +162,8 @@ function App() {
 
       {currentPage === 'login' && (
         <LoginPage 
-          handleLogin={handleLogin}
-          handleSignup={handleSignup}
-          isGenerating={isGenerating}
+          handleKeyLogin={handleKeyLogin}
+          handleKeyGenerate={handleKeyGenerate}
           onBackToHome={() => handleNavigate('landing')}
           setUser={setUser}
           handleNavigate={handleNavigate}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import '../css/Header.css';
 
 export default function Header({
@@ -17,8 +18,11 @@ export default function Header({
   fetchReports,
   isSaving,
   hasChanges,
-  lastSaved
+  lastSaved,
+  handleKeyLogin
 }) {
+  const [showKeyDropdown, setShowKeyDropdown] = useState(false);
+  const [copyText, setCopyText] = useState("Copy");
   return (
     <header className="top-nav">
       {!currentReport ? (
@@ -81,13 +85,80 @@ export default function Header({
             <span className="landing-nav-link">About Us</span>
             <span className="landing-nav-link">Service</span>
             <span className="landing-nav-link">Contact</span>
+            
             {user ? (
-              <>
-                <span className="landing-nav-link" style={{ fontWeight: 600, color: '#3a9ad9' }}>👤 {user.username ? user.username.split(' ')[0] : ''}</span>
-                <button type="button" className="landing-logout-btn" onClick={handleLogout}>Log Out</button>
-              </>
+              <div className="header-key-widget-container">
+                <button 
+                  type="button" 
+                  className={`header-key-btn ${showKeyDropdown ? 'active' : ''}`} 
+                  onClick={() => setShowKeyDropdown(!showKeyDropdown)}
+                  title="View your Secure Key"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="btn-key-svg">
+                    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3M15.5 7.5L14 9" />
+                  </svg>
+                </button>
+                {showKeyDropdown && (
+                  <div className="header-key-dropdown">
+                    <div className="dropdown-key-title">Your Secure Key</div>
+                    <div 
+                      className={`dropdown-key-box ${copyText === "Copied!" ? "success" : ""}`}
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(user.username);
+                          setCopyText("Copied!");
+                          setTimeout(() => setCopyText("Copy"), 2000);
+                        } catch (e) {
+                          console.warn("Copy failed");
+                        }
+                      }}
+                      title="Click anywhere to copy secure key"
+                    >
+                      <span className="dropdown-key-val">
+                        {copyText === "Copied!" ? "COPIED" : user.username}
+                      </span>
+                      <button type="button" className="dropdown-copy-btn" tabIndex="-1">
+                        {copyText === "Copied!" ? "✓" : "📋"}
+                      </button>
+                    </div>
+                    <button type="button" className="dropdown-logout-btn" onClick={() => { setShowKeyDropdown(false); handleLogout(); }}>
+                      Log Out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
-              <button type="button" className="landing-login-btn" onClick={() => handleNavigate('login')}>Log In</button>
+              <div className="header-keyhole-wrapper">
+                <button 
+                  type="button" 
+                  className="header-keyhole-btn" 
+                  onClick={async () => {
+                    const rememberedKey = localStorage.getItem('safira_remembered_key');
+                    if (rememberedKey) {
+                      try {
+                        await handleKeyLogin(rememberedKey);
+                      } catch (e) {
+                        handleNavigate('login');
+                      }
+                    } else {
+                      handleNavigate('login');
+                    }
+                  }} 
+                  title="Unlock Safira Workspace"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="btn-keyhole-svg">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="10" r="3" fill="currentColor" />
+                    <path d="M10 13 L14 13 L15 18 L9 18 Z" fill="currentColor" />
+                  </svg>
+                </button>
+                
+                {/* Subtle attention-catching prompt bubble */}
+                <div className="keyhole-prompt-bubble">
+                  Unlock workspace key! 🔑
+                  <div className="bubble-arrow"></div>
+                </div>
+              </div>
             )}
           </div>
         </>
@@ -185,6 +256,50 @@ export default function Header({
             <button className="btn-secondary btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
             <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
             <button className="btn-primary" onClick={handlePrint}>EXPORT</button>
+
+            {/* Secure Key Widget */}
+            {user && (
+              <div className="header-key-widget-container">
+                <button 
+                  type="button" 
+                  className={`header-key-btn ${showKeyDropdown ? 'active' : ''}`} 
+                  onClick={() => setShowKeyDropdown(!showKeyDropdown)}
+                  title="View your Secure Key"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="btn-key-svg">
+                    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3M15.5 7.5L14 9" />
+                  </svg>
+                </button>
+                {showKeyDropdown && (
+                  <div className="header-key-dropdown">
+                    <div className="dropdown-key-title">Your Secure Key</div>
+                    <div 
+                      className={`dropdown-key-box ${copyText === "Copied!" ? "success" : ""}`}
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(user.username);
+                          setCopyText("Copied!");
+                          setTimeout(() => setCopyText("Copy"), 2000);
+                        } catch (e) {
+                          console.warn("Copy failed");
+                        }
+                      }}
+                      title="Click anywhere to copy secure key"
+                    >
+                      <span className="dropdown-key-val">
+                        {copyText === "Copied!" ? "COPIED" : user.username}
+                      </span>
+                      <button type="button" className="dropdown-copy-btn" tabIndex="-1">
+                        {copyText === "Copied!" ? "✓" : "📋"}
+                      </button>
+                    </div>
+                    <button type="button" className="dropdown-logout-btn" onClick={() => { setShowKeyDropdown(false); handleLogout(); }}>
+                      Log Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </>
       )}

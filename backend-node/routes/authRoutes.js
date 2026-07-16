@@ -12,6 +12,122 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 // Make sure REDIRECT_URI matches the registered one on Google Console (local vs prod)
 const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback';
 
+
+/**
+ * Helper to generate mnemonic key of format AAA-000
+ */
+function generateMnemonicKey() {
+  const letters = Array.from({ length: 3 }, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
+  const numbers = Math.floor(100 + Math.random() * 900).toString(); // 3 digits
+  return `${letters}-${numbers}`;
+}
+
+/**
+ * POST /api/auth/key-generate
+ * Generates a unique secure key, registers the user behind the scenes,
+ * and returns the session token along with the key.
+ */
+router.post('/key-generate', async (req, res) => {
+  try {
+    let key = '';
+    let isUnique = false;
+    let attempts = 0;
+
+    // Check key uniqueness
+    while (!isUnique && attempts < 10) {
+      key = generateMnemonicKey();
+      const { data: existing, error: checkError } = await supabase
+        .from('safira_users')
+        .select('id')
+        .eq('username', key)
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+      if (!existing) {
+        isUnique = true;
+      }
+      attempts++;
+    }
+
+    if (!isUnique) {
+      return res.status(500).json({ error: 'Failed to generate a unique key. Please try again.' });
+    }
+
+    const email = `${key.toLowerCase()}@safira.key`;
+    const password_hash = hashPassword(key);
+
+    const { data: newUser, error: insertError } = await supabase
+      .from('safira_users')
+      .insert([{
+        username: key,
+        email,
+        password_hash
+      }])
+      .select('id, username, email')
+      .single();
+
+    if (insertError) throw insertError;
+
+    const token = generateToken({ userId: newUser.id, username: newUser.username, email: newUser.email });
+
+    res.status(201).json({
+      message: 'Key generation successful',
+      token,
+      key,
+      user: newUser
+    });
+  } catch (err) {
+    console.error('Key generation error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * POST /api/auth/key-login
+ * Log in using a previously generated mnemonic key
+ */
+router.post('/key-login', async (req, res) => {
+  const { key } = req.body;
+
+  if (!key) {
+    return res.status(400).json({ error: 'Key is required' });
+  }
+
+  const cleanKey = key.trim().toUpperCase();
+  const keyFormatRegex = /^[A-Z]{3}-\d{3}$/;
+  if (!keyFormatRegex.test(cleanKey)) {
+    return res.status(400).json({ error: 'Key format is invalid. Must be like AAA-000' });
+  }
+
+  try {
+    const { data: user, error: fetchError } = await supabase
+      .from('safira_users')
+      .select('*')
+      .eq('username', cleanKey)
+      .maybeSingle();
+
+    if (fetchError) throw fetchError;
+    if (!user) {
+      return res.status(400).json({ error: 'Key is not registered or invalid' });
+    }
+
+    const token = generateToken({ userId: user.id, username: user.username, email: user.email });
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (err) {
+    console.error('Key login error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /**
  * POST /api/auth/signup
  * Standard email/password registration

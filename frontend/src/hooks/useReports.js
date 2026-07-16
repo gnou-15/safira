@@ -155,45 +155,51 @@ export default function useReports() {
     setIsPageLoading(false);
   };
 
-  const handleLogin = async (email, password, rememberMe) => {
-    const res = await fetch(`${API_URL}/api/auth/login`, {
+  const handleKeyLogin = async (key) => {
+    const res = await fetch(`${API_URL}/api/auth/key-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ key })
     });
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Login failed');
 
+    const cleanKey = key.trim().toUpperCase();
     const loginUser = { token: data.token, ...data.user };
-
-    setUser(loginUser);
-    if (rememberMe) {
-      localStorage.setItem('safira_token', data.token);
-      localStorage.setItem('safira_user', JSON.stringify(data.user));
-    } else {
-      localStorage.removeItem('safira_token');
-      localStorage.removeItem('safira_user');
-    }
-    return true;
-  };
-
-  const handleSignup = async (username, email, password) => {
-    const res = await fetch(`${API_URL}/api/auth/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password })
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Signup failed');
-
-    const loginUser = { token: data.token, ...data.user };
-
     setUser(loginUser);
     localStorage.setItem('safira_token', data.token);
     localStorage.setItem('safira_user', JSON.stringify(data.user));
+    localStorage.setItem('safira_remembered_key', cleanKey);
+    localStorage.setItem('safira_current_page', 'landing');
+    setCurrentPage('landing');
     return true;
+  };
+
+  const handleKeyGenerate = async () => {
+    const res = await fetch(`${API_URL}/api/auth/key-generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Key generation failed');
+
+    const loginUser = { token: data.token, ...data.user };
+    setUser(loginUser);
+    localStorage.setItem('safira_token', data.token);
+    localStorage.setItem('safira_user', JSON.stringify(data.user));
+    localStorage.setItem('safira_remembered_key', data.key);
+    localStorage.setItem('safira_current_page', 'landing');
+    setCurrentPage('landing');
+    
+    try {
+      await navigator.clipboard.writeText(data.key);
+    } catch (e) {
+      console.warn("Clipboard access failed, key was:", data.key);
+    }
+
+    return data.key;
   };
 
   const handleLogout = async () => {
@@ -206,11 +212,11 @@ export default function useReports() {
     setReports([]);
     localStorage.removeItem('safira_token');
     localStorage.removeItem('safira_user');
-    localStorage.setItem('safira_current_page', 'login');
+    localStorage.setItem('safira_current_page', 'landing');
     localStorage.removeItem('activeReportId');
     localStorage.removeItem('activeReport');
     localStorage.removeItem('activeReportRows');
-    setCurrentPage('login');
+    setCurrentPage('landing');
     setIsPageLoading(false);
   };
 
@@ -756,8 +762,8 @@ export default function useReports() {
     setUser,
     currentPage,
     setCurrentPage,
-    handleLogin,
-    handleSignup,
+    handleKeyLogin,
+    handleKeyGenerate,
     handleLogout,
     handleNavigate,
     reports,

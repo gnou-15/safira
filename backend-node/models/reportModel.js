@@ -60,7 +60,7 @@ export const ReportModel = {
   async getAll(userId) {
     let query = supabase.from('hirac_reports').select('*');
     if (userId) {
-      query = query.or(`user_id.eq.${userId},user_id.is.null`);
+      query = query.eq('user_id', userId);
     } else {
       query = query.is('user_id', null);
     }

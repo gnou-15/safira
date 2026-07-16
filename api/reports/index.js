@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       const { data, error } = await supabase
         .from('hirac_reports')
         .select('*')
-        .or(`user_id.eq.${user.id},user_id.is.null`)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
