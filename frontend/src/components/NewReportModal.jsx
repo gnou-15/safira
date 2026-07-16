@@ -102,11 +102,6 @@ export default function NewReportModal({
         <h3 className="modal-header-title">Generate HIRAC via AI Prompt</h3>
         
         <div className="modal-form-group">
-          {isSuggesting && (
-            <div className="modal-suggesting-status-container">
-              <span className="modal-suggesting-spinner">AI suggesting details...</span>
-            </div>
-          )}
           <label className="modal-label">Report Title</label>
           <input
             type="text"
@@ -150,6 +145,9 @@ export default function NewReportModal({
             onChange={(e) => setIncidentPrompt(e.target.value)}
             required
           />
+          {isSuggesting && (
+            <div className="modal-suggesting-spinner">AI suggesting details...</div>
+          )}
         </div>
         
         <div className="modal-actions">

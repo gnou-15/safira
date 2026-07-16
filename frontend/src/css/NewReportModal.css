@@ -284,31 +284,9 @@
   }
 }
 
-.modal-suggesting-status-container {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  background-color: #f0f9ff !important; /* Soft sky blue background */
-  border: 2px solid #3b1c14 !important; /* Outlined border */
-  border-radius: 12px !important;
-  padding: 8px 16px !important;
-  margin-bottom: 14px !important;
-  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.12) !important;
-  animation: suggesting-status-slide 0.2s ease-out !important;
-}
-
-@keyframes suggesting-status-slide {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .modal-suggesting-spinner {
+  display: block !important;
+  margin-top: 8px !important;
   font-family: 'Outfit', sans-serif !important;
   font-size: 13px !important;
   font-weight: 800 !important;
