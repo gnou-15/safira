@@ -44,6 +44,7 @@ export default function useReports() {
   const [hasChanges, setHasChanges] = useState(false);
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
+  const [isReportLoading, setIsReportLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Preparing safety dashboard...");
   const [lastSaved, setLastSaved] = useState(null);
 
@@ -237,15 +238,14 @@ export default function useReports() {
       await handleSave();
     }
     setLastSaved(null);
-    setLoadingMessage("Retrieving report data...");
-    setIsPageLoading(true);
+    setIsReportLoading(true);
     try {
       const res = await authedFetch(`${API_URL}/api/reports/${id}`);
       if (res.ok) {
         const data = await res.json();
         const { rows: fetchedRows, ...meta } = data;
-        // 1s delay to show transition animation
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // 800ms delay to show transition animation smoothly
+        await new Promise(resolve => setTimeout(resolve, 800));
         setCurrentReport(meta);
         setRows(fetchedRows || []);
         setHasChanges(false);
@@ -256,7 +256,7 @@ export default function useReports() {
     } catch (err) {
       console.error(`Failed to load report ${id}:`, err);
     } finally {
-      setIsPageLoading(false);
+      setIsReportLoading(false);
     }
   };
 
@@ -813,6 +813,7 @@ export default function useReports() {
     handleCreateReport,
     handleSendMessage,
     handlePrint,
-    lastSaved
+    lastSaved,
+    isReportLoading
   };
 }

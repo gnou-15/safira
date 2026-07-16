@@ -11,13 +11,14 @@ const getRiskClass = (index) => {
 export default function DocumentSheet({
   currentReport,
   rows,
+  isReportLoading,
   handleCellEdit,
   handleMetaEdit,
   handleAddRow,
   handleDeleteRow
 }) {
   return (
-    <div className="document-sheet">
+    <div className={`document-sheet ${isReportLoading ? 'skeleton-active' : ''}`}>
       {/* Header Box */}
       <div className="doc-header-layout">
         <div className="logo-placeholder">

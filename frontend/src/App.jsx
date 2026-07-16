@@ -7,6 +7,7 @@ import NewReportModal from './components/NewReportModal';
 import SafetyManualsModal from './components/SafetyManualsModal';
 import BufferLoader from './components/BufferLoader';
 import LoginPage from './components/LoginPage';
+import DocumentSkeleton from './components/DocumentSkeleton';
 import './css/App.css';
 
 function App() {
@@ -65,10 +66,9 @@ function App() {
     handleSendMessage,
     handlePrint,
     handleExitToLanding,
-    loadingMessage
+    loadingMessage,
+    isReportLoading
   } = useReports();
-
-
   return (
     <div className={`app-container ${!currentReport ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
       {/* Top Navbar */}
@@ -98,7 +98,9 @@ function App() {
         
         {/* Center Canvas */}
         <section className="document-workspace">
-          {currentReport ? (
+          {isReportLoading ? (
+            <DocumentSkeleton />
+          ) : currentReport ? (
             <DocumentSheet
               currentReport={currentReport}
               rows={rows}
@@ -116,6 +118,7 @@ function App() {
               loadReport={loadReport}
               handleGetToWork={handleGetToWork}
               handleOpenManualsModal={handleOpenManualsModal}
+              handleKeyLogin={handleKeyLogin}
             />
           )}
         </section>

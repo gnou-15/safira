@@ -8,7 +8,8 @@ export default function LandingPage({
   handleNavigate,
   reports,
   loadReport,
-  handleGetToWork
+  handleGetToWork,
+  handleKeyLogin
 }) {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [lightning, setLightning] = useState(null);
@@ -32,9 +33,18 @@ export default function LandingPage({
     return () => clearInterval(interval);
   }, []);
 
-  const handleAction = () => {
+  const handleAction = async () => {
     if (!user) {
-      handleNavigate('login');
+      const rememberedKey = localStorage.getItem('safira_remembered_key');
+      if (rememberedKey) {
+        try {
+          await handleKeyLogin(rememberedKey);
+        } catch (e) {
+          handleNavigate('login');
+        }
+      } else {
+        handleNavigate('login');
+      }
     } else {
       handleGetToWork();
     }

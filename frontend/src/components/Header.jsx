@@ -22,6 +22,7 @@ export default function Header({
   handleKeyLogin
 }) {
   const [showKeyDropdown, setShowKeyDropdown] = useState(false);
+  const [showReportDropdown, setShowReportDropdown] = useState(false);
   const [copyText, setCopyText] = useState("Copy");
   return (
     <header className="top-nav">
@@ -219,19 +220,47 @@ export default function Header({
               <span className="brand-text">Safira</span>
             </div>
             {reports.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <select
-                  className="report-select-dropdown"
-                  value={currentReport?.id || ''}
-                  onChange={(e) => loadReport(e.target.value)}
-                >
-                  <option value="" disabled>Select a Report...</option>
-                  {reports.map((report) => (
-                    <option key={report.id} value={report.id}>
-                      {report.title}
-                    </option>
-                  ))}
-                </select>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+                <div className="custom-report-selector">
+                  <button 
+                    type="button" 
+                    className={`custom-select-trigger ${showReportDropdown ? 'active' : ''}`}
+                    onClick={() => setShowReportDropdown(!showReportDropdown)}
+                  >
+                    <span className="trigger-text" title={currentReport?.title || 'Select a Report...'}>
+                      {currentReport?.title || 'Select a Report...'}
+                    </span>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="chevron-icon">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+
+                  {showReportDropdown && (
+                    <>
+                      {/* Invisible click backdrop to dismiss dropdown */}
+                      <div className="custom-select-backdrop" onClick={() => setShowReportDropdown(false)}></div>
+                      
+                      <div className="custom-select-menu">
+                        <div className="custom-menu-header">Available HIRAC Worksheets</div>
+                        <div className="custom-menu-options">
+                          {reports.map((report) => (
+                            <div 
+                              key={report.id} 
+                              className={`custom-select-option ${currentReport?.id === report.id ? 'selected' : ''}`}
+                              onClick={() => {
+                                loadReport(report.id);
+                                setShowReportDropdown(false);
+                              }}
+                            >
+                              <span className="option-bullet"></span>
+                              <span className="option-title" title={report.title}>{report.title}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
 
                 {/* Autosave Status Indicator */}
                 <div className="header-save-status">
@@ -253,9 +282,9 @@ export default function Header({
             )}
           </div>
           <div className="nav-actions">
-            <button className="btn-secondary btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
-            <button className="btn-secondary" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
-            <button className="btn-primary" onClick={handlePrint}>EXPORT</button>
+            <button className="btn-nav-action btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
+            <button className="btn-nav-action btn-nav-generate" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
+            <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>EXPORT</button>
 
             {/* Secure Key Widget */}
             {user && (
