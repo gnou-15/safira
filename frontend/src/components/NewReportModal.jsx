@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react';
 import '../css/NewReportModal.css';
 
 export default function NewReportModal({
@@ -10,6 +11,69 @@ export default function NewReportModal({
   handleCreateReport,
   isGenerating
 }) {
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const debounceTimerRef = useRef(null);
+  const lastFetchedTitleRef = useRef('');
+
+  const fetchSuggestions = async (title) => {
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle || trimmedTitle.length < 5 || trimmedTitle === lastFetchedTitleRef.current) return;
+    
+    lastFetchedTitleRef.current = trimmedTitle;
+    setIsSuggesting(true);
+
+    try {
+      const token = localStorage.getItem('safira_token');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/ai/suggest-details`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ title: trimmedTitle })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.department) {
+          setNewReportMeta(prev => ({ ...prev, department: data.department }));
+        }
+        if (data.description) {
+          setIncidentPrompt(data.description);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching title suggestions:', err);
+    } finally {
+      setIsSuggesting(false);
+    }
+  };
+
+  const handleTitleChange = (e) => {
+    const val = e.target.value;
+    setNewReportMeta(prev => ({ ...prev, title: val }));
+
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+
+    debounceTimerRef.current = setTimeout(() => {
+      fetchSuggestions(val);
+    }, 1500);
+  };
+
+  const handleTitleBlur = (e) => {
+    const val = e.target.value;
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    fetchSuggestions(val);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, []);
+
   if (!showModal) return null;
 
   return (
@@ -35,35 +99,41 @@ export default function NewReportModal({
             </div>
           </div>
         )}
-        <h3>Generate HIRAC via AI Prompt</h3>
+        <h3 className="modal-header-title">Generate HIRAC via AI Prompt</h3>
         
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>Report Title</label>
+        <div className="modal-form-group">
+          {isSuggesting && (
+            <div className="modal-suggesting-status-container">
+              <span className="modal-suggesting-spinner">AI suggesting details...</span>
+            </div>
+          )}
+          <label className="modal-label">Report Title</label>
           <input
             type="text"
-            style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '6px' }}
+            className="modal-input-field"
             value={newReportMeta.title}
-            onChange={(e) => setNewReportMeta({ ...newReportMeta, title: e.target.value })}
+            onChange={handleTitleChange}
+            onBlur={handleTitleBlur}
             required
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '15px' }}>
+        <div className="modal-grid-layout">
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>Location</label>
+            <label className="modal-label">Location</label>
             <input
               type="text"
-              style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '6px' }}
+              className="modal-input-field"
               value={newReportMeta.location}
               onChange={(e) => setNewReportMeta({ ...newReportMeta, location: e.target.value })}
               required
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>Department</label>
+            <label className="modal-label">Department</label>
             <input
               type="text"
-              style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '6px' }}
+              className="modal-input-field"
               value={newReportMeta.department || ''}
               onChange={(e) => setNewReportMeta({ ...newReportMeta, department: e.target.value })}
               required
@@ -71,25 +141,27 @@ export default function NewReportModal({
           </div>
         </div>
 
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>Describe the Incident, Activity, or Hazard Scenario</label>
-        <textarea
-          className="modal-prompt-textarea"
-          placeholder="e.g. A severe Typhoon warning in Mactan Cebu affecting baggage handler equipment and strong wind damage inside the passenger terminal..."
-          value={incidentPrompt}
-          onChange={(e) => setIncidentPrompt(e.target.value)}
-          required
-        />
+        <div className="modal-form-group">
+          <label className="modal-label">Describe the Incident, Activity, or Hazard Scenario</label>
+          <textarea
+            className="modal-prompt-textarea"
+            placeholder="e.g. A severe Typhoon warning in Mactan Cebu affecting baggage handler equipment and strong wind damage inside the passenger terminal..."
+            value={incidentPrompt}
+            onChange={(e) => setIncidentPrompt(e.target.value)}
+            required
+          />
+        </div>
         
         <div className="modal-actions">
           <button 
             type="button" 
-            className="btn-secondary" 
+            className="btn-modal-cancel" 
             onClick={() => setShowModal(false)} 
             disabled={isGenerating}
           >
             Cancel
           </button>
-          <button type="submit" className="btn-primary" disabled={isGenerating}>
+          <button type="submit" className="btn-modal-submit" disabled={isGenerating}>
             {isGenerating ? 'Generating...' : 'Generate Report'}
           </button>
         </div>

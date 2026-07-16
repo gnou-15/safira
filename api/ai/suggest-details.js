@@ -17,13 +17,13 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Python AI service URL is not configured.' });
   }
 
-  const { report_title, location, department, activity, existing_hazards } = req.body;
+  const { title } = req.body;
 
   try {
-    const response = await fetch(`${PYTHON_SERVICE_URL}/generate-row`, {
+    const response = await fetch(`${PYTHON_SERVICE_URL}/suggest-details`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ report_title, location, department, activity, existing_hazards })
+      body: JSON.stringify({ title })
     });
 
     if (!response.ok) {
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     const data = await response.json();
     return res.status(200).json(data);
   } catch (error) {
-    console.error('AI generate row proxy error:', error);
+    console.error('AI suggest details proxy error:', error);
     return res.status(500).json({ error: 'AI Service communication error' });
   }
 }

@@ -89,49 +89,38 @@
 /* Screen Interactive Overrides for Header */
 @media screen {
   .app-container:not(.landing-active) .top-nav {
-    background: rgba(255, 255, 255, 0.82) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    border-bottom: 1.5px solid rgba(226, 232, 240, 0.8) !important;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02) !important;
-    padding: 12px 28px !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: 2.5px solid #3b1c14 !important;
+    box-shadow: 0 4px 0px rgba(59, 28, 20, 0.08) !important;
+    padding: 14px 28px !important;
     position: relative !important;
   }
 
-  /* Glowing airport runway centerline running along the bottom of the navbar */
   .app-container:not(.landing-active) .top-nav::after {
-    content: '' !important;
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 2px !important;
-    background-image: linear-gradient(to right, #3a9ad9 50%, transparent 50%) !important;
-    background-size: 16px 100% !important;
-    opacity: 0.28 !important;
-    pointer-events: none !important;
+    display: none !important;
   }
 
   .app-container:not(.landing-active) .report-select-dropdown {
-    background-color: rgba(248, 250, 252, 0.7) !important;
+    background-color: #ffffff !important;
     background-image: none !important;
-    border: 1px solid rgba(203, 213, 225, 0.8) !important;
-    border-radius: 20px !important; /* Rounded pill style */
-    font-family: 'Outfit', 'Inter', sans-serif !important;
+    border: 2px solid #3b1c14 !important;
+    border-radius: 20px !important;
+    font-family: 'Outfit', sans-serif !important;
     font-weight: 700 !important;
-    font-size: 12px !important;
-    color: #1e293b !important;
+    font-size: 12.5px !important;
+    color: #3b1c14 !important;
     padding: 6px 16px !important;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03) !important;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.1) !important;
+    transition: all 0.15s ease !important;
     outline: none !important;
     max-width: 280px !important;
   }
 
   .app-container:not(.landing-active) .report-select-dropdown:hover {
-    border-color: #3a9ad9 !important;
-    background-color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(58, 154, 217, 0.08) !important;
+    background-color: #f8fafc !important;
+    border-color: #3b1c14 !important;
   }
 }
 
@@ -241,28 +230,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  background-color: #0f172a; /* Dark mechanical backing */
-  border: 2px solid #ca8a04; /* Brass/Gold border */
-  color: #fde047; /* Gold icon */
-  border-radius: 50%;
+  width: 38px !important;
+  height: 38px !important;
+  background-color: #ffffff !important;
+  border: 2px solid #3b1c14 !important;
+  color: #3b1c14 !important;
+  border-radius: 50% !important;
   padding: 0 !important;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 10px rgba(202, 138, 4, 0.25);
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.15) !important;
 }
 
 .header-key-btn:hover, .header-key-btn.active {
-  background-color: #1e293b;
-  border-color: #eab308;
-  color: #fef08a;
-  transform: translateY(-1.5px) scale(1.05);
-  box-shadow: 0 6px 14px rgba(234, 179, 8, 0.4);
+  background-color: #f8fafc !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.2) !important;
+}
+
+.header-key-btn:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.15) !important;
 }
 
 .header-key-btn svg {
-  color: #eab308;
+  color: #3b1c14 !important;
 }
 
 /* Dropdown Card */
@@ -271,35 +263,22 @@
   top: calc(100% + 10px);
   right: 0;
   width: 145px;
-  background-color: #0f172a;
-  background-image: 
-    /* Runway Crossing Line 1 */
-    linear-gradient(60deg, transparent 48%, rgba(56, 189, 248, 0.16) 49%, rgba(56, 189, 248, 0.16) 51%, transparent 52%),
-    /* Runway Crossing Line 2 */
-    linear-gradient(120deg, transparent 48%, rgba(56, 189, 248, 0.16) 49%, rgba(56, 189, 248, 0.16) 51%, transparent 52%),
-    /* Concentric Radar sweep lines */
-    radial-gradient(circle at 100% 0%, transparent 35%, rgba(56, 189, 248, 0.08) 36%, rgba(56, 189, 248, 0.08) 37%, transparent 38%, transparent 65%, rgba(56, 189, 248, 0.08) 66%, rgba(56, 189, 248, 0.08) 67%, transparent 68%),
-    /* Linear Navy/Indigo background gradient */
-    linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  border-radius: 14px;
-  box-shadow: 
-    0 8px 32px rgba(15, 23, 42, 0.4), 
-    0 0 15px rgba(58, 154, 217, 0.15);
-  padding: 10px;
+  background-color: #ffffff !important;
+  border: 2.5px solid #3b1c14 !important;
+  border-radius: 14px !important;
+  box-shadow: 5px 5px 0px rgba(59, 28, 20, 0.15) !important;
+  padding: 10px !important;
   display: flex;
   flex-direction: column;
   gap: 6px;
   z-index: 1000;
-  animation: keyDropdownFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: keyDropdownFadeIn 0.2s ease-out both;
 }
 
 @keyframes keyDropdownFadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.93);
+    transform: translateY(6px) scale(0.97);
   }
   to {
     opacity: 1;
@@ -308,15 +287,15 @@
 }
 
 .dropdown-key-title {
-  font-size: 9px;
-  font-weight: 800;
-  color: #38bdf8;
-  text-shadow: 0 0 6px rgba(56, 189, 248, 0.2);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: #3b1c14 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.6px !important;
+  font-family: 'Outfit', sans-serif !important;
   text-align: center;
   margin-top: 2px;
+  text-shadow: none !important;
 }
 
 .dropdown-key-box {
@@ -324,123 +303,76 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px dashed rgba(56, 189, 248, 0.4);
-  border-radius: 8px;
+  background: #f8fafc !important;
+  border: 2px solid #3b1c14 !important;
+  border-radius: 8px !important;
   padding: 4px 6px;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s ease;
   user-select: none;
   overflow: visible;
 }
 
-/* Ticket Side Notches */
-.dropdown-key-box::before,
-.dropdown-key-box::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 5px;
-  height: 8px;
-  background-color: #131b2e; /* Blends with the parent navy gradient */
-  border: 1.2px solid rgba(56, 189, 248, 0.4);
-  border-top: none;
-  border-bottom: none;
-  z-index: 2;
-  transition: all 0.25s ease;
-}
-
-.dropdown-key-box::before {
-  left: -1px;
-  transform: translateY(-50%);
-  border-radius: 0 4px 4px 0;
-  border-left: none;
-}
-
-.dropdown-key-box::after {
-  right: -1px;
-  transform: translateY(-50%);
-  border-radius: 4px 0 0 4px;
-  border-right: none;
-}
-
 .dropdown-key-box:hover {
-  background: rgba(30, 41, 59, 0.65);
-  border-color: #38bdf8;
+  background: #ffffff !important;
   transform: translateY(-0.5px);
-  box-shadow: 0 4px 10px rgba(56, 189, 248, 0.08);
 }
 
 .dropdown-key-box.success {
-  background-color: #052e16;
-  border-style: solid;
-  border-color: #22c55e;
-  box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
-}
-
-.dropdown-key-box.success::before,
-.dropdown-key-box.success::after {
-  border-color: #22c55e;
-  background-color: #052e16;
+  background-color: #dcfce7 !important;
+  border-color: #3b1c14 !important;
 }
 
 .dropdown-key-box.success .dropdown-key-val {
-  color: #4ade80;
-  text-shadow: 0 0 6px rgba(74, 222, 128, 0.3);
-  letter-spacing: 0.2px;
+  color: #15803d !important;
 }
 
 .dropdown-key-box.success .dropdown-copy-btn {
-  color: #4ade80;
+  color: #15803d !important;
 }
 
 .dropdown-key-val {
   font-size: 12.5px;
   font-weight: 800;
-  color: #f8fafc;
-  text-shadow: 0 0 6px rgba(56, 189, 248, 0.2);
+  color: #3b1c14 !important;
   letter-spacing: 0.5px;
   font-family: 'Outfit', monospace;
   margin-left: 2px;
+  text-shadow: none !important;
 }
 
 .dropdown-copy-btn {
   background: transparent;
   border: none;
   font-size: 11px;
-  color: #38bdf8;
+  color: #3b1c14 !important;
   cursor: pointer;
   padding: 2px;
   border-radius: 4px;
   transition: all 0.15s ease;
 }
 
-.dropdown-copy-btn:hover {
-  background-color: rgba(56, 189, 248, 0.15);
-  color: #ffffff;
-}
-
 .dropdown-logout-btn {
-  background: rgba(239, 68, 68, 0.05);
-  border: 1px solid rgba(239, 68, 68, 0.5);
-  color: #fca5a5;
-  border-radius: 20px;
-  padding: 3px 12px;
-  font-size: 10px;
-  font-weight: 700;
+  background: #ffffff !important;
+  border: 2px solid #3b1c14 !important;
+  color: #ef4444 !important;
+  border-radius: 20px !important;
+  padding: 4px 12px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  font-family: 'Outfit', sans-serif !important;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  width: fit-content;
-  margin: 2px auto 2px auto;
-  display: block;
+  transition: all 0.15s ease !important;
+  width: 100% !important;
+  text-align: center;
+  box-shadow: 2px 2px 0px rgba(59, 28, 20, 0.1) !important;
 }
 
 .dropdown-logout-btn:hover {
-  background-color: rgba(239, 68, 68, 0.2);
-  border-color: #ef4444;
-  color: #ffffff;
-  transform: translateY(-0.5px);
-  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+  background-color: #fca5a5 !important;
+  color: #ffffff !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.15) !important;
 }
 
 /* --- Prompt Bubble Tooltip --- */
@@ -507,53 +439,66 @@
   letter-spacing: 0.6px !important;
   border-radius: 20px !important;
   padding: 6px 16px !important;
-  border: none !important;
+  border: 2px solid #3b1c14 !important;
   cursor: pointer !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.15s ease !important;
   display: flex !important;
   align-items: center !important;
   gap: 5px !important;
 }
 
-/* 📚 Safety Manuals - Glassy Slate Blue */
+/* 📚 Safety Manuals - Flat Slate */
 .btn-nav-manuals {
-  background: rgba(15, 23, 42, 0.05) !important;
-  border: 1px solid rgba(15, 23, 42, 0.15) !important;
-  color: #475569 !important;
-  box-shadow: none !important;
+  background: #ffffff !important;
+  color: #3b1c14 !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.1) !important;
 }
 
 .btn-nav-manuals:hover {
-  background: rgba(15, 23, 42, 0.09) !important;
-  border-color: rgba(15, 23, 42, 0.25) !important;
-  color: #0f172a !important;
-  transform: translateY(-1px);
+  background: #f8fafc !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.15) !important;
 }
 
-/* ⚡ Generate New HIRAC - Glowing Electric Purple-Blue */
+.btn-nav-manuals:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.1) !important;
+}
+
+/* ⚡ Generate New HIRAC - Flat Cyan Blue */
 .btn-nav-generate {
-  background: linear-gradient(135deg, #4f46e5 0%, #3a9ad9 100%) !important;
+  background: #3a9ad9 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2) !important;
 }
 
 .btn-nav-generate:hover {
-  background: linear-gradient(135deg, #4338ca 0%, #2b85bf 100%) !important;
-  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35), 0 0 10px rgba(58, 154, 217, 0.2) !important;
-  transform: translateY(-1px);
+  background: #2b85bf !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.25) !important;
 }
 
-/* 📤 EXPORT - Glowing Mint Emerald */
+.btn-nav-generate:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.2) !important;
+}
+
+/* 📤 EXPORT - Flat Emerald */
 .btn-nav-export {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  background: #10b981 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2) !important;
 }
 
 .btn-nav-export:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35) !important;
-  transform: translateY(-1px);
+  background: #059669 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.25) !important;
+}
+
+.btn-nav-export:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.2) !important;
 }
 
 /* Custom React Select dropdown */
@@ -568,27 +513,33 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  background-color: rgba(248, 250, 252, 0.7);
-  border: 1px solid rgba(203, 213, 225, 0.8);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-family: 'Outfit', 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 12.5px;
-  color: #0f172a;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  outline: none;
-  max-width: 280px;
-  user-select: none;
+  background-color: #ffffff !important;
+  border: 2px solid #3b1c14 !important;
+  border-radius: 20px !important;
+  padding: 6px 14px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  color: #3b1c14 !important;
+  cursor: pointer !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.1) !important;
+  transition: all 0.15s ease !important;
+  outline: none !important;
+  max-width: 280px !important;
+  user-select: none !important;
 }
 
 .custom-select-trigger:hover,
 .custom-select-trigger.active {
-  background-color: #ffffff;
-  border-color: #3a9ad9;
-  box-shadow: 0 4px 12px rgba(58, 154, 217, 0.08);
+  background-color: #f8fafc !important;
+  border-color: #3b1c14 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.15) !important;
+}
+
+.custom-select-trigger:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.1) !important;
 }
 
 .custom-select-trigger .trigger-text {
@@ -600,13 +551,13 @@
 
 .custom-select-trigger .chevron-icon {
   flex-shrink: 0;
-  color: #64748b;
+  color: #3b1c14 !important;
   transition: transform 0.25s ease;
 }
 
 .custom-select-trigger.active .chevron-icon {
   transform: rotate(180deg);
-  color: #3a9ad9;
+  color: #3b1c14 !important;
 }
 
 /* Click Backdrop to dismiss */
@@ -626,18 +577,16 @@
   top: calc(100% + 8px);
   left: 0;
   width: 280px;
-  background-color: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 12px;
-  box-shadow: 
-    0 10px 25px -5px rgba(15, 23, 42, 0.08), 
-    0 8px 10px -6px rgba(15, 23, 42, 0.08);
-  padding: 8px 0;
-  z-index: 100;
+  background-color: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 2.5px solid #3b1c14 !important;
+  border-radius: 12px !important;
+  box-shadow: 5px 5px 0px rgba(59, 28, 20, 0.15) !important;
+  padding: 8px 0 !important;
+  z-index: 100 !important;
   transform-origin: top left;
-  animation: selectMenuFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: selectMenuFadeIn 0.2s ease-out both;
 }
 
 @keyframes selectMenuFadeIn {

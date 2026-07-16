@@ -84,5 +84,21 @@ export const AiController = {
       const detail = error.response?.data?.detail || 'AI Service communication error';
       res.status(status).json({ error: detail });
     }
+  },
+
+  // POST /api/ai/suggest-details
+  async suggestDetails(req, res) {
+    const { title } = req.body;
+    try {
+      const response = await axios.post(`${PYTHON_SERVICE_URL}/suggest-details`, {
+        title
+      });
+      res.json(response.data);
+    } catch (error) {
+      console.error('Error in AI suggest details proxy:', error.message);
+      const status = error.response?.status || 500;
+      const detail = error.response?.data?.detail || 'AI Service communication error';
+      res.status(status).json({ error: detail });
+    }
   }
 };

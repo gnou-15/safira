@@ -5,57 +5,183 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(15, 23, 42, 0.45);
+  background-color: rgba(15, 23, 42, 0.7) !important;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 150;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+/* Prompt Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 150;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  animation: modalFadeIn 0.25s ease-out;
 }
 
 .modal-content {
-  background-color: var(--bg-card);
-  border-radius: 20px;
-  width: 90%;
-  max-width: 600px;
-  padding: 32px;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-color);
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border-radius: 20px !important;
+  width: 90% !important;
+  max-width: 600px !important;
+  padding: 32px !important;
+  border: 2.5px solid #3b1c14 !important; /* Thick dark-brown outline matching runway/ground */
+  box-shadow: 6px 6px 0px rgba(59, 28, 20, 0.15) !important; /* Flat-tactile drop shadow */
+  color: #3b1c14 !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  position: relative;
+  overflow: hidden;
 }
 
-.modal-content h3 {
-  margin-top: 0;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 20px;
+.modal-header-title {
+  margin-top: 0 !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 900 !important;
+  color: #3b1c14 !important;
+  margin-bottom: 24px !important;
+  text-align: center !important;
+  letter-spacing: -0.5px !important;
+}
+
+.modal-form-group {
+  margin-bottom: 18px !important;
+}
+
+.modal-grid-layout {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 16px !important;
+  margin-bottom: 18px !important;
+}
+
+.modal-label {
+  display: block !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #3b1c14 !important;
+  margin-bottom: 6px !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+.modal-input-field {
+  width: 100% !important;
+  padding: 10px 14px !important;
+  background-color: #ffffff !important;
+  border: 2px solid #3b1c14 !important; /* Thick dark outline */
+  border-radius: 12px !important;
+  color: #3b1c14 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s ease !important;
+}
+
+.modal-input-field:focus {
+  outline: none !important;
+  border-color: #3a9ad9 !important; /* Focus colors it Safira Blue */
+  box-shadow: 4px 4px 0px rgba(58, 154, 217, 0.15) !important; /* Flat-tactile focus shadow */
 }
 
 .modal-prompt-textarea {
-  width: 100%;
-  height: 120px;
-  border: 1px solid var(--border-dark);
-  border-radius: 12px;
-  padding: 12px;
-  font-family: inherit;
-  font-size: 14px;
-  margin-bottom: 20px;
-  resize: none;
-  box-sizing: border-box;
-  color: var(--text-primary);
-  background-color: var(--bg-card);
+  width: 100% !important;
+  height: 110px !important;
+  background-color: #ffffff !important;
+  border: 2px solid #3b1c14 !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #3b1c14 !important;
+  margin-bottom: 24px !important;
+  resize: none !important;
+  box-sizing: border-box !important;
+  transition: all 0.15s ease !important;
 }
 
 .modal-prompt-textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px var(--primary-bg-light);
+  outline: none !important;
+  border-color: #3a9ad9 !important;
+  box-shadow: 4px 4px 0px rgba(58, 154, 217, 0.15) !important;
+}
+
+.modal-prompt-textarea::placeholder {
+  color: #a3a3a3 !important;
+  opacity: 1 !important;
 }
 
 .modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+.btn-modal-cancel {
+  background: #ffffff !important;
+  border: 2px solid #3b1c14 !important;
+  color: #3b1c14 !important;
+  padding: 8px 24px !important;
+  border-radius: 20px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.1) !important;
+}
+
+.btn-modal-cancel:hover {
+  background: #f8fafc !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.15) !important;
+}
+
+.btn-modal-cancel:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.1) !important;
+}
+
+.btn-modal-submit {
+  background: #3a9ad9 !important; /* Safira primary blue */
+  border: 2px solid #3b1c14 !important;
+  color: #ffffff !important;
+  padding: 8px 28px !important;
+  border-radius: 20px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2) !important;
+}
+
+.btn-modal-submit:hover {
+  background: #2b85bf !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.25) !important;
+}
+
+.btn-modal-submit:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.2) !important;
 }
 
 /* Modal Generating Overlay and Spinner */
@@ -156,4 +282,44 @@
   .modal-overlay {
     display: none !important;
   }
+}
+
+.modal-suggesting-status-container {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background-color: #f0f9ff !important; /* Soft sky blue background */
+  border: 2px solid #3b1c14 !important; /* Outlined border */
+  border-radius: 12px !important;
+  padding: 8px 16px !important;
+  margin-bottom: 14px !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.12) !important;
+  animation: suggesting-status-slide 0.2s ease-out !important;
+}
+
+@keyframes suggesting-status-slide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-suggesting-spinner {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: #3a9ad9 !important; /* Safira primary Blue */
+  animation: suggesting-pulse 1.2s infinite ease-in-out !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+@keyframes suggesting-pulse {
+  0% { opacity: 0.75; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 0.75; transform: scale(0.98); }
 }
