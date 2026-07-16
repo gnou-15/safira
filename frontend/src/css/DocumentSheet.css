@@ -363,26 +363,37 @@
   box-shadow: var(--shadow-sm);
 }
 
-.sig-box {
-  padding: 16px;
+.sig-column {
   border-right: 1px solid var(--border-color);
-  min-height: 110px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background-color: var(--bg-card);
+  min-height: 220px;
 }
 
-.sig-box:last-child {
+.sig-column:last-child {
   border-right: none;
 }
 
-.sig-box-title {
+.sig-column-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.sig-block-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sig-block-title {
   font-weight: 700;
   color: var(--text-secondary);
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  font-size: 10.5px;
+  font-size: 11px;
   letter-spacing: 0.5px;
 }
 
@@ -412,11 +423,14 @@
   background: transparent;
 }
 
-.sig-remarks-box {
-  grid-column: span 2;
+.sig-bottom-bar {
   border-top: 1px solid var(--border-color);
-  padding: 16px;
-  background-color: var(--bg-app);
+  text-align: center;
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--bg-card);
 }
 
 /* Interactive Screen Overrides for Document Sheet */
@@ -676,12 +690,15 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
   }
 
-  .app-container:not(.landing-active) .sig-box {
+  .app-container:not(.landing-active) .sig-column {
     border-right: 1px solid #e2e8f0 !important;
-    padding: 16px !important;
   }
 
-  .app-container:not(.landing-active) .sig-box-title {
+  .app-container:not(.landing-active) .sig-column:last-child {
+    border-right: none !important;
+  }
+
+  .app-container:not(.landing-active) .sig-block-title {
     color: #475569 !important;
     font-weight: 700 !important;
     font-size: 11px !important;
@@ -705,15 +722,23 @@
     color: #64748b !important;
   }
 
-  .app-container:not(.landing-active) .sig-remarks-box {
-    background-color: #f8fafc !important;
+  .app-container:not(.landing-active) .sig-bottom-bar {
     border-top: 1px solid #e2e8f0 !important;
-    padding: 16px !important;
+    color: #475569 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    background-color: #ffffff !important;
   }
 }
 
 /* Print Overrides for Document Sheet */
 @media print {
+  .screen-only,
+  .risk-cell-content.screen-only,
+  .row-actions-td {
+    display: none !important;
+  }
+
   .document-workspace {
     padding: 5mm 0 !important;
     background: #ffffff !important;
@@ -957,36 +982,53 @@
     grid-template-columns: 1fr 1fr !important;
   }
 
-  .sig-box {
-    border: none !important;
-    background: #ffffff !important;
-    padding: 16px !important;
-    min-height: 110px !important;
+  .sig-column {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
+    background: #ffffff !important;
+    min-height: 250px !important;
   }
 
-  .sig-box:nth-child(1),
-  .sig-box:nth-child(3) {
-    border-right: 1px solid #000000 !important;
+  .sig-column:nth-child(1) {
+    border-right: 1.2px solid #000000 !important;
   }
 
-  .sig-box:nth-child(1),
-  .sig-box:nth-child(2) {
-    border-bottom: 1px solid #000000 !important;
+  .sig-column-content {
+    padding: 12px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    flex-grow: 1 !important;
   }
 
-  .sig-box-title {
+  .sig-block-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+
+  .sig-block-title {
     color: #000000 !important;
     font-weight: bold !important;
+    font-size: 11px !important;
+    text-transform: none !important;
   }
 
-  .sig-remarks-box {
-    grid-column: span 2 !important;
-    padding: 16px !important;
+  .sig-bottom-bar {
+    border-top: 1.2px solid #000000 !important;
+    text-align: center !important;
+    padding: 5px !important;
+    font-size: 11px !important;
+    font-weight: normal !important;
+    color: #000000 !important;
     background: #ffffff !important;
-    border: none !important;
-    border-top: 1px solid #000000 !important;
+  }
+
+  .remarks-print-text {
+    font-size: 10px !important;
+    color: #000000 !important;
+    text-align: left !important;
+    white-space: pre-wrap !important;
   }
 }

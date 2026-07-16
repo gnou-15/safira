@@ -2,6 +2,12 @@ import AutoResizeTextarea from './AutoResizeTextarea';
 import { getRiskCode } from '../utils/riskCalculations';
 import '../css/DocumentSheet.css';
 
+const getRiskClass = (index) => {
+  if (!index) return 'low';
+  const val = index.toLowerCase();
+  return val === 'medium' ? 'moderate' : val;
+};
+
 export default function DocumentSheet({
   currentReport,
   rows,
@@ -174,7 +180,7 @@ export default function DocumentSheet({
                 </td>
 
                 {/* Interactive Safety Risk Index (Single cell with internal score controls) */}
-                <td className={`risk-index-cell risk-${(row.initial_risk_index || 'Low').toLowerCase()}`}>
+                <td className={`risk-index-cell risk-${getRiskClass(row.initial_risk_index)}`}>
                   {/* Screen: full interactive widget */}
                   <div className="risk-cell-content screen-only">
                     <div className="risk-level-label">
@@ -213,11 +219,11 @@ export default function DocumentSheet({
                     </div>
                   </div>
                   {/* Print: solid-colored badge — divs always print backgrounds */}
-                  <div className={`print-only risk-print-badge risk-print-${(row.initial_risk_index || 'low').toLowerCase()}`}>
-                    {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
-                    <span style={{ display: 'block', fontSize: '9px', marginTop: '2px' }}>
-                      ({getRiskCode(row.initial_likelihood, row.initial_severity)})
-                    </span>
+                  <div className={`print-only risk-print-badge risk-print-${getRiskClass(row.initial_risk_index)}`}>
+                    <div>{getRiskCode(row.initial_likelihood, row.initial_severity)}</div>
+                    <div style={{ fontSize: '9px', marginTop: '2px' }}>
+                      {row.initial_risk_index ? row.initial_risk_index.toUpperCase() : 'LOW'}
+                    </div>
                   </div>
                 </td>
 
@@ -231,7 +237,7 @@ export default function DocumentSheet({
                 </td>
 
                 {/* Interactive Residual Risk Index */}
-                <td className={`risk-index-cell risk-${(row.residual_risk_index || 'Low').toLowerCase()}`}>
+                <td className={`risk-index-cell risk-${getRiskClass(row.residual_risk_index)}`}>
                   {/* Screen: full interactive widget */}
                   <div className="risk-cell-content screen-only">
                     <div className="risk-level-label">
@@ -270,11 +276,11 @@ export default function DocumentSheet({
                     </div>
                   </div>
                   {/* Print: solid-colored badge — divs always print backgrounds */}
-                  <div className={`print-only risk-print-badge risk-print-${(row.residual_risk_index || 'low').toLowerCase()}`}>
-                    {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
-                    <span style={{ display: 'block', fontSize: '9px', marginTop: '2px' }}>
-                      ({getRiskCode(row.residual_likelihood, row.residual_severity)})
-                    </span>
+                  <div className={`print-only risk-print-badge risk-print-${getRiskClass(row.residual_risk_index)}`}>
+                    <div>{getRiskCode(row.residual_likelihood, row.residual_severity)}</div>
+                    <div style={{ fontSize: '9px', marginTop: '2px' }}>
+                      {row.residual_risk_index ? row.residual_risk_index.toUpperCase() : 'LOW'}
+                    </div>
                   </div>
                 </td>
 
@@ -325,79 +331,99 @@ export default function DocumentSheet({
 
       {/* Document Signatures */}
       <div className="doc-footer-signatures">
-        <div className="sig-box">
-          <div className="sig-box-title">Prepared by:</div>
-          <div>
-            <input
-              type="text"
-              className="sig-name-input screen-only"
-              placeholder="Name & Signature"
-              value={currentReport.prepared_by_name || ''}
-              onChange={(e) => handleMetaEdit('prepared_by_name', e.target.value)}
-            />
-            <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.prepared_by_name || ''}</div>
-            <input
-              type="text"
-              className="sig-role-input screen-only"
-              placeholder="Role (e.g. S.H.E Specialist)"
-              value={currentReport.prepared_by_role || ''}
-              onChange={(e) => handleMetaEdit('prepared_by_role', e.target.value)}
-            />
-            <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.prepared_by_role || ''}</div>
+        {/* Left Column */}
+        <div className="sig-column">
+          <div className="sig-column-content">
+            <div className="sig-block-group">
+              <div className="sig-block-title">Prepared by:</div>
+              <div className="sig-block-body">
+                <input
+                  type="text"
+                  className="sig-name-input screen-only"
+                  placeholder="Name & Signature"
+                  value={currentReport.prepared_by_name || ''}
+                  onChange={(e) => handleMetaEdit('prepared_by_name', e.target.value)}
+                />
+                <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.prepared_by_name || ''}</div>
+                <input
+                  type="text"
+                  className="sig-role-input screen-only"
+                  placeholder="Role (e.g. S.H.E Specialist)"
+                  value={currentReport.prepared_by_role || ''}
+                  onChange={(e) => handleMetaEdit('prepared_by_role', e.target.value)}
+                />
+                <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.prepared_by_role || ''}</div>
+              </div>
+            </div>
+
+            <div className="sig-block-group" style={{ marginTop: '20px' }}>
+              <div className="sig-block-title">Approved by:</div>
+              <div className="sig-block-body">
+                <input
+                  type="text"
+                  className="sig-name-input screen-only"
+                  placeholder="Name & Signature"
+                  value={currentReport.approved_by_name || ''}
+                  onChange={(e) => handleMetaEdit('approved_by_name', e.target.value)}
+                />
+                <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.approved_by_name || ''}</div>
+                <input
+                  type="text"
+                  className="sig-role-input screen-only"
+                  placeholder="Role (e.g. VP Safety)"
+                  value={currentReport.approved_by_role || ''}
+                  onChange={(e) => handleMetaEdit('approved_by_role', e.target.value)}
+                />
+                <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.approved_by_role || ''}</div>
+              </div>
+            </div>
+          </div>
+          <div className="sig-bottom-bar">
+            Name and Signature
           </div>
         </div>
-        <div className="sig-box">
-          <div className="sig-box-title">Approved by:</div>
-          <div>
-            <input
-              type="text"
-              className="sig-name-input screen-only"
-              placeholder="Name & Signature"
-              value={currentReport.approved_by_name || ''}
-              onChange={(e) => handleMetaEdit('approved_by_name', e.target.value)}
-            />
-            <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.approved_by_name || ''}</div>
-            <input
-              type="text"
-              className="sig-role-input screen-only"
-              placeholder="Role (e.g. VP Safety)"
-              value={currentReport.approved_by_role || ''}
-              onChange={(e) => handleMetaEdit('approved_by_role', e.target.value)}
-            />
-            <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.approved_by_role || ''}</div>
+
+        {/* Right Column */}
+        <div className="sig-column">
+          <div className="sig-column-content">
+            <div className="sig-block-group">
+              <div className="sig-block-title">Acknowledged by:</div>
+              <div className="sig-block-body">
+                <input
+                  type="text"
+                  className="sig-name-input screen-only"
+                  placeholder="Name & Signature"
+                  value={currentReport.acknowledged_by_name || ''}
+                  onChange={(e) => handleMetaEdit('acknowledged_by_name', e.target.value)}
+                />
+                <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.acknowledged_by_name || ''}</div>
+                <input
+                  type="text"
+                  className="sig-role-input screen-only"
+                  placeholder="Role (e.g. GSE Manager)"
+                  value={currentReport.acknowledged_by_role || ''}
+                  onChange={(e) => handleMetaEdit('acknowledged_by_role', e.target.value)}
+                />
+                <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.acknowledged_by_role || ''}</div>
+              </div>
+            </div>
+
+            <div className="sig-block-group" style={{ marginTop: '20px' }}>
+              <div className="sig-block-title" style={{ fontStyle: 'italic', textTransform: 'none' }}>Remarks:</div>
+              <div className="sig-block-body">
+                <AutoResizeTextarea
+                  className="cell-editable screen-only"
+                  placeholder="General report remarks or comments..."
+                  value={currentReport.footer_remarks || ''}
+                  onChange={(e) => handleMetaEdit('footer_remarks', e.target.value)}
+                />
+                <div className="print-only cell-print-text remarks-print-text" style={{ textAlign: 'left' }}>{currentReport.footer_remarks || ''}</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="sig-box">
-          <div className="sig-box-title">Acknowledged by:</div>
-          <div>
-            <input
-              type="text"
-              className="sig-name-input screen-only"
-              placeholder="Name & Signature"
-              value={currentReport.acknowledged_by_name || ''}
-              onChange={(e) => handleMetaEdit('acknowledged_by_name', e.target.value)}
-            />
-            <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.acknowledged_by_name || ''}</div>
-            <input
-              type="text"
-              className="sig-role-input screen-only"
-              placeholder="Role (e.g. GSE Manager)"
-              value={currentReport.acknowledged_by_role || ''}
-              onChange={(e) => handleMetaEdit('acknowledged_by_role', e.target.value)}
-            />
-            <div className="print-only cell-print-text" style={{ color: '#444', fontSize: '9px' }}>{currentReport.acknowledged_by_role || ''}</div>
+          <div className="sig-bottom-bar">
+            Name and Signature
           </div>
-        </div>
-        <div className="sig-remarks-box">
-          <strong>Remarks / Notes:</strong>
-          <AutoResizeTextarea
-            className="cell-editable screen-only"
-            placeholder="General report remarks or comments..."
-            style={{ marginTop: '10px' }}
-            value={currentReport.footer_remarks || ''}
-            onChange={(e) => handleMetaEdit('footer_remarks', e.target.value)}
-          />
-          <div className="print-only cell-print-text" style={{ marginTop: '6px' }}>{currentReport.footer_remarks || ''}</div>
         </div>
       </div>
     </div>
