@@ -14,7 +14,10 @@ export default function Header({
   handleOpenManualsModal,
   setShowModal,
   handlePrint,
-  fetchReports
+  fetchReports,
+  isSaving,
+  hasChanges,
+  lastSaved
 }) {
   return (
     <header className="top-nav">
@@ -144,18 +147,37 @@ export default function Header({
             <span className="brand-text">Safira</span>
           </div>
           {reports.length > 0 && (
-            <select
-              className="report-select-dropdown"
-              value={currentReport?.id || ''}
-              onChange={(e) => loadReport(e.target.value)}
-            >
-              <option value="" disabled>Select a Report...</option>
-              {reports.map((report) => (
-                <option key={report.id} value={report.id}>
-                  {report.title}
-                </option>
-              ))}
-            </select>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <select
+                className="report-select-dropdown"
+                value={currentReport?.id || ''}
+                onChange={(e) => loadReport(e.target.value)}
+              >
+                <option value="" disabled>Select a Report...</option>
+                {reports.map((report) => (
+                  <option key={report.id} value={report.id}>
+                    {report.title}
+                  </option>
+                ))}
+              </select>
+
+              {/* Autosave Status Indicator */}
+              <div className="header-save-status">
+                {isSaving ? (
+                  <span className="status-saving">
+                    <span className="status-dot pulse-blue"></span> Saving...
+                  </span>
+                ) : hasChanges ? (
+                  <span className="status-pending">
+                    <span className="status-dot pulse-amber"></span> Saving soon...
+                  </span>
+                ) : (
+                  <span className="status-saved">
+                    <span className="status-dot green"></span> Saved{lastSaved ? ` at ${lastSaved}` : ''}
+                  </span>
+                )}
+              </div>
+            </div>
           )}
           <div className="nav-actions">
             {user && (

@@ -32,8 +32,8 @@ export default function DocumentSheet({
       <table className="meta-table">
         <tbody>
           <tr>
-            <td className="meta-label" style={{ width: '15%' }}>REPORT TITLE:</td>
-            <td className="meta-value" colSpan={3} style={{ width: '65%' }}>
+            <td className="meta-label" style={{ width: '18%' }}>REPORT TITLE:</td>
+            <td className="meta-value" colSpan={3} style={{ width: '62%' }}>
               <input
                 type="text"
                 className="screen-only"
@@ -43,7 +43,7 @@ export default function DocumentSheet({
               <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.title || ''}</div>
             </td>
             <td className="meta-value-sidebar" rowSpan={2} style={{ width: '20%' }}>
-              <div className="sidebar-label">HIRAC Ref. No.:</div>
+              <div className="sidebar-label">HIRAC REF. NO.:</div>
               <input
                 type="text"
                 className="sidebar-input screen-only"
@@ -55,7 +55,7 @@ export default function DocumentSheet({
             </td>
           </tr>
           <tr>
-            <td className="meta-label">Department:</td>
+            <td className="meta-label">DEPARTMENT:</td>
             <td className="meta-value">
               <input
                 type="text"
@@ -65,7 +65,7 @@ export default function DocumentSheet({
               />
               <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.department || ''}</div>
             </td>
-            <td className="meta-label" style={{ width: '15%' }}>Location:</td>
+            <td className="meta-label" style={{ width: '15%' }}>LOCATION:</td>
             <td className="meta-value" style={{ width: '25%' }}>
               <input
                 type="text"
@@ -77,7 +77,7 @@ export default function DocumentSheet({
             </td>
           </tr>
           <tr>
-            <td className="meta-label">Activity/Area being assessed:</td>
+            <td className="meta-label">ACTIVITY/AREA ASSESSED:</td>
             <td className="meta-value" colSpan={3}>
               <input
                 type="text"
@@ -88,7 +88,7 @@ export default function DocumentSheet({
               <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.activity_assessed || ''}</div>
             </td>
             <td className="meta-value-sidebar" rowSpan={2}>
-              <div className="sidebar-label">Assessor(s)/Team:</div>
+              <div className="sidebar-label">ASSESSOR(S)/TEAM:</div>
               <AutoResizeTextarea
                 className="sidebar-textarea screen-only"
                 value={currentReport.assessor_team || ''}
@@ -98,7 +98,7 @@ export default function DocumentSheet({
             </td>
           </tr>
           <tr>
-            <td className="meta-label">Date Created:</td>
+            <td className="meta-label">DATE CREATED:</td>
             <td className="meta-value">
               <input
                 type="text"
@@ -108,7 +108,7 @@ export default function DocumentSheet({
               />
               <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.date_created || ''}</div>
             </td>
-            <td className="meta-label">Date Reviewed:</td>
+            <td className="meta-label">DATE REVIEWED:</td>
             <td className="meta-value">
               <input
                 type="text"
@@ -188,33 +188,41 @@ export default function DocumentSheet({
                       <span className="risk-score-number"><br />({getRiskCode(row.initial_likelihood, row.initial_severity)})</span>
                     </div>
                     <div className="risk-score-selectors">
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
-                          Probability:
-                          <select
-                            className="cell-select-compact"
-                            value={row.initial_likelihood || 3}
-                            onChange={(e) => handleCellEdit(idx, 'initial_likelihood', parseInt(e.target.value))}
-                          >
-                            {[
-                              { label: 'A', val: 5 },
-                              { label: 'B', val: 4 },
-                              { label: 'C', val: 3 },
-                              { label: 'D', val: 2 },
-                              { label: 'E', val: 1 }
-                            ].map(opt => <option key={opt.val} value={opt.val}>{opt.label}</option>)}
-                          </select>
-                        </label>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
-                          Severity:
-                          <select
-                            className="cell-select-compact"
-                            value={row.initial_severity || 3}
-                            onChange={(e) => handleCellEdit(idx, 'initial_severity', parseInt(e.target.value))}
-                          >
-                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                          </select>
-                        </label>
+                      <div className="risk-selector-group">
+                        <span className="risk-selector-label">PROBABILITY</span>
+                        <div className="risk-selector-circles">
+                          {[
+                            { label: 'A', val: 5 },
+                            { label: 'B', val: 4 },
+                            { label: 'C', val: 3 },
+                            { label: 'D', val: 2 },
+                            { label: 'E', val: 1 }
+                          ].map(opt => (
+                            <button
+                              key={opt.val}
+                              type="button"
+                              className={`risk-circle-btn ${(row.initial_likelihood || 3) === opt.val ? 'active' : ''}`}
+                              onClick={() => handleCellEdit(idx, 'initial_likelihood', opt.val)}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="risk-selector-group">
+                        <span className="risk-selector-label">SEVERITY</span>
+                        <div className="risk-selector-circles">
+                          {[1, 2, 3, 4, 5].map(v => (
+                            <button
+                              key={v}
+                              type="button"
+                              className={`risk-circle-btn ${(row.initial_severity || 3) === v ? 'active' : ''}`}
+                              onClick={() => handleCellEdit(idx, 'initial_severity', v)}
+                            >
+                              {v}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -245,33 +253,41 @@ export default function DocumentSheet({
                       <span className="risk-score-number"><br />({getRiskCode(row.residual_likelihood, row.residual_severity)})</span>
                     </div>
                     <div className="risk-score-selectors">
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
-                          Probability:
-                          <select
-                            className="cell-select-compact"
-                            value={row.residual_likelihood || 2}
-                            onChange={(e) => handleCellEdit(idx, 'residual_likelihood', parseInt(e.target.value))}
-                          >
-                            {[
-                              { label: 'A', val: 5 },
-                              { label: 'B', val: 4 },
-                              { label: 'C', val: 3 },
-                              { label: 'D', val: 2 },
-                              { label: 'E', val: 1 }
-                            ].map(opt => <option key={opt.val} value={opt.val}>{opt.label}</option>)}
-                          </select>
-                        </label>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
-                          Severity:
-                          <select
-                            className="cell-select-compact"
-                            value={row.residual_severity || 2}
-                            onChange={(e) => handleCellEdit(idx, 'residual_severity', parseInt(e.target.value))}
-                          >
-                            {[1, 2, 3, 4, 5].map(v => <option key={v} value={v}>{v}</option>)}
-                          </select>
-                        </label>
+                      <div className="risk-selector-group">
+                        <span className="risk-selector-label">PROBABILITY</span>
+                        <div className="risk-selector-circles">
+                          {[
+                            { label: 'A', val: 5 },
+                            { label: 'B', val: 4 },
+                            { label: 'C', val: 3 },
+                            { label: 'D', val: 2 },
+                            { label: 'E', val: 1 }
+                          ].map(opt => (
+                            <button
+                              key={opt.val}
+                              type="button"
+                              className={`risk-circle-btn ${(row.residual_likelihood || 2) === opt.val ? 'active' : ''}`}
+                              onClick={() => handleCellEdit(idx, 'residual_likelihood', opt.val)}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="risk-selector-group">
+                        <span className="risk-selector-label">SEVERITY</span>
+                        <div className="risk-selector-circles">
+                          {[1, 2, 3, 4, 5].map(v => (
+                            <button
+                              key={v}
+                              type="button"
+                              className={`risk-circle-btn ${(row.residual_severity || 2) === v ? 'active' : ''}`}
+                              onClick={() => handleCellEdit(idx, 'residual_severity', v)}
+                            >
+                              {v}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

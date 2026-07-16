@@ -45,6 +45,10 @@ export default function useReports() {
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Preparing safety dashboard...");
+  const [lastSaved, setLastSaved] = useState(null);
+
+  const stateRef = useRef({ currentReport, rows });
+  stateRef.current = { currentReport, rows };
 
 
   // Chat Sidebar State
@@ -223,6 +227,10 @@ export default function useReports() {
   };
 
   const loadReport = async (id) => {
+    if (stateRef.current.currentReport && hasChanges) {
+      await handleSave();
+    }
+    setLastSaved(null);
     setLoadingMessage("Retrieving report data...");
     setIsPageLoading(true);
     try {
@@ -248,6 +256,9 @@ export default function useReports() {
 
   // Transition back to landing page with loader animation
   const handleExitToLanding = async () => {
+    if (hasChanges) {
+      await handleSave();
+    }
     setLoadingMessage("Closing safety worksheet...");
     setIsPageLoading(true);
     try {
@@ -258,16 +269,16 @@ export default function useReports() {
     }
   };
 
-  // Triggers 5-second idle timer on change
+  // Triggers 2-second idle timer on change for autosave
   const markChanged = () => {
     setHasChanges(true);
     if (idleTimerRef.current) {
       clearTimeout(idleTimerRef.current);
     }
-    // Show prompt after 5 seconds of inactivity
+    // Auto-save after 2 seconds of inactivity
     idleTimerRef.current = setTimeout(() => {
-      setShowSavePrompt(true);
-    }, 5000);
+      handleSave();
+    }, 2000);
   };
 
   // Clean timer on unmount
@@ -279,34 +290,36 @@ export default function useReports() {
 
   // Save changes (rows + metadata) to Supabase
   const handleSave = async () => {
-    if (!currentReport) return;
+    const { currentReport: latestReport, rows: latestRows } = stateRef.current;
+    if (!latestReport) return;
     setIsSaving(true);
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
 
     try {
       // 1. Update report metadata
-      const metaRes = await authedFetch(`${API_URL}/api/reports/${currentReport.id}`, {
+      const metaRes = await authedFetch(`${API_URL}/api/reports/${latestReport.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(currentReport)
+        body: JSON.stringify(latestReport)
       });
 
       if (!metaRes.ok) throw new Error('Failed to save report headers');
 
       // 2. Update report rows
-      const rowsRes = await authedFetch(`${API_URL}/api/reports/${currentReport.id}/rows`, {
+      const rowsRes = await authedFetch(`${API_URL}/api/reports/${latestReport.id}/rows`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rows })
+        body: JSON.stringify({ rows: latestRows })
       });
 
       if (!rowsRes.ok) throw new Error('Failed to save table rows');
 
       setHasChanges(false);
       setShowSavePrompt(false);
+      setLastSaved(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
       fetchReports();
     } catch (err) {
-      alert(`Save error: ${err.message}`);
+      console.error(`Save error: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
@@ -796,6 +809,7 @@ export default function useReports() {
     handleGetToWork,
     handleCreateReport,
     handleSendMessage,
-    handlePrint
+    handlePrint,
+    lastSaved
   };
 }

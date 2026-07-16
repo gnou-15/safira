@@ -27,6 +27,7 @@ function App() {
     isSaving,
     hasChanges,
     showSavePrompt,
+    lastSaved,
     chatOpen,
     setChatOpen,
     chatHistory,
@@ -86,6 +87,9 @@ function App() {
         setShowModal={setShowModal}
         handlePrint={handlePrint}
         fetchReports={fetchReports}
+        isSaving={isSaving}
+        hasChanges={hasChanges}
+        lastSaved={lastSaved}
       />
 
       {/* Main Workspace */}
@@ -127,18 +131,7 @@ function App() {
         />
       </main>
 
-      {/* Unsaved Changes Banner */}
-      {showSavePrompt && hasChanges && (
-        <div className="save-prompt-banner">
-          <span>⚠️ You have unsaved table modifications. Confirm updates?</span>
-          <button className="save-btn-confirm" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Sync to Supabase'}
-          </button>
-          <button className="save-btn-discard" onClick={handleDiscard} disabled={isSaving}>
-            Discard
-          </button>
-        </div>
-      )}
+
 
       {/* Initial Prompt Generation Modal */}
       <NewReportModal
