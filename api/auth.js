@@ -1,6 +1,12 @@
 import { supabase, setCorsHeaders } from './_lib/supabase.js';
 import { hashPassword, verifyPassword, generateToken, getAuthenticatedUser } from './_lib/auth.js';
 
+function generateMnemonicKey() {
+  const letters = Array.from({ length: 3 }, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
+  const numbers = Math.floor(100 + Math.random() * 900).toString(); // 3 digits
+  return `${letters}-${numbers}`;
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(res);
 
@@ -270,6 +276,109 @@ export default async function handler(req, res) {
         res.writeHead(302, { Location: `${FRONTEND_URL}/login?error=${encodeURIComponent(err.message)}` });
         return res.end();
       }
+    }
+  }
+
+  // 5. POST /api/auth/key-generate
+  if (action === 'key-generate' && !subAction) {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+    try {
+      let key = '';
+      let isUnique = false;
+      let attempts = 0;
+
+      while (!isUnique && attempts < 10) {
+        key = generateMnemonicKey();
+        const { data: existing, error: checkError } = await supabase
+          .from('safira_users')
+          .select('id')
+          .eq('username', key)
+          .maybeSingle();
+
+        if (checkError) throw checkError;
+        if (!existing) {
+          isUnique = true;
+        }
+        attempts++;
+      }
+
+      if (!isUnique) {
+        return res.status(500).json({ error: 'Failed to generate a unique key. Please try again.' });
+      }
+
+      const email = `${key.toLowerCase()}@safira.key`;
+      const password_hash = hashPassword(key);
+
+      const { data: newUser, error: insertError } = await supabase
+        .from('safira_users')
+        .insert([{
+          username: key,
+          email,
+          password_hash
+        }])
+        .select('id, username, email')
+        .single();
+
+      if (insertError) throw insertError;
+
+      const token = generateToken({ userId: newUser.id, username: newUser.username, email: newUser.email });
+
+      return res.status(201).json({
+        message: 'Key generation successful',
+        token,
+        key,
+        user: newUser
+      });
+    } catch (err) {
+      console.error('Key generation serverless error:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // 6. POST /api/auth/key-login
+  if (action === 'key-login' && !subAction) {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+    const { key } = req.body;
+    if (!key) {
+      return res.status(400).json({ error: 'Key is required' });
+    }
+
+    const cleanKey = key.trim().toUpperCase();
+    const keyFormatRegex = /^[A-Z]{3}-\d{3}$/;
+    if (!keyFormatRegex.test(cleanKey)) {
+      return res.status(400).json({ error: 'Key format is invalid. Must be like AAA-000' });
+    }
+
+    try {
+      const { data: user, error: fetchError } = await supabase
+        .from('safira_users')
+        .select('*')
+        .eq('username', cleanKey)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+      if (!user) {
+        return res.status(400).json({ error: 'Key is not registered or invalid' });
+      }
+
+      const token = generateToken({ userId: user.id, username: user.username, email: user.email });
+
+      return res.status(200).json({
+        message: 'Login successful',
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email
+        }
+      });
+    } catch (err) {
+      console.error('Key login serverless error:', err);
+      return res.status(500).json({ error: err.message });
     }
   }
 
