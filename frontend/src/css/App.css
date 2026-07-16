@@ -224,6 +224,9 @@ body,
   /* Only apply when NOT on the landing page */
   .app-container:not(.landing-active) {
     background-color: #cad4da !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
   }
 
   /* Flat-Tactile EXPORT Button */
@@ -333,4 +336,201 @@ body,
   select.screen-only {
     display: none !important;
   }
+}
+
+.document-workspace {
+  position: relative;
+  z-index: 2; /* Renders document card on top of background vectors */
+  width: 100%;
+}
+
+/* --- Professional Workspace Background Silhouettes & Animations --- */
+.workspace-bg-container {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 70px);
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Tower Silhouette - Left */
+.bg-silhouette-left {
+  position: absolute;
+  left: 45px;
+  bottom: 170px;
+  width: 130px;
+  height: auto;
+  opacity: 0.08;
+  color: #0f172a;
+  fill: currentColor;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.bg-silhouette-left:hover {
+  opacity: 0.16;
+  color: #3a9ad9 !important;
+  transform: scale(1.05) translateY(-5px);
+}
+
+/* Jet Airplane Silhouette - Right */
+.bg-silhouette-right {
+  position: absolute;
+  right: 50px;
+  top: 120px;
+  width: 170px;
+  height: auto;
+  opacity: 0.08;
+  color: #0f172a;
+  fill: currentColor;
+  animation: bg-jet-sway 8s ease-in-out infinite alternate;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.bg-silhouette-right:hover {
+  opacity: 0.18;
+  color: #3a9ad9 !important;
+  transform: translate(-15px, -15px) scale(1.08);
+}
+
+
+@keyframes bg-jet-sway {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+
+/* Windsock Silhouette */
+.bg-silhouette-windsock {
+  position: absolute;
+  left: 140px;
+  bottom: 60px;
+  width: 60px;
+  height: auto;
+  opacity: 0.08;
+  color: #0f172a;
+  fill: none;
+  animation: bg-windsock-flutter 4s ease-in-out infinite alternate;
+  transform-origin: 20px 30px;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.bg-silhouette-windsock:hover {
+  opacity: 0.16;
+  color: #3a9ad9 !important;
+  animation: bg-windsock-flutter-fast 1s ease-in-out infinite alternate !important;
+}
+
+@keyframes bg-windsock-flutter {
+  0% {
+    transform: rotate(0deg) scaleY(1);
+  }
+  100% {
+    transform: rotate(-4deg) scaleY(0.93) skewX(-2deg);
+  }
+}
+
+@keyframes bg-windsock-flutter-fast {
+  0% {
+    transform: rotate(-2deg) scaleY(1.05) skewX(-4deg);
+  }
+  100% {
+    transform: rotate(-10deg) scaleY(0.9) skewX(-8deg);
+  }
+}
+
+/* Hangar Silhouette */
+.bg-silhouette-hangar {
+  position: absolute;
+  left: 30px;
+  bottom: 45px;
+  width: 100px;
+  height: auto;
+  opacity: 0.07;
+  color: #0f172a;
+  fill: none;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.bg-silhouette-hangar:hover {
+  opacity: 0.14;
+  color: #3a9ad9 !important;
+  transform: scale(1.03);
+}
+
+/* Compass Rose Silhouette */
+.bg-silhouette-compass {
+  position: absolute;
+  right: 40px;
+  top: 30px;
+  width: 110px;
+  height: auto;
+  opacity: 0.06;
+  color: #0f172a;
+  fill: none;
+  animation: bg-compass-rotate 120s linear infinite;
+  transform-origin: 50px 50px;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.bg-silhouette-compass:hover {
+  opacity: 0.15;
+  color: #3a9ad9 !important;
+  animation: bg-compass-rotate-fast 15s linear infinite !important;
+}
+
+@keyframes bg-compass-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bg-compass-rotate-fast {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tiny Distant Airplane Silhouette */
+.bg-silhouette-plane-far {
+  position: absolute;
+  right: 210px;
+  top: 90px;
+  width: 50px;
+  height: auto;
+  opacity: 0.05;
+  color: #0f172a;
+  fill: none;
+  animation: bg-jet-sway 10s ease-in-out infinite alternate-reverse;
+  transition: all 0.5s ease;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.bg-silhouette-plane-far:hover {
+  opacity: 0.12;
+  color: #3a9ad9 !important;
+  transform: translate(-10px, -5px) scale(1.1);
 }
