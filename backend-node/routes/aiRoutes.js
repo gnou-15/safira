@@ -9,6 +9,7 @@ const router = express.Router();
 router.post('/generate', authMiddleware, rateLimiter, AiController.generateReport);
 router.post('/suggest-details', authMiddleware, rateLimiter, AiController.suggestDetails);
 router.post('/chat', authMiddleware, rateLimiter, AiController.chatAgent);
+router.post('/investigate', authMiddleware, rateLimiter, AiController.generateInvestigation);
 
 // Document management (protected by authentication)
 router.get('/documents', authMiddleware, AiController.listDocuments);

@@ -100,5 +100,25 @@ export const AiController = {
       const detail = error.response?.data?.detail || 'AI Service communication error';
       res.status(status).json({ error: detail });
     }
+  },
+
+  // POST /api/ai/investigate
+  async generateInvestigation(req, res) {
+    const { executive_summary, id_number, position, date_of_hiring, trainings } = req.body;
+    try {
+      const response = await axios.post(`${PYTHON_SERVICE_URL}/generate-investigation`, {
+        executive_summary,
+        id_number,
+        position,
+        date_of_hiring,
+        trainings
+      });
+      res.json(response.data);
+    } catch (error) {
+      console.error('Error in AI investigation generation proxy:', error.message);
+      const status = error.response?.status || 500;
+      const detail = error.response?.data?.detail || 'AI Service communication error';
+      res.status(status).json({ error: detail });
+    }
   }
 };

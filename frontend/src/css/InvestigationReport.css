@@ -1,0 +1,536 @@
+/* --- Formal Investigation Report Workspace Styles --- */
+
+.investigation-report-page {
+  padding: 30px 15px 0 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Document Toolbar matching HIRAC style */
+.doc-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-toolbar {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 8px 20px;
+  border: 1px solid var(--border-dark);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-toolbar-back {
+  background-color: #ffffff;
+  color: var(--text-primary);
+}
+
+.btn-toolbar-back:hover {
+  background-color: #f1f5f9;
+  border-color: var(--border-dark);
+}
+
+.btn-toolbar-export {
+  background-color: var(--success-color);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+}
+
+.btn-toolbar-export:hover {
+  background-color: var(--success-hover);
+}
+
+/* Save Status Indicator */
+.save-status-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.save-status {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.save-status.saved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.save-status.saving {
+  background-color: #fef9c3;
+  color: #a16207;
+  animation: pulse-save 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-save {
+
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Canvas mimicking physical A4 sheet */
+.investigation-sheet-canvas {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 48px;
+  max-width: 1000px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+/* Document Header Section */
+.inv-sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--text-primary);
+  padding-bottom: 16px;
+  margin-bottom: 25px;
+}
+
+.inv-header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inv-meta-input {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  border: none;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: transparent;
+  padding: 2px 4px;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.inv-meta-input:focus {
+  background-color: #f1f5f9;
+  outline: none;
+}
+
+.inv-meta-input.ref-no {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.inv-logo-img {
+  height: 38px;
+  object-fit: contain;
+}
+
+/* Main Title Section */
+.inv-title-container {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.inv-title-textarea {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #475569 !important;
+  text-align: center !important;
+  border: none !important;
+  background: transparent !important;
+  resize: none;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.inv-title-textarea:focus {
+  background-color: #f8fafc !important;
+  outline: none;
+}
+
+/* Content Sections */
+.inv-section-card {
+  margin-bottom: 24px;
+}
+
+.inv-section-title {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.inv-heading {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1.5px solid var(--border-color);
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inv-sub-section {
+  margin-bottom: 16px;
+  padding-left: 10px;
+}
+
+.inv-sub-heading {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  font-size: 11.5px;
+  letter-spacing: 0.2px;
+}
+
+/* Inputs & Textareas */
+.inv-section-textarea {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  border: 1px solid transparent;
+  background: transparent;
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.inv-section-textarea:hover {
+  border-color: var(--border-color);
+}
+
+.inv-section-textarea:focus {
+  border-color: var(--primary-color);
+  background-color: var(--primary-bg-light);
+  outline: none;
+}
+
+.inv-section-textarea.references {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* Risk Index Badge */
+.inv-risk-index-input {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  text-align: center;
+  width: 110px;
+  outline: none;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+}
+
+/* Personnel Information Grid Table */
+.inv-personnel-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.inv-personnel-table td {
+  border: 1px solid var(--border-color);
+  padding: 10px 14px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.inv-personnel-table td.table-label {
+  font-weight: 700;
+  color: var(--text-secondary);
+  background-color: #f8fafc;
+  width: 25%;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.2px;
+}
+
+.inv-personnel-table td.table-value input {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 2px;
+}
+
+.inv-personnel-table td.table-value input:focus {
+  outline: none;
+  background-color: #f1f5f9;
+}
+
+.inv-personnel-table td.table-value .table-textarea {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 0;
+  font-size: 13px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.inv-personnel-table td.table-value .table-textarea:focus {
+  background-color: #f1f5f9 !important;
+}
+
+/* Bullet Items List styling */
+.bullet-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 10px;
+}
+
+.bullet-item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  position: relative;
+}
+
+.bullet-label {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding-top: 8px;
+  min-width: 18px;
+}
+
+.bullet-textarea {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  border: 1px solid transparent;
+  background: transparent;
+  width: 100%;
+  padding: 6px 28px 6px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.bullet-textarea:hover {
+  border-color: var(--border-color);
+}
+
+.bullet-textarea:focus {
+  border-color: var(--primary-color);
+  background-color: var(--primary-bg-light);
+  outline: none;
+}
+
+.btn-remove-bullet {
+  position: absolute;
+  right: 4px;
+  top: 8px;
+  background: none;
+  border: none;
+  color: var(--danger-color);
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  padding: 2px 6px;
+}
+
+.bullet-item-row:hover .btn-remove-bullet {
+  opacity: 0.7;
+}
+
+.bullet-item-row:hover .btn-remove-bullet:hover {
+  opacity: 1;
+}
+
+.btn-add-bullet {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--primary-color);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  align-self: flex-start;
+  transition: color 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.btn-add-bullet:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* Signatures layout block */
+.inv-signatures-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.inv-sig-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sig-header-label {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.sig-line-container {
+  border-top: 1px solid var(--text-primary);
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sig-input-name {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border: none;
+  background: transparent;
+  width: 100%;
+}
+
+.sig-input-role {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  border: none;
+  background: transparent;
+  width: 100%;
+}
+
+.sig-input-name:focus,
+.sig-input-role:focus {
+  outline: none;
+  background-color: #f1f5f9;
+}
+
+/* Delete button container */
+.delete-report-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.btn-delete-report {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #ffffff;
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+  border-radius: 20px;
+  padding: 8px 24px;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-delete-report:hover {
+  background-color: var(--danger-light);
+  color: var(--danger-hover);
+  border-color: var(--danger-hover);
+}
+
+/* --- Print Overrides --- */
+@media print {
+  body {
+    background-color: #ffffff !important;
+  }
+
+  .screen-only {
+    display: none !important;
+  }
+
+  .investigation-report-page {
+    padding: 0 !important;
+  }
+
+  .investigation-sheet-canvas {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .btn-remove-bullet,
+  .btn-add-bullet {
+    display: none !important;
+  }
+
+  .bullet-textarea {
+    padding-right: 0 !important;
+  }
+
+  .page-break-avoid {
+    page-break-inside: avoid !important;
+  }
+}

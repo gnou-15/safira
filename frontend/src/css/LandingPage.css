@@ -801,3 +801,54 @@
     box-shadow: 0 0 6px #0284c7, 0 0 8px #38bdf8;
   }
 }
+
+/* --- Select Report Type Modal Styles --- */
+.btn-select-type {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  background-color: #ffffff !important;
+  border: 2px solid #3b1c14 !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  cursor: pointer !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.15) !important;
+  transition: all 0.15s ease !important;
+  width: 100% !important;
+}
+
+.btn-select-type strong {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #3b1c14 !important;
+  margin-bottom: 4px !important;
+}
+
+.btn-select-type .desc-text {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 12px !important;
+  color: #64748b !important;
+  font-weight: 400 !important;
+}
+
+.btn-select-type:hover {
+  background-color: #f8fafc !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.2) !important;
+}
+
+.btn-select-type:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 2px 2px 0px rgba(59, 28, 20, 0.15) !important;
+}
+
+/* Hover Accent color adjustments */
+.btn-select-type.hirac-type:hover strong {
+  color: #3a9ad9 !important;
+}
+
+.btn-select-type.investigation-type:hover strong {
+  color: #f59e0b !important;
+}

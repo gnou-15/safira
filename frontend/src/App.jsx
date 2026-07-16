@@ -1,13 +1,17 @@
+import { useState } from 'react';
 import useReports from './hooks/useReports';
 import Header from './components/Header';
 import LandingPage from './routes/LandingPage';
 import DocumentSheet from './routes/DocumentSheet';
+import InvestigationReport from './routes/InvestigationReport';
 import ChatbotSidebar from './components/ChatbotSidebar';
 import NewReportModal from './components/NewReportModal';
 import SafetyManualsModal from './components/SafetyManualsModal';
 import BufferLoader from './components/BufferLoader';
 import LoginPage from './routes/LoginPage';
 import DocumentSkeleton from './components/DocumentSkeleton';
+import useInvestigations from './hooks/useInvestigations';
+import NewInvestigationModal from './components/NewInvestigationModal';
 import './css/App.css';
 
 function App() {
@@ -70,8 +74,34 @@ function App() {
     loadingMessage,
     isReportLoading
   } = useReports();
+
+  const {
+    investigations,
+    currentInvestigation,
+    isLoadingInvestigations,
+    isGeneratingInvestigation,
+    hasInvestigationChanges,
+    investigationLoadingMessage,
+    showInvestigationModal,
+    setShowInvestigationModal,
+    loadInvestigation,
+    handleCreateInvestigation,
+    handleFieldEdit: handleInvestigationFieldEdit,
+    handleDeleteInvestigation,
+    handleExitInvestigation,
+    handleSaveExplicit: handleInvestigationSaveExplicit
+  } = useInvestigations(user, setCurrentPage);
+
+  const handleGetToWorkInvestigation = async () => {
+    if (investigations.length > 0) {
+      await loadInvestigation(investigations[0].id);
+    } else {
+      setShowInvestigationModal(true);
+    }
+  };
+
   return (
-    <div className={`app-container ${!currentReport ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
+    <div className={`app-container ${(!currentReport && !currentInvestigation) ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
       {/* Top Navbar */}
       <Header
         user={user}
@@ -92,6 +122,12 @@ function App() {
         hasChanges={hasChanges}
         lastSaved={lastSaved}
         handleKeyLogin={handleKeyLogin}
+        currentInvestigation={currentInvestigation}
+        investigations={investigations}
+        loadInvestigation={loadInvestigation}
+        setShowInvestigationModal={setShowInvestigationModal}
+        hasInvestigationChanges={hasInvestigationChanges}
+        handleExitInvestigation={handleExitInvestigation}
       />
 
       {/* Main Workspace */}
@@ -101,6 +137,14 @@ function App() {
         <section className="document-workspace">
           {isReportLoading ? (
             <DocumentSkeleton />
+          ) : currentPage === 'investigation' ? (
+            <InvestigationReport
+              currentInvestigation={currentInvestigation}
+              handleFieldEdit={handleInvestigationFieldEdit}
+              handleDeleteInvestigation={handleDeleteInvestigation}
+              hasChanges={hasInvestigationChanges}
+              handleExitToLanding={handleExitInvestigation}
+            />
           ) : currentReport ? (
             <DocumentSheet
               currentReport={currentReport}
@@ -117,8 +161,11 @@ function App() {
               setCurrentPage={setCurrentPage}
               handleNavigate={handleNavigate}
               reports={reports}
+              investigations={investigations}
               loadReport={loadReport}
+              loadInvestigation={loadInvestigation}
               handleGetToWork={handleGetToWork}
+              handleGetToWorkInvestigation={handleGetToWorkInvestigation}
               handleOpenManualsModal={handleOpenManualsModal}
               handleKeyLogin={handleKeyLogin}
             />
@@ -133,7 +180,7 @@ function App() {
           chatInput={chatInput}
           setChatInput={setChatInput}
           isLoadingChat={isLoadingChat}
-          handleSendMessage={handleSendMessage}
+          handleSendMessage={(e) => handleSendMessage(e, currentReport, currentInvestigation)}
         />
       </main>
 
@@ -149,6 +196,14 @@ function App() {
         setIncidentPrompt={setIncidentPrompt}
         handleCreateReport={handleCreateReport}
         isGenerating={isGenerating}
+      />
+
+      {/* New Investigation Report Modal */}
+      <NewInvestigationModal
+        showModal={showInvestigationModal}
+        setShowModal={setShowInvestigationModal}
+        handleCreateReport={handleCreateInvestigation}
+        isGenerating={isGeneratingInvestigation}
       />
 
       {/* Safety Manuals Ingestion/Management Modal */}
@@ -175,7 +230,9 @@ function App() {
         />
       )}
 
-      {isPageLoading && <BufferLoader message={loadingMessage} />}
+      {(isPageLoading || isLoadingInvestigations) && (
+        <BufferLoader message={loadingMessage || investigationLoadingMessage} />
+      )}
     </div>
   );
 }

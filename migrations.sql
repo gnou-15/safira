@@ -105,3 +105,36 @@ CREATE TABLE IF NOT EXISTS safira_user_usage (
 
 -- Associate Reports with Users
 ALTER TABLE hirac_reports ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES safira_users(id) ON DELETE CASCADE;
+
+-- 6. Safety Incident Investigation Reports Table
+CREATE TABLE IF NOT EXISTS safira_investigations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES safira_users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    ref_no VARCHAR(100) DEFAULT 'SSQA-032',
+    revision_info VARCHAR(100) DEFAULT 'July2022 / Rev 02',
+    
+    -- User Inputs
+    id_number VARCHAR(100),
+    position VARCHAR(255),
+    date_of_hiring VARCHAR(100),
+    trainings TEXT,
+    executive_summary TEXT,
+    
+    -- AI Generated Columns
+    operational_irregularity TEXT,
+    risk_index VARCHAR(50),
+    analysis JSONB DEFAULT '[]'::jsonb,
+    root_cause JSONB DEFAULT '[]'::jsonb,
+    corrective_action JSONB DEFAULT '[]'::jsonb,
+    preventive_action JSONB DEFAULT '[]'::jsonb,
+    
+    -- Footer/Signatures
+    references_text TEXT DEFAULT '- Interview with concerned personnel\n- Safety Security Report Form',
+    prepared_by_name VARCHAR(100) DEFAULT 'Catalino III Z. Borromeo',
+    prepared_by_role VARCHAR(100) DEFAULT 'SSQA - S.H.E Representative',
+    approved_by_name VARCHAR(100) DEFAULT 'Roy Philip R. Magsayo',
+    approved_by_role VARCHAR(100) DEFAULT 'SSQA - Vice President (VP)',
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);

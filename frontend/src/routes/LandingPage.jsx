@@ -7,13 +7,17 @@ export default function LandingPage({
   setCurrentPage,
   handleNavigate,
   reports,
+  investigations,
   loadReport,
+  loadInvestigation,
   handleGetToWork,
+  handleGetToWorkInvestigation,
   handleKeyLogin
 }) {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [lightning, setLightning] = useState(null);
   const [timeString, setTimeString] = useState('');
+  const [showTypeSelector, setShowTypeSelector] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -39,6 +43,7 @@ export default function LandingPage({
       if (rememberedKey) {
         try {
           await handleKeyLogin(rememberedKey);
+          setShowTypeSelector(true);
         } catch (e) {
           handleNavigate('login');
         }
@@ -46,17 +51,26 @@ export default function LandingPage({
         handleNavigate('login');
       }
     } else {
-      handleGetToWork();
+      setShowTypeSelector(true);
     }
   };
 
-  const handleReportClick = (id) => {
+  const handleReportClick = (report) => {
     if (!user) {
       handleNavigate('login');
     } else {
-      loadReport(id);
+      if (report.docType === 'investigation') {
+        loadInvestigation(report.id);
+      } else {
+        loadReport(report.id);
+      }
     }
   };
+
+  const unifiedRecentReports = [
+    ...(reports || []).map((r) => ({ ...r, docType: 'hirac' })),
+    ...(investigations || []).map((i) => ({ ...i, docType: 'investigation' }))
+  ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -112,6 +126,54 @@ export default function LandingPage({
 
   return (
     <div className="landing-page-container">
+      {/* Selector Modal Overlay */}
+      {showTypeSelector && (
+        <div className="modal-overlay">
+          <div className="modal-content select-report-type-modal" style={{ maxWidth: '480px', width: '90%', textAlign: 'center', padding: '30px' }}>
+            <h3 className="modal-header-title" style={{ marginBottom: '12px' }}>Select Report Type</h3>
+            <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', fontFamily: "'Outfit', sans-serif" }}>
+              Choose which safety report workspace you would like to open:
+            </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <button 
+                type="button"
+                className="btn-select-type hirac-type"
+                onClick={() => {
+                  setShowTypeSelector(false);
+                  handleGetToWork();
+                }}
+              >
+                <strong>HIRAC Report</strong>
+                <span className="desc-text">Hazard Identification, Risk Assessment & Control</span>
+              </button>
+              
+              <button 
+                type="button"
+                className="btn-select-type investigation-type"
+                onClick={() => {
+                  setShowTypeSelector(false);
+                  handleGetToWorkInvestigation();
+                }}
+              >
+                <strong>Investigation Report</strong>
+                <span className="desc-text">Incident & Accident Investigation Dashboard</span>
+              </button>
+            </div>
+            
+            <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
+              <button 
+                type="button" 
+                className="btn-modal-cancel" 
+                style={{ width: 'auto', padding: '8px 24px' }}
+                onClick={() => setShowTypeSelector(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="landing-page-content">
         {/* Hero Section with Unified SVG Composition */}
         <div className="landing-hero-section">
@@ -262,17 +324,20 @@ export default function LandingPage({
           <div className="landing-report-logs-section">
             <h4 className="report-logs-title">Recent Reports</h4>
             <div className="report-logs-list">
-              {reports.length === 0 ? (
+              {unifiedRecentReports.length === 0 ? (
                 <span className="report-log-link-placeholder">No reports found.</span>
               ) : (
-                reports.slice(0, 3).map((report) => (
+                unifiedRecentReports.slice(0, 3).map((report) => (
                   <div
                     key={report.id}
                     className="report-log-pill"
-                    onClick={() => handleReportClick(report.id)}
+                    onClick={() => handleReportClick(report)}
                   >
-                    <span className="pill-dot"></span>
-                    <span className="pill-title" title={report.title}>{report.title || 'Untitled Report'}</span>
+                    <span className="pill-dot" style={{ backgroundColor: report.docType === 'investigation' ? '#f59e0b' : '#3a9ad9' }}></span>
+                    <span className="pill-title" title={report.title}>
+                      {report.docType === 'investigation' ? '[Investigation] ' : ''}
+                      {report.title || 'Untitled Report'}
+                    </span>
                     <span className="pill-date">{formatTimestampShort(report.created_at)}</span>
                   </div>
                 ))

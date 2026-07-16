@@ -270,6 +270,7 @@ export default function useReports() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setCurrentReport(null);
+      setCurrentPage('landing');
     } finally {
       setIsPageLoading(false);
     }
@@ -695,7 +696,7 @@ export default function useReports() {
   }, [handleDeleteRow]);
 
   // Send message to chatbot (RAG Chat API)
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = async (e, activeReport = currentReport, activeInvestigation = null) => {
     e.preventDefault();
     if (!chatInput.trim() || isLoadingChat) return;
 
@@ -711,7 +712,9 @@ export default function useReports() {
         body: JSON.stringify({
           message: userMsg,
           chat_history: chatHistory.slice(-6),
-          current_table: rows
+          current_table: activeReport ? rows : [],
+          doc_type: activeInvestigation ? 'investigation' : 'hirac',
+          current_investigation: activeInvestigation
         })
       });
 

@@ -19,14 +19,20 @@ export default function Header({
   isSaving,
   hasChanges,
   lastSaved,
-  handleKeyLogin
+  handleKeyLogin,
+  currentInvestigation,
+  investigations,
+  loadInvestigation,
+  setShowInvestigationModal,
+  hasInvestigationChanges,
+  handleExitInvestigation
 }) {
   const [showKeyDropdown, setShowKeyDropdown] = useState(false);
   const [showReportDropdown, setShowReportDropdown] = useState(false);
   const [copyText, setCopyText] = useState("Copy");
   return (
     <header className="top-nav">
-      {!currentReport ? (
+      {!currentReport && !currentInvestigation ? (
         <>
           <div className="logo-container" onClick={() => fetchReports()}>
             <div className="safira-logo-wrapper">
@@ -166,7 +172,7 @@ export default function Header({
       ) : (
         <>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div className="logo-container" onClick={handleExitToLanding} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+            <div className="logo-container" onClick={currentReport ? handleExitToLanding : handleExitInvestigation} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
               <div className="safira-logo-wrapper">
                 <svg viewBox="0 0 100 100" className="safira-logo" width="30" height="30">
                   <defs>
@@ -219,7 +225,7 @@ export default function Header({
               </div>
               <span className="brand-text">Safira</span>
             </div>
-            {reports.length > 0 && (
+            {currentReport && reports.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
                 <div className="custom-report-selector">
                   <button 
@@ -280,11 +286,77 @@ export default function Header({
                 </div>
               </div>
             )}
+
+            {currentInvestigation && investigations.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+                <div className="custom-report-selector">
+                  <button 
+                    type="button" 
+                    className={`custom-select-trigger ${showReportDropdown ? 'active' : ''}`}
+                    onClick={() => setShowReportDropdown(!showReportDropdown)}
+                  >
+                    <span className="trigger-text" title={currentInvestigation?.title || 'Select an Investigation...'}>
+                      {currentInvestigation?.title || 'Select an Investigation...'}
+                    </span>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="chevron-icon">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+
+                  {showReportDropdown && (
+                    <>
+                      <div className="custom-select-backdrop" onClick={() => setShowReportDropdown(false)}></div>
+                      
+                      <div className="custom-select-menu">
+                        <div className="custom-menu-header">Available Investigations</div>
+                        <div className="custom-menu-options">
+                          {investigations.map((inv) => (
+                            <div 
+                              key={inv.id} 
+                              className={`custom-select-option ${currentInvestigation?.id === inv.id ? 'selected' : ''}`}
+                              onClick={() => {
+                                loadInvestigation(inv.id);
+                                setShowReportDropdown(false);
+                              }}
+                            >
+                              <span className="option-bullet" style={{ backgroundColor: '#f59e0b' }}></span>
+                              <span className="option-title" title={inv.title}>{inv.title}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="header-save-status">
+                  {hasInvestigationChanges ? (
+                    <span className="status-pending">
+                      <span className="status-dot pulse-amber"></span> Saving soon...
+                    </span>
+                  ) : (
+                    <span className="status-saved">
+                      <span className="status-dot green"></span> Saved
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           <div className="nav-actions">
             <button className="btn-nav-action btn-nav-manuals" onClick={handleOpenManualsModal}>Safety Manuals</button>
-            <button className="btn-nav-action btn-nav-generate" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
-            <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>EXPORT</button>
+            {currentReport && (
+              <>
+                <button className="btn-nav-action btn-nav-generate" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
+                <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>EXPORT</button>
+              </>
+            )}
+            {currentInvestigation && (
+              <>
+                <button className="btn-nav-action btn-nav-generate" onClick={() => setShowInvestigationModal(true)}>+ New Investigation</button>
+                <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>EXPORT</button>
+              </>
+            )}
 
             {/* Secure Key Widget */}
             {user && (
