@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useReports from './hooks/useReports';
 import Header from './components/Header';
 import LandingPage from './routes/LandingPage';
@@ -36,6 +36,7 @@ function App() {
     chatOpen,
     setChatOpen,
     chatHistory,
+    setChatHistory,
     chatInput,
     setChatInput,
     isLoadingChat,
@@ -99,6 +100,19 @@ function App() {
       setShowInvestigationModal(true);
     }
   };
+
+  // Reset chat context when switching between HIRAC and Investigation modes
+  useEffect(() => {
+    if (currentPage === 'investigation' && currentInvestigation) {
+      setChatHistory([
+        { role: 'assistant', content: `Hello! I am SAFIRA, your airport safety AI assistant. I see you're working on the Investigation Report: "${currentInvestigation.title || 'Untitled'}". I can help you analyze findings, suggest corrective/preventive actions, or answer safety-related questions.` }
+      ]);
+    } else if (currentReport) {
+      setChatHistory([
+        { role: 'assistant', content: 'Hello! I am SAFIRA, your airport safety AI assistant. Describe an incident or select a report to get started. I can help explain regulations or make inline edits to your report.' }
+      ]);
+    }
+  }, [currentPage, currentInvestigation, currentReport, setChatHistory]);
 
   return (
     <div className={`app-container ${(!currentReport && !currentInvestigation) ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
@@ -255,7 +269,7 @@ function App() {
           chatInput={chatInput}
           setChatInput={setChatInput}
           isLoadingChat={isLoadingChat}
-          handleSendMessage={(e) => handleSendMessage(e, currentReport, currentInvestigation)}
+          handleSendMessage={(e) => handleSendMessage(e, currentReport, currentInvestigation, handleInvestigationFieldEdit)}
         />
       </main>
 

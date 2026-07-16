@@ -26,12 +26,19 @@ export const AiController = {
 
   // POST /api/ai/chat
   async chatAgent(req, res) {
-    const { message, chat_history, current_table } = req.body;
+    const { message, chat_history, current_table, doc_type, current_investigation } = req.body;
+    console.log('[SAFIRA NODE DEBUG] Chat proxy received:', {
+      doc_type,
+      hasInvestigation: !!current_investigation,
+      messagePreview: message?.substring(0, 50)
+    });
     try {
       const response = await axios.post(`${PYTHON_SERVICE_URL}/chat`, {
         message,
         chat_history,
-        current_table
+        current_table,
+        doc_type,
+        current_investigation
       });
       res.json(response.data);
     } catch (error) {

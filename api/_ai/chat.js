@@ -29,13 +29,13 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Python AI service URL is not configured.' });
   }
 
-  const { message, chat_history, current_table } = req.body;
+  const { message, chat_history, current_table, doc_type, current_investigation } = req.body;
 
   try {
     const response = await fetch(`${PYTHON_SERVICE_URL}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, chat_history, current_table })
+      body: JSON.stringify({ message, chat_history, current_table, doc_type, current_investigation })
     });
 
     if (!response.ok) {

@@ -425,8 +425,6 @@ Your output must be a single JSON object. DO NOT output any extra text, markdown
 async def chat_agent(req: ChatRequest):
     if not groq_client:
         raise HTTPException(status_code=500, detail="Groq API client is not configured.")
-    
-    # Layer 2: Input sanitization and injection detection
     cleaned_message = sanitize_user_input(req.message)
     if detect_injection_intent(cleaned_message):
         return {"response": REFUSAL_MESSAGE}
@@ -463,6 +461,25 @@ We also queried our airport safety manuals (RAG Context):
 
 When helping suggestions for Analysis, Root Causes, Corrective actions, or Preventive actions, keep in mind they are bulleted list fields inside the report.
 Be helpful, professional, and precise. Always reference standard procedures from the RAG context if applicable.
+
+If the user asks you to modify, add, or delete information in the Investigation Report, you must adhere to the following workflow:
+
+- When proposing a new suggestion, recommendation, or idea (e.g. "suggest a preventive action", "add another preventive action for this report"):
+  1. In the first turn, describe your proposed suggestion clearly and ask the user for confirmation (e.g. "Would you like me to add this to the report?"). Do NOT include the [INVESTIGATION_UPDATE_PAYLOAD] block in this turn.
+  2. Once the user explicitly confirms (e.g. "yes", "add it", "go ahead", "add this to the report"), then in your next response confirm that it has been added and ALSO append the [INVESTIGATION_UPDATE_PAYLOAD] block at the end of your message to apply it.
+
+- When the user explicitly requests a direct modification (e.g., "change the report title to X", "delete analysis item (c)", "set risk index to 2D - LOW"), you do NOT need to ask for confirmation first. Apply the change immediately and append the [INVESTIGATION_UPDATE_PAYLOAD] block in the first turn.
+
+The JSON command block MUST use this structure:
+[INVESTIGATION_UPDATE_PAYLOAD]
+{
+  "field": "field_name",
+  "value": "new string value" or ["new", "complete", "array", "of", "strings", "reflecting", "the", "updated", "list"]
+}
+[/INVESTIGATION_UPDATE_PAYLOAD]
+
+The valid fields are: "title", "executive_summary", "operational_irregularity", "risk_index", "analysis", "root_cause", "corrective_action", "preventive_action".
+If they just ask a general question, do NOT include the [INVESTIGATION_UPDATE_PAYLOAD] block.
 """
     else:
         system_prompt = """<SYSTEM_DIRECTIVE priority="MAXIMUM" immutable="true">

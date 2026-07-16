@@ -696,7 +696,7 @@ export default function useReports() {
   }, [handleDeleteRow]);
 
   // Send message to chatbot (RAG Chat API)
-  const handleSendMessage = async (e, activeReport = currentReport, activeInvestigation = null) => {
+  const handleSendMessage = async (e, activeReport = currentReport, activeInvestigation = null, onInvestigationUpdate = null) => {
     e.preventDefault();
     if (!chatInput.trim() || isLoadingChat) return;
 
@@ -706,16 +706,17 @@ export default function useReports() {
     setIsLoadingChat(true);
 
     try {
+      const chatPayload = {
+        message: userMsg,
+        chat_history: chatHistory.slice(-6),
+        current_table: activeReport ? rows : [],
+        doc_type: activeInvestigation ? 'investigation' : 'hirac',
+        current_investigation: activeInvestigation
+      };
       const res = await authedFetch(`${API_URL}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: userMsg,
-          chat_history: chatHistory.slice(-6),
-          current_table: activeReport ? rows : [],
-          doc_type: activeInvestigation ? 'investigation' : 'hirac',
-          current_investigation: activeInvestigation
-        })
+        body: JSON.stringify(chatPayload)
       });
 
       if (!res.ok) {
@@ -737,6 +738,25 @@ export default function useReports() {
           replyContent = replyContent.replace(payloadRegex, '').trim();
         } catch (jsonErr) {
           console.error("Failed to parse update command:", jsonErr);
+        }
+      }
+
+      // Extract and execute INVESTIGATION_UPDATE_PAYLOAD if present
+      const invPayloadRegex = /\[INVESTIGATION_UPDATE_PAYLOAD\]([\s\S]*?)\[\/INVESTIGATION_UPDATE_PAYLOAD\]/;
+      const invMatch = replyContent.match(invPayloadRegex);
+
+      if (invMatch && onInvestigationUpdate) {
+        try {
+          const payload = JSON.parse(invMatch[1].trim());
+          if (payload.field && payload.value !== undefined) {
+            onInvestigationUpdate(payload.field, payload.value);
+            // Append system message
+            setChatHistory(h => [...h, { role: 'system', content: `Applied edit to field: "${payload.field}"` }]);
+          }
+          // Strip payload from the visible text for the user
+          replyContent = replyContent.replace(invPayloadRegex, '').trim();
+        } catch (jsonErr) {
+          console.error("Failed to parse investigation update command:", jsonErr);
         }
       }
 
