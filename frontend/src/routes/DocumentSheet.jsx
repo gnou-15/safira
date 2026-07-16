@@ -15,7 +15,8 @@ export default function DocumentSheet({
   handleCellEdit,
   handleMetaEdit,
   handleAddRow,
-  handleDeleteRow
+  handleDeleteRow,
+  handleDeleteReport
 }) {
   return (
     <div className={`document-sheet ${isReportLoading ? 'skeleton-active' : ''}`}>
@@ -442,6 +443,16 @@ export default function DocumentSheet({
             Name and Signature
           </div>
         </div>
+      </div>
+
+      <div className="delete-report-container screen-only">
+        <button 
+          type="button" 
+          className="btn-delete-report" 
+          onClick={() => handleDeleteReport(currentReport.id)}
+        >
+          Delete This Report
+        </button>
       </div>
     </div>
   );

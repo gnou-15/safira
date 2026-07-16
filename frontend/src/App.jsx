@@ -65,6 +65,7 @@ function App() {
     handleCreateReport,
     handleSendMessage,
     handlePrint,
+    handleDeleteReport,
     handleExitToLanding,
     loadingMessage,
     isReportLoading
@@ -108,6 +109,7 @@ function App() {
               handleMetaEdit={handleMetaEdit}
               handleAddRow={handleAddRow}
               handleDeleteRow={handleDeleteRow}
+              handleDeleteReport={handleDeleteReport}
             />
           ) : (
             <LandingPage

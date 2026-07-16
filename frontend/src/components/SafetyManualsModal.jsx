@@ -18,7 +18,7 @@ export default function SafetyManualsModal({
     <div className="modal-overlay">
       <div className="modal-content manuals-modal-content" style={{ maxWidth: '650px', width: '90%' }}>
         <div className="manuals-modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800' }}>📚 Airport Safety Manuals Manager</h3>
+          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800' }}>Airport Safety Manuals Manager</h3>
           <button 
             type="button" 
             style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'var(--text-muted)' }} 

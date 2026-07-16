@@ -589,7 +589,10 @@ export default function useReports() {
         })
       });
 
-      if (!aiRes.ok) throw new Error('AI Generation failed');
+      if (!aiRes.ok) {
+        const errData = await aiRes.json().catch(() => ({}));
+        throw new Error(errData.error || 'AI Generation failed');
+      }
       const generatedRows = await aiRes.json();
 
       // 2. Save metadata and get report ID
@@ -712,7 +715,10 @@ export default function useReports() {
         })
       });
 
-      if (!res.ok) throw new Error('Failed to fetch AI reply');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to fetch AI reply');
+      }
       const data = await res.json();
       let replyContent = data.response;
 
@@ -736,6 +742,41 @@ export default function useReports() {
       setChatHistory(prev => [...prev, { role: 'system', content: `Error: ${err.message}` }]);
     } finally {
       setIsLoadingChat(false);
+    }
+  };
+
+  const handleDeleteReport = async (id) => {
+    if (!id) return;
+    const confirmDelete = window.confirm("Are you sure you want to delete this report? This action cannot be undone.");
+    if (!confirmDelete) return;
+
+    setLoadingMessage("Deleting safety worksheet...");
+    setIsPageLoading(true);
+    try {
+      const res = await authedFetch(`${API_URL}/api/reports/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to delete report');
+      }
+
+      // Remove from states
+      setReports(prev => prev.filter(r => r.id !== id));
+      setCurrentReport(null);
+      setRows([]);
+
+      // Clear session cache
+      sessionStorage.removeItem('activeReportId');
+      sessionStorage.removeItem('activeReport');
+      sessionStorage.removeItem('activeReportRows');
+
+      setCurrentPage('landing');
+    } catch (err) {
+      alert(`Error deleting report: ${err.message}`);
+    } finally {
+      setIsPageLoading(false);
     }
   };
 
@@ -813,6 +854,7 @@ export default function useReports() {
     handleCreateReport,
     handleSendMessage,
     handlePrint,
+    handleDeleteReport,
     lastSaved,
     isReportLoading
   };

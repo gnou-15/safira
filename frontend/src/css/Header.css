@@ -251,7 +251,7 @@
   justify-content: center;
   width: 38px !important;
   height: 38px !important;
-  background-color: #ffffff !important;
+  background-color: #fbbf24 !important;
   border: 2px solid #3b1c14 !important;
   color: #3b1c14 !important;
   border-radius: 50% !important;
@@ -263,7 +263,7 @@
 
 .header-key-btn:hover,
 .header-key-btn.active {
-  background-color: #f8fafc !important;
+  background-color: #f59e0b !important;
   transform: translate(-1px, -1px) !important;
   box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.2) !important;
 }

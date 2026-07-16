@@ -1,4 +1,6 @@
 import { setCorsHeaders } from '../_lib/supabase.js';
+import { getAuthenticatedUser } from '../_lib/auth.js';
+import { checkRateLimit } from '../_lib/rateLimiter.js';
 
 const PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL;
 
@@ -12,6 +14,16 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  // 1. Authenticate user
+  const user = getAuthenticatedUser(req);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid or expired session token' });
+  }
+
+  // 2. Enforce daily rate limit
+  const allowed = await checkRateLimit(req, res, user);
+  if (!allowed) return;
 
   if (!PYTHON_SERVICE_URL) {
     return res.status(500).json({ error: 'Python AI service URL is not configured.' });

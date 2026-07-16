@@ -787,8 +787,42 @@
     color: #475569 !important;
     font-size: 11px !important;
     font-weight: 600 !important;
-    background-color: #ffffff !important;
   }
+}
+
+.delete-report-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.btn-delete-report {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  border: 2px solid #3b1c14 !important;
+  padding: 10px 24px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.15) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-delete-report:hover {
+  background-color: #dc2626 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.2) !important;
+}
+
+.btn-delete-report:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 2px 2px 0px rgba(59, 28, 20, 0.15) !important;
 }
 
 /* Print Overrides for Document Sheet */

@@ -91,7 +91,16 @@ CREATE TABLE IF NOT EXISTS safira_users (
     username VARCHAR(100) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
+    daily_limit INT DEFAULT 20, -- Default daily limit for testers
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- 5. User AI Usage Rate Limiting Table
+CREATE TABLE IF NOT EXISTS safira_user_usage (
+    user_id UUID REFERENCES safira_users(id) ON DELETE CASCADE,
+    usage_date DATE DEFAULT CURRENT_DATE,
+    request_count INT DEFAULT 1,
+    PRIMARY KEY (user_id, usage_date)
 );
 
 -- Associate Reports with Users

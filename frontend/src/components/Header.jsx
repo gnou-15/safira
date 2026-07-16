@@ -156,7 +156,7 @@ export default function Header({
                 
                 {/* Subtle attention-catching prompt bubble */}
                 <div className="keyhole-prompt-bubble">
-                  Unlock workspace key! 🔑
+                  Unlock workspace key!
                   <div className="bubble-arrow"></div>
                 </div>
               </div>
@@ -282,7 +282,7 @@ export default function Header({
             )}
           </div>
           <div className="nav-actions">
-            <button className="btn-nav-action btn-nav-manuals" onClick={handleOpenManualsModal}>📚 Safety Manuals</button>
+            <button className="btn-nav-action btn-nav-manuals" onClick={handleOpenManualsModal}>Safety Manuals</button>
             <button className="btn-nav-action btn-nav-generate" onClick={() => setShowModal(true)}>+ Generate New HIRAC</button>
             <button className="btn-nav-action btn-nav-export" onClick={handlePrint}>EXPORT</button>
 
