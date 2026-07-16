@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import '../css/ChatbotSidebar.css';
 
 export default function ChatbotSidebar({
@@ -9,68 +10,127 @@ export default function ChatbotSidebar({
   isLoadingChat,
   handleSendMessage
 }) {
+  const [eyeOffset, setEyeOffset] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const btn = document.querySelector('.chatbot-toggle-btn');
+      if (btn) {
+        const rect = btn.getBoundingClientRect();
+        const btnCenterX = rect.left + rect.width / 2;
+        const btnCenterY = rect.top + rect.height / 2;
+        
+        const dx = e.clientX - btnCenterX;
+        const dy = e.clientY - btnCenterY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        const maxOffset = 6; // Max displacement inside the goggle lens
+        if (distance === 0) {
+          setEyeOffset({ x: 0, y: 0 });
+        } else {
+          const ratio = Math.min(maxOffset / distance, 1);
+          setEyeOffset({
+            x: dx * ratio,
+            y: dy * ratio
+          });
+        }
+      } else {
+        const dx = (e.clientX / window.innerWidth) - 0.5;
+        const dy = (e.clientY / window.innerHeight) - 0.5;
+        setEyeOffset({ x: dx * 6, y: dy * 6 });
+      }
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <>
-      {/* Shared linear gradients definitions for Chatbot Logos */}
+      {/* Shared linear gradients and clip paths definitions for Chatbot Logos */}
       <svg style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' }}>
         <defs>
           <filter id="chatbot-glow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#00f2fe" floodOpacity="0.3" />
           </filter>
+          {/* Clip path to restrict anime sheen sweep to the inside of the lens */}
+          <clipPath id="lens-clip">
+            <circle cx="50" cy="50" r="28" />
+          </clipPath>
         </defs>
       </svg>
 
       {/* Floating chatbot overlay at bottom right */}
-      {chatOpen && (
-        <aside className="chatbot-sidebar">
+      <aside className={`chatbot-sidebar ${chatOpen ? 'open' : ''}`}>
           <div className="chatbot-header">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Animated Radar Airport Theme Background */}
+            <div className="header-radar-bg">
+              <svg viewBox="0 0 360 50" preserveAspectRatio="none" className="radar-svg">
+                {/* Concentric Radar Rings */}
+                <circle cx="180" cy="25" r="20" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1" />
+                <circle cx="180" cy="25" r="40" fill="none" stroke="rgba(255, 255, 255, 0.03)" strokeWidth="1" />
+                <circle cx="180" cy="25" r="70" fill="none" stroke="rgba(255, 255, 255, 0.02)" strokeWidth="1" />
+                
+                {/* Radar Grid Lines */}
+                <line x1="0" y1="25" x2="360" y2="25" stroke="rgba(255, 255, 255, 0.02)" strokeWidth="1" />
+                <line x1="180" y1="0" x2="180" y2="50" stroke="rgba(255, 255, 255, 0.02)" strokeWidth="1" />
+
+                {/* Sweeping Radar Line */}
+                <line className="radar-sweep" x1="180" y1="25" x2="360" y2="25" stroke="rgba(58, 154, 217, 0.15)" strokeWidth="2" />
+                
+                {/* Pulsing Airport/Target Blip */}
+                <circle className="radar-blip" cx="240" cy="15" r="3" fill="#22c55e" />
+                <circle className="radar-blip-pulse" cx="240" cy="15" r="8" fill="none" stroke="#22c55e" strokeWidth="1" />
+
+                {/* Airplane flying across screen */}
+                <g className="radar-airplane">
+                  <path d="M-10,0 L2,0 L5,-3 L7,-3 L5,0 L10,0 L12,2 L10,2 L8,5 L6,5 L8,2 L2,2 Z" fill="rgba(255,255,255,0.06)" />
+                </g>
+              </svg>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', zIndex: 2 }}>
               <svg viewBox="0 0 100 100" width="22" height="22">
                 <g filter="url(#chatbot-glow)">
-                  {/* Face under the helmet */}
-                  <path d="M 26,44 C 26,62 30,76 50,76 C 70,76 74,62 74,44 Z" fill="#fde0c5" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
+                  {/* Outer Rim */}
+                  <circle cx="50" cy="50" r="42" fill="#e5832a" stroke="#3b1c14" strokeWidth="5" />
+                  {/* Inner Frame */}
+                  <circle cx="50" cy="50" r="34" fill="#f9ab55" stroke="#3b1c14" strokeWidth="3" />
+                  {/* Eyeball (White Sclera) */}
+                  <circle cx="50" cy="50" r="28" fill="#ffffff" stroke="#3b1c14" strokeWidth="3" />
                   
-                  {/* Cute Smile (visible below goggles) */}
-                  <path d="M 46,65 Q 50,69 54,65" fill="none" stroke="#3b1c14" strokeWidth="2.2" strokeLinecap="round" />
+                  {/* Eye translation group (follows mouse) */}
+                  <g transform={`translate(${eyeOffset.x}, ${eyeOffset.y})`}>
+                    {/* Eye blink group (CSS animated scaleY) */}
+                    <g className="eye-blink-group">
+                      {/* Blue Iris */}
+                      <circle cx="50" cy="50" r="17" fill="#00b5ff" stroke="#3b1c14" strokeWidth="2" />
+                      {/* Iris details */}
+                      <path d="M 40,40 L 43,43" stroke="#0091d9" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d="M 60,60 L 57,57" stroke="#0091d9" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d="M 40,60 L 43,57" stroke="#0091d9" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d="M 60,40 L 57,43" stroke="#0091d9" strokeWidth="1.5" strokeLinecap="round" />
+                      
+                      {/* Pupil */}
+                      <circle cx="50" cy="50" r="9" fill="#0d1e29" />
+                      {/* Pupil Glare Highlights */}
+                      <circle cx="47.5" cy="47.5" r="2.2" fill="#ffffff" />
+                      <circle cx="53" cy="53" r="1" fill="#ffffff" />
+                    </g>
+                  </g>
                   
-                  {/* Pink Cheeks (peeking out) */}
-                  <circle cx="33" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
-                  <circle cx="67" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
-
-                  {/* Helmet Dome */}
-                  <path d="M 18,45 C 18,20 32,10 50,10 C 68,10 82,20 82,45 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                  <path d="M 50,10 L 50,45" stroke="#3b1c14" strokeWidth="2.5" />
-
-                  {/* Left Ear Flap Outer */}
-                  <path d="M 22,42 C 16,52 14,64 15,78 C 16,84 20,86 23,83 C 26,80 26,68 26,42 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                  {/* Left Ear Flap Inner Fleece */}
-                  <path d="M 25,44 C 22,50 20,60 21,76 C 21.5,79 23,80 24.5,78 C 26,75 26.5,66 26.5,44 Z" fill="#f6e5b5" stroke="#3b1c14" strokeWidth="1.5" strokeLinejoin="round" />
-
-                  {/* Right Ear Flap Outer */}
-                  <path d="M 78,42 C 84,52 86,64 85,78 C 84,84 80,86 77,83 C 74,80 74,68 74,42 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                  {/* Right Ear Flap Inner Fleece */}
-                  <path d="M 75,44 C 78,50 80,60 79,76 C 78.5,79 77,80 75.5,78 C 74,75 73.5,66 73.5,44 Z" fill="#f6e5b5" stroke="#3b1c14" strokeWidth="1.5" strokeLinejoin="round" />
-
-                  {/* Goggles Strap (Moved down to eye level) */}
-                  <path d="M 18,52 C 18,52 30,50 50,50 C 70,50 82,52 82,52" stroke="#451c14" strokeWidth="6" strokeLinecap="round" />
-
-                  {/* Goggles Left */}
-                  <circle cx="39" cy="52" r="10" fill="#e5832a" stroke="#3b1c14" strokeWidth="2" />
-                  <circle cx="39" cy="52" r="7.5" fill="#f9ab55" stroke="#3b1c14" strokeWidth="1.5" />
-                  <circle cx="39" cy="52" r="6" fill="#7cd4d5" stroke="#3b1c14" strokeWidth="1.5" />
-                  <path d="M 36,50 L 38,48" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
-
-                  {/* Goggles Right */}
-                  <circle cx="61" cy="52" r="10" fill="#e5832a" stroke="#3b1c14" strokeWidth="2" />
-                  <circle cx="61" cy="52" r="7.5" fill="#f9ab55" stroke="#3b1c14" strokeWidth="1.5" />
-                  <circle cx="61" cy="52" r="6" fill="#7cd4d5" stroke="#3b1c14" strokeWidth="1.5" />
-                  <path d="M 58,50 L 60,48" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
+                  {/* Anime Glasses Shine (sweeps diagonal glint inside the lens bounds) */}
+                  <g clipPath="url(#lens-clip)">
+                    <rect className="anime-shine-swipe" x="-70" y="-30" width="24" height="160" fill="#ffffff" opacity="0.8" />
+                  </g>
+                  
+                  {/* Static Glare outline */}
+                  <path d="M 36,36 L 44,28" stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" opacity="0.85" />
                 </g>
               </svg>
               <h4 className="chatbot-title">SAFIRA AI Safety Bot</h4>
             </div>
             <button 
-              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }} 
+              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', zIndex: 2, fontSize: '16px', opacity: 0.8 }} 
               onClick={() => setChatOpen(false)}
             >
               ✕
@@ -105,55 +165,52 @@ export default function ChatbotSidebar({
             </div>
           </form>
         </aside>
-      )}
 
-      {/* Floating robot icon to open chat if closed */}
-      {!chatOpen && (
-        <div className="chatbot-toggle-btn" onClick={() => setChatOpen(true)} title="Open AI Chat">
-          <svg viewBox="0 0 100 100" width="60" height="60">
-            <g filter="url(#chatbot-glow)">
-              {/* Face under the helmet */}
-              <path d="M 26,44 C 26,62 30,76 50,76 C 70,76 74,62 74,44 Z" fill="#fde0c5" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-              
-              {/* Cute Smile (visible below goggles) */}
-              <path d="M 46,65 Q 50,69 54,65" fill="none" stroke="#3b1c14" strokeWidth="2.2" strokeLinecap="round" />
-              
-              {/* Pink Cheeks (peeking out) */}
-              <circle cx="33" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
-              <circle cx="67" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
-
-              {/* Helmet Dome */}
-              <path d="M 18,45 C 18,20 32,10 50,10 C 68,10 82,20 82,45 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-              <path d="M 50,10 L 50,45" stroke="#3b1c14" strokeWidth="2.5" />
-
-              {/* Left Ear Flap Outer */}
-              <path d="M 22,42 C 16,52 14,64 15,78 C 16,84 20,86 23,83 C 26,80 26,68 26,42 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-              {/* Left Ear Flap Inner Fleece */}
-              <path d="M 25,44 C 22,50 20,60 21,76 C 21.5,79 23,80 24.5,78 C 26,75 26.5,66 26.5,44 Z" fill="#f6e5b5" stroke="#3b1c14" strokeWidth="1.5" strokeLinejoin="round" />
-
-              {/* Right Ear Flap Outer */}
-              <path d="M 78,42 C 84,52 86,64 85,78 C 84,84 80,86 77,83 C 74,80 74,68 74,42 Z" fill="#9d532a" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-              {/* Right Ear Flap Inner Fleece */}
-              <path d="M 75,44 C 78,50 80,60 79,76 C 78.5,79 77,80 75.5,78 C 74,75 73.5,66 73.5,44 Z" fill="#f6e5b5" stroke="#3b1c14" strokeWidth="1.5" strokeLinejoin="round" />
-
-              {/* Goggles Strap (Moved down to eye level) */}
-              <path d="M 18,52 C 18,52 30,50 50,50 C 70,50 82,52 82,52" stroke="#451c14" strokeWidth="6" strokeLinecap="round" />
-
-              {/* Goggles Left */}
-              <circle cx="39" cy="52" r="10" fill="#e5832a" stroke="#3b1c14" strokeWidth="2" />
-              <circle cx="39" cy="52" r="7.5" fill="#f9ab55" stroke="#3b1c14" strokeWidth="1.5" />
-              <circle cx="39" cy="52" r="6" fill="#7cd4d5" stroke="#3b1c14" strokeWidth="1.5" />
-              <path d="M 36,50 L 38,48" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
-
-              {/* Goggles Right */}
-              <circle cx="61" cy="52" r="10" fill="#e5832a" stroke="#3b1c14" strokeWidth="2" />
-              <circle cx="61" cy="52" r="7.5" fill="#f9ab55" stroke="#3b1c14" strokeWidth="1.5" />
-              <circle cx="61" cy="52" r="6" fill="#7cd4d5" stroke="#3b1c14" strokeWidth="1.5" />
-              <path d="M 58,50 L 60,48" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
+      {/* Floating robot icon to toggle chat (always visible) */}
+      <div 
+        className={`chatbot-toggle-btn ${chatOpen ? 'chat-active' : ''}`} 
+        onClick={() => setChatOpen(!chatOpen)} 
+        title={chatOpen ? "Close AI Chat" : "Open AI Chat"}
+      >
+        <svg viewBox="0 0 100 100" width="60" height="60">
+          <g filter="url(#chatbot-glow)">
+            {/* Outer Rim */}
+            <circle cx="50" cy="50" r="42" fill="#e5832a" stroke="#3b1c14" strokeWidth="5" />
+            {/* Inner Frame */}
+            <circle cx="50" cy="50" r="34" fill="#f9ab55" stroke="#3b1c14" strokeWidth="3" />
+            {/* Eyeball (White Sclera) */}
+            <circle cx="50" cy="50" r="28" fill="#ffffff" stroke="#3b1c14" strokeWidth="3" />
+            
+            {/* Eye translation group (follows mouse) */}
+            <g transform={`translate(${eyeOffset.x}, ${eyeOffset.y})`}>
+              {/* Eye blink group (CSS animated scaleY) */}
+              <g className="eye-blink-group">
+                {/* Blue Iris */}
+                <circle cx="50" cy="50" r="17" fill="#00b5ff" stroke="#3b1c14" strokeWidth="2" />
+                {/* Iris details */}
+                <path d="M 40,40 L 43,43" stroke="#0091d9" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M 60,60 L 57,57" stroke="#0091d9" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M 40,60 L 43,57" stroke="#0091d9" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M 60,40 L 57,43" stroke="#0091d9" strokeWidth="1.5" strokeLinecap="round" />
+                
+                {/* Pupil */}
+                <circle cx="50" cy="50" r="9" fill="#0d1e29" />
+                {/* Pupil Glare Highlights */}
+                <circle cx="47.5" cy="47.5" r="2.2" fill="#ffffff" />
+                <circle cx="53" cy="53" r="1" fill="#ffffff" />
+              </g>
             </g>
-          </svg>
-        </div>
-      )}
+            
+            {/* Anime Glasses Shine (sweeps diagonal glint inside the lens bounds) */}
+            <g clipPath="url(#lens-clip)">
+              <rect className="anime-shine-swipe" x="-70" y="-30" width="24" height="160" fill="#ffffff" opacity="0.8" />
+            </g>
+            
+            {/* Static Glare outline */}
+            <path d="M 36,36 L 44,28" stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" opacity="0.85" />
+          </g>
+        </svg>
+      </div>
     </>
   );
 }

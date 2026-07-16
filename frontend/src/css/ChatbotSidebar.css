@@ -13,17 +13,29 @@
   flex-direction: column;
   z-index: 120;
   overflow: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 0;
+  transform: translateY(30px) scale(0.92);
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.chatbot-sidebar.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
 }
 
 .chatbot-header {
-  padding: 14px 18px;
-  background-color: var(--text-primary);
-  border-bottom: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .chatbot-title {
@@ -31,40 +43,70 @@
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.5px;
+  font-family: 'Outfit', sans-serif;
+  background: linear-gradient(90deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .chat-history {
   flex: 1;
-  padding: 16px;
+  padding: 18px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background-color: var(--bg-workspace);
+  gap: 14px;
+  /* Beautiful custom ambient color mesh + tech dot matrix background */
+  background: radial-gradient(circle at 10% 10%, rgba(58, 154, 217, 0.06) 0%, transparent 40%),
+              radial-gradient(circle at 90% 90%, rgba(245, 158, 11, 0.06) 0%, transparent 45%),
+              #f8fafc;
+  background-image: radial-gradient(circle at 10% 10%, rgba(58, 154, 217, 0.06) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 90%, rgba(245, 158, 11, 0.06) 0%, transparent 45%),
+                    radial-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 14px 14px;
 }
 
 .chat-msg {
-  max-width: 85%;
-  padding: 10px 14px;
-  border-radius: 14px;
+  max-width: 82%;
+  padding: 11px 15px;
   font-size: 12.5px;
-  line-height: 1.4;
-  box-shadow: var(--shadow-sm);
+  line-height: 1.45;
+  font-family: 'Inter', sans-serif;
+  animation: message-slide-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.2s ease;
+}
+
+.chat-msg:hover {
+  transform: translateY(-1px);
+}
+
+@keyframes message-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .chat-msg-user {
   align-self: flex-end;
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, #3a9ad9 0%, #2563eb 100%);
   color: #ffffff;
-  border-bottom-right-radius: 2px;
+  border-radius: 18px 18px 2px 18px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .chat-msg-assistant {
   align-self: flex-start;
-  background-color: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-bottom-left-radius: 2px;
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px 18px 18px 2px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
 }
 
 .chat-msg-system {
@@ -72,24 +114,33 @@
   background-color: var(--danger-light);
   color: var(--danger-hover);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 11px;
   box-shadow: none;
+  padding: 8px 12px;
 }
 
 .chat-input-area {
-  padding: 12px;
-  background-color: var(--bg-card);
-  border-top: 1px solid var(--border-color);
+  padding: 14px;
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.02);
 }
 
 .chat-input-wrapper {
   display: flex;
-  background-color: var(--bg-app);
-  border-radius: 20px;
-  border: 1px solid var(--border-color);
-  padding: 2px 12px;
+  background-color: #f8fafc;
+  border-radius: 24px;
+  border: 1.5px solid #e2e8f0;
+  padding: 3px 14px;
   align-items: center;
+  transition: all 0.25s ease;
+}
+
+.chat-input-wrapper:focus-within {
+  border-color: #3a9ad9;
+  box-shadow: 0 0 0 3px rgba(58, 154, 217, 0.12);
+  background-color: #ffffff;
 }
 
 .chat-input-wrapper input {
@@ -97,21 +148,23 @@
   border: none;
   background: transparent;
   outline: none;
-  color: var(--text-primary);
+  color: #0f172a;
   padding: 8px 2px;
   font-size: 12.5px;
+  font-weight: 500;
 }
 
 .chat-input-wrapper input::placeholder {
-  color: var(--text-muted);
+  color: #94a3b8;
+  font-weight: 400;
 }
 
 .chat-send-btn {
   background: transparent;
   border: none;
-  color: var(--primary-color);
+  color: #3a9ad9;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,9 +198,125 @@
   transform: scale(1.15) rotate(5deg) !important;
 }
 
+.chatbot-toggle-btn.chat-active {
+  transform: scale(0.92) rotate(-15deg) !important;
+}
+
+.chatbot-toggle-btn.chat-active:hover {
+  transform: scale(0.98) rotate(-10deg) !important;
+}
+
 @media print {
   .chatbot-sidebar,
   .chatbot-toggle-btn {
     display: none !important;
+  }
+}
+
+/* Animated Eye blink inside pilot goggle lens */
+.eye-blink-group {
+  transform-origin: 50px 50px;
+  animation: eye-blink-anim 4.5s infinite ease-in-out;
+}
+
+@keyframes eye-blink-anim {
+  0%, 95%, 100% {
+    transform: scaleY(1);
+  }
+  97.5% {
+    transform: scaleY(0.08);
+  }
+}
+
+/* Animated anime glass sweep shine */
+.anime-shine-swipe {
+  transform-origin: center;
+  transform: translate(-100px, -30px) rotate(25deg);
+  animation: anime-glasses-shine 5.5s infinite ease-in-out;
+}
+
+@keyframes anime-glasses-shine {
+  0%, 80% {
+    transform: translate(-100px, -30px) rotate(25deg);
+    opacity: 0;
+  }
+  82% {
+    opacity: 0.85;
+  }
+  88% {
+    transform: translate(140px, -30px) rotate(25deg);
+    opacity: 0.85;
+  }
+  90%, 100% {
+    transform: translate(140px, -30px) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+/* Animated Airport Radar Background for Header */
+.header-radar-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.radar-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.radar-sweep {
+  transform-origin: 180px 25px;
+  animation: radar-sweep-anim 4.5s linear infinite;
+}
+
+.radar-blip-pulse {
+  transform-origin: 240px 15px;
+  animation: radar-pulse-anim 2s infinite ease-out;
+}
+
+.radar-airplane {
+  transform: translate(-30px, 15px);
+  animation: radar-plane-flight 14s linear infinite;
+}
+
+@keyframes radar-sweep-anim {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes radar-pulse-anim {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@keyframes radar-plane-flight {
+  0% {
+    transform: translate(-20px, 8px) scale(0.7);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(380px, 35px) scale(0.7);
+    opacity: 0;
   }
 }
