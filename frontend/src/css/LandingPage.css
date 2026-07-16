@@ -13,6 +13,8 @@
   height: auto;
   overflow: hidden;
   align-items: stretch;
+  z-index: 20 !important;
+  position: relative !important;
 }
 
 .landing-active .document-workspace {
@@ -26,6 +28,7 @@
   border-bottom: none !important;
   box-shadow: none !important;
   padding: 28px 70px 14px 70px !important;
+  z-index: 10 !important;
 }
 
 .landing-nav-links {
