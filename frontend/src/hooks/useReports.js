@@ -570,8 +570,6 @@ export default function useReports() {
     e.preventDefault();
     if (!incidentPrompt.trim()) return;
     setIsGenerating(true);
-    setLoadingMessage("Generating safety worksheet...");
-    setIsPageLoading(true);
 
     try {
       // 1. Generate Rows using Groq Proxy
@@ -629,7 +627,6 @@ export default function useReports() {
       alert(`Error generating report: ${err.message}`);
     } finally {
       setIsGenerating(false);
-      setIsPageLoading(false);
     }
   };
 
