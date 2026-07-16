@@ -70,7 +70,7 @@ function App() {
 
 
   return (
-    <div className={`app-container ${!currentReport ? 'landing-active' : ''}`}>
+    <div className={`app-container ${!currentReport ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
       {/* Top Navbar */}
       <Header
         user={user}

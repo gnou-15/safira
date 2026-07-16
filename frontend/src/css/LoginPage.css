@@ -8,6 +8,12 @@
   --ice-blue: #e0f2fe;
 }
 
+/* Blurs everything behind the login screen */
+.app-container.login-active > *:not(.login-page-container):not(.buffer-loader-container) {
+  filter: blur(8px);
+  transition: filter 0.3s ease;
+}
+
 .login-page-container {
   position: fixed;
   top: 0;
@@ -17,9 +23,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(202, 212, 218, 0.4); /* Semi-transparent matching landing bg */
-  backdrop-filter: blur(12px); /* Glassmorphism blur matching Resora */
-  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(202, 212, 218, 0.25); /* Light transparent tint overlay */
+  backdrop-filter: blur(4px); /* Light progressive enhancement blur */
+  -webkit-backdrop-filter: blur(4px);
   padding: 1.5rem;
   box-sizing: border-box;
   font-family: 'Inter', sans-serif;
