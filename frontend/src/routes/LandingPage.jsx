@@ -364,8 +364,10 @@ export default function LandingPage({
                   >
                     <span className="pill-dot" style={{ backgroundColor: report.docType === 'investigation' ? '#f59e0b' : '#3a9ad9' }}></span>
                     <span className="pill-title" title={report.title}>
-                      {report.docType === 'investigation' ? '[Investigation] ' : ''}
-                      {report.title || 'Untitled Report'}
+                      {report.docType === 'investigation' ? 
+                        (report.title || 'Untitled Report').replace(/^(Safety Incident\s+)?Investigation\s+Report(:\s*)?/i, '').trim() || 'Safety Incident Investigation'
+                        : (report.title || 'Untitled Report')
+                      }
                     </span>
                     <span className="pill-date">{formatTimestampShort(report.created_at)}</span>
                   </div>
