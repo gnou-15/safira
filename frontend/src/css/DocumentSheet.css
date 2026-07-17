@@ -829,6 +829,11 @@
 }
 
 /* Print Overrides for Document Sheet */
+@page hirac-landscape-page {
+  size: A4 landscape;
+  margin: 10mm;
+}
+
 @media print {
 
   .screen-only,
@@ -845,6 +850,7 @@
   }
 
   .document-sheet {
+    page: hirac-landscape-page !important;
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;

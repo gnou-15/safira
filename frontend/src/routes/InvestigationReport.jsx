@@ -1,6 +1,8 @@
 import React from 'react';
 import AutoResizeTextarea from '../components/AutoResizeTextarea';
 import '../css/InvestigationReport.css';
+import '../css/InvestigationReportPrint.css';
+import InvestigationReportPrint from '../components/InvestigationReportPrint';
 
 export default function InvestigationReport({
   currentInvestigation,
@@ -388,6 +390,9 @@ export default function InvestigationReport({
           Delete This Report
         </button>
       </div>
+
+      {/* Print-Only Version (Exactly formatted as Portrait PDF) */}
+      <InvestigationReportPrint currentInvestigation={currentInvestigation} />
     </div>
   );
 }
