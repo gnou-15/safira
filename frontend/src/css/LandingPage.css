@@ -28,7 +28,7 @@
   border-bottom: none !important;
   box-shadow: none !important;
   padding: 28px 70px 14px 70px !important;
-  z-index: 10 !important;
+  z-index: 1000 !important;
 }
 
 .landing-nav-links {
