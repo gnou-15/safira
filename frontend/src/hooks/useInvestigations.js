@@ -192,11 +192,21 @@ export default function useInvestigations(user, setCurrentPage) {
     }
   };
 
-  const handleExitInvestigation = () => {
-    sessionStorage.removeItem('activeInvestigationId');
-    sessionStorage.setItem('safira_current_page', 'landing');
-    setCurrentInvestigation(null);
-    setCurrentPage('landing');
+  const handleExitInvestigation = async () => {
+    if (hasChanges) {
+      await saveChanges(currentInvestigation);
+    }
+    setLoadingMessage("Closing investigation report...");
+    setIsLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      sessionStorage.removeItem('activeInvestigationId');
+      sessionStorage.setItem('safira_current_page', 'landing');
+      setCurrentInvestigation(null);
+      setCurrentPage('landing');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Load from session storage on mount
