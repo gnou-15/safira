@@ -318,10 +318,12 @@
   padding: 0;
   font-size: 13px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary) !important;
 }
 
 .inv-personnel-table td.table-value .table-textarea:focus {
   background-color: #f1f5f9 !important;
+  color: var(--text-primary) !important;
 }
 
 /* Bullet Items List styling */
