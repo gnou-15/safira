@@ -2,11 +2,12 @@
 
 .investigation-print-version {
   display: none;
+  page: investigation-portrait-page !important;
 }
 
-@page {
-  size: A4 portrait !important;
-  margin: 0.5in 1in 0.5in 1in !important;
+@page investigation-portrait-page {
+  size: A4 portrait;
+  margin: 0.5in 1in 0.5in 1in;
 }
 
 @media print {
