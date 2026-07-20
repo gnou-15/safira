@@ -80,7 +80,8 @@
 }
 
 .landing-logout-btn {
-  background-color: #64748b; /* Slate gray */
+  background-color: #64748b;
+  /* Slate gray */
   color: #ffffff !important;
   font-family: inherit;
   font-weight: 700;
@@ -708,7 +709,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: rgba(254, 243, 199, 0.25); /* Very subtle warm base */
+  background: rgba(254, 243, 199, 0.25);
+  /* Very subtle warm base */
   border: 1px solid rgba(245, 158, 11, 0.1);
   padding: 6px 14px;
   border-radius: 20px;
@@ -729,11 +731,14 @@
 }
 
 @keyframes subtle-pulse-dot {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(0.95);
     opacity: 0.6;
     box-shadow: 0 0 4px #f59e0b;
   }
+
   50% {
     transform: scale(1.15);
     opacity: 1;
@@ -742,7 +747,8 @@
 }
 
 .bubble-text {
-  color: #64748b; /* Muted gray for a less prominent notice */
+  color: #64748b;
+  /* Muted gray for a less prominent notice */
   font-size: 11.5px;
   font-weight: 600;
   letter-spacing: -0.05px;
@@ -795,10 +801,13 @@
 }
 
 @keyframes version-pulse-dot {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.6;
     box-shadow: 0 0 2px #0284c7;
   }
+
   50% {
     opacity: 1;
     box-shadow: 0 0 6px #0284c7, 0 0 8px #38bdf8;
@@ -869,4 +878,387 @@
 
 .landing-svg-manuals-btn:active rect {
   transform: scale(0.98);
+}
+
+/* ============================================================
+   🌙 NIGHT SKY MODE — Logged-out landing page
+   Activated via body.night-mode-active (toggled by LandingPage.jsx useEffect)
+   ============================================================ */
+
+body.night-mode-active {
+  background-color: #06091a;
+}
+
+body.night-mode-active .landing-active {
+  --bg-app: #06091a;
+  background: #06091a !important;
+}
+
+body.night-mode-active .landing-active .top-nav {
+  background-color: rgba(6, 9, 26, 0.96) !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* Brand text on night nav */
+body.night-mode-active .landing-active .brand-subtext {
+  color: rgba(196, 214, 230, 0.5) !important;
+  -webkit-text-fill-color: rgba(196, 214, 230, 0.5) !important;
+}
+
+body.night-mode-active .landing-active .landing-nav-link {
+  color: rgba(196, 214, 230, 0.6);
+}
+
+body.night-mode-active .landing-active .landing-nav-link:hover {
+  color: #e2e8f0;
+}
+
+/* SVG scene text — invert to light for readability */
+body.night-mode-active .landing-active .landing-scene-svg text,
+body.night-mode-active .landing-active .landing-scene-svg tspan {
+  fill: #e2e8f0 !important;
+}
+
+/* Keep "REPORT" as bright sky-blue instead of white */
+body.night-mode-active .landing-active .landing-scene-svg .hero-report-text {
+  fill: #7dd3fc !important;
+}
+
+/* Ground line — faint silver */
+body.night-mode-active .landing-active .landing-scene-svg line {
+  stroke: rgba(148, 163, 184, 0.22) !important;
+}
+
+/* "Yes There Is!" button — dark glass pill */
+body.night-mode-active .landing-active .btn-yes-today {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(200, 220, 255, 0.28) !important;
+}
+
+body.night-mode-active .landing-active .btn-yes-today::before {
+  opacity: 0.07 !important;
+}
+
+body.night-mode-active .landing-active .btn-yes-today::after {
+  opacity: 0.05 !important;
+}
+
+body.night-mode-active .landing-active .btn-yes-today:hover {
+  background-color: rgba(255, 255, 255, 0.11) !important;
+  border-color: rgba(125, 211, 252, 0.45) !important;
+}
+
+/* App description text */
+body.night-mode-active .landing-active .landing-app-description {
+  color: rgba(196, 214, 230, 0.62);
+}
+
+/* Recent reports section */
+body.night-mode-active .landing-active .report-logs-title {
+  color: rgba(196, 214, 230, 0.38);
+}
+
+body.night-mode-active .landing-active .report-log-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(200, 220, 255, 0.09);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+body.night-mode-active .landing-active .report-log-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(125, 211, 252, 0.32);
+  box-shadow: 0 4px 14px rgba(125, 211, 252, 0.12);
+}
+
+body.night-mode-active .landing-active .pill-title {
+  color: #c4d6e8;
+}
+
+body.night-mode-active .landing-active .pill-date {
+  color: rgba(196, 214, 230, 0.38);
+  border-left-color: rgba(196, 214, 230, 0.14);
+}
+
+/* Login prompt bubble (logged-out) */
+body.night-mode-active .landing-active .login-prompt-bubble {
+  background: rgba(196, 214, 230, 0.05);
+  border-color: rgba(196, 214, 230, 0.1);
+}
+
+body.night-mode-active .landing-active .bubble-text {
+  color: rgba(196, 214, 230, 0.62);
+}
+
+/* City skyline — show as faint luminous silhouette against night sky */
+body.night-mode-active .landing-active .landing-skyline {
+  filter: invert(1) opacity(0.11);
+}
+
+/* Footer */
+body.night-mode-active .landing-active .landing-footer-text {
+  color: rgba(196, 214, 230, 0.32);
+}
+
+/* =====================
+   ⭐ Star Field Layer
+   ===================== */
+.star-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background-color: #ffffff;
+  pointer-events: none;
+}
+
+/* Bright "highlight" stars get a soft glow halo */
+.star.bright {
+  box-shadow: 0 0 3px 1px rgba(196, 225, 255, 0.6);
+}
+
+/* Twinkle variant A — slow fade in/out */
+.star.twinkle-a {
+  animation-name: star-twinkle-a;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Twinkle variant B — double pulse */
+.star.twinkle-b {
+  animation-name: star-twinkle-b;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Twinkle variant C — delayed sharp flicker */
+.star.twinkle-c {
+  animation-name: star-twinkle-c;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes star-twinkle-a {
+
+  0%,
+  100% {
+    opacity: 0.12;
+    transform: scale(0.88);
+  }
+
+  50% {
+    opacity: 0.95;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes star-twinkle-b {
+
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.95);
+  }
+
+  35% {
+    opacity: 0.85;
+    transform: scale(1.22);
+  }
+
+  70% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+}
+
+@keyframes star-twinkle-c {
+
+  0%,
+  100% {
+    opacity: 0.08;
+    transform: scale(0.82);
+  }
+
+  60% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+
+/* =====================
+   💫 Shooting Stars
+   ===================== */
+.shooting-star {
+  position: absolute;
+  height: 1px;
+  width: 110px;
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: left center;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.92), rgba(200, 225, 255, 0.4), transparent);
+  z-index: 1;
+}
+
+.shooting-star-1 {
+  top: 10%;
+  left: 5%;
+  animation: shooting-star-streak 20s linear infinite;
+  animation-delay: 6s;
+}
+
+.shooting-star-2 {
+  top: 6%;
+  left: 38%;
+  animation: shooting-star-streak 20s linear infinite;
+  animation-delay: 24s;
+}
+
+.shooting-star-3 {
+  top: 20%;
+  left: 14%;
+  animation: shooting-star-streak 20s linear infinite;
+  animation-delay: 41s;
+}
+
+@keyframes shooting-star-streak {
+  0% {
+    opacity: 0;
+    transform: rotate(32deg) translateX(-20px) scaleX(0);
+  }
+
+  4% {
+    opacity: 0;
+    transform: rotate(32deg) translateX(0px) scaleX(0);
+  }
+
+  10% {
+    opacity: 0.88;
+    transform: rotate(32deg) translateX(70px) scaleX(1);
+  }
+
+  22% {
+    opacity: 0;
+    transform: rotate(32deg) translateX(300px) scaleX(0.3);
+  }
+
+  23%,
+  100% {
+    opacity: 0;
+    transform: rotate(32deg) translateX(300px) scaleX(0);
+  }
+}
+
+/* =====================
+   🌙 Crescent Moon
+   ===================== */
+.landing-moon-wrapper {
+  position: absolute;
+  top: 9%;
+  right: 7%;
+  z-index: 1;
+  pointer-events: none;
+  animation: moon-float 9s ease-in-out infinite;
+}
+
+.landing-moon-svg {
+  width: 88px;
+  height: 88px;
+  display: block;
+}
+
+@keyframes moon-float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+/* =====================
+   ☀️ Sun (logged-in / daytime landing) — clean solid disc
+   ===================== */
+.landing-sun-wrapper {
+  position: absolute;
+  top: 8%;
+  right: 6%;
+  z-index: 2;
+  pointer-events: none;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sun-drift 14s ease-in-out infinite;
+}
+
+/* Large warm atmospheric halo — bleeds into the sky like the reference */
+.sun-halo-outer {
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255, 252, 190, 0.55) 0%,
+    rgba(255, 220, 80, 0.32) 30%,
+    rgba(255, 170, 30, 0.14) 58%,
+    rgba(255, 130, 10, 0.04) 80%,
+    transparent 95%
+  );
+  filter: blur(12px);
+  animation: sun-pulse 6s ease-in-out infinite;
+}
+
+/* Solid bright sun disc — white-hot center, warm cream edge */
+.sun-disc {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    #ffffff 0%,
+    #fffef2 40%,
+    #fffac0 72%,
+    rgba(255, 235, 80, 0.6) 100%
+  );
+  box-shadow:
+    0 0 10px 5px rgba(255, 255, 230, 0.9),
+    0 0 30px 14px rgba(255, 228, 70, 0.6),
+    0 0 75px 32px rgba(255, 185, 25, 0.3),
+    0 0 140px 65px rgba(255, 145, 10, 0.14);
+}
+
+@keyframes sun-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.06);
+    opacity: 0.9;
+  }
+}
+
+@keyframes sun-drift {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
 }

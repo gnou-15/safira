@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { formatTimestampShort } from '../utils/formatTimestampShort';
 import '../css/LandingPage.css';
 
@@ -37,6 +37,18 @@ export default function LandingPage({
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Apply/remove night-mode-active body class for CSS scoping (logged-out = night sky)
+  useEffect(() => {
+    if (!user) {
+      document.body.classList.add('night-mode-active');
+    } else {
+      document.body.classList.remove('night-mode-active');
+    }
+    return () => {
+      document.body.classList.remove('night-mode-active');
+    };
+  }, [user]);
 
   const handleAction = async () => {
     if (!user) {
@@ -84,6 +96,21 @@ export default function LandingPage({
     setMouseOffset({ x: 0, y: 0 });
   };
 
+  // Generate stable randomized star positions once per mount
+  const stars = useMemo(() => {
+    const variants = ['twinkle-a', 'twinkle-b', 'twinkle-c'];
+    return Array.from({ length: 90 }, (_, i) => ({
+      id: i,
+      top: `${(Math.random() * 90).toFixed(1)}%`,
+      left: `${(Math.random() * 100).toFixed(1)}%`,
+      size: `${(Math.random() * 1.8 + 0.7).toFixed(1)}px`,
+      delay: `${(Math.random() * 6).toFixed(2)}s`,
+      duration: `${(Math.random() * 3 + 2).toFixed(2)}s`,
+      variant: variants[i % 3],
+      bright: i < 12,
+    }));
+  }, []);
+
   const triggerLightning = (cloudId, startX, startY) => {
     // Apply parallax offset only to Cloud 1 (left cloud) which has mouse tracking
     let offsetX = 0;
@@ -127,6 +154,61 @@ export default function LandingPage({
 
   return (
     <div className="landing-page-container">
+      {/* Night Sky: Stars + Crescent Moon + Shooting Stars (logged-out only) */}
+      {!user && (
+        <>
+          <div className="star-field" aria-hidden="true">
+            {stars.map(star => (
+              <span
+                key={star.id}
+                className={`star ${star.variant}${star.bright ? ' bright' : ''}`}
+                style={{
+                  top: star.top,
+                  left: star.left,
+                  width: star.size,
+                  height: star.size,
+                  animationDuration: star.duration,
+                  animationDelay: star.delay,
+                }}
+              />
+            ))}
+          </div>
+          <div className="landing-moon-wrapper" aria-hidden="true">
+            <svg viewBox="0 0 70 70" className="landing-moon-svg" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
+              <defs>
+                <filter id="moon-glow-filter" x="-60%" y="-60%" width="220%" height="220%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#c4dcff" floodOpacity="0.75" />
+                  <feDropShadow dx="0" dy="0" stdDeviation="16" floodColor="#90b4d8" floodOpacity="0.3" />
+                </filter>
+                {/* Mask creates a true crescent — no opaque fill needed */}
+                <mask id="moon-crescent-mask">
+                  <circle cx="38" cy="35" r="22" fill="white" />
+                  <circle cx="51" cy="27" r="20" fill="black" />
+                </mask>
+              </defs>
+              {/* Moon disc with glow applied to the crescent shape */}
+              <g filter="url(#moon-glow-filter)">
+                <circle cx="38" cy="35" r="22" fill="#dde8f4" mask="url(#moon-crescent-mask)" />
+              </g>
+              {/* Craters — also masked to stay within visible crescent */}
+              <g mask="url(#moon-crescent-mask)">
+                <circle cx="22" cy="42" r="2.8" fill="rgba(148,172,200,0.28)" />
+                <circle cx="16" cy="30" r="2" fill="rgba(148,172,200,0.2)" />
+              </g>
+            </svg>
+          </div>
+          <div className="shooting-star shooting-star-1" aria-hidden="true" />
+          <div className="shooting-star shooting-star-2" aria-hidden="true" />
+          <div className="shooting-star shooting-star-3" aria-hidden="true" />
+        </>
+      )}
+      {/* Sun (logged-in / daytime landing only) */}
+      {user && (
+        <div className="landing-sun-wrapper" aria-hidden="true">
+          <div className="sun-halo-outer" />
+          <div className="sun-disc" />
+        </div>
+      )}
       {/* Selector Modal Overlay */}
       {showTypeSelector && (
         <div className="modal-overlay">
@@ -195,7 +277,7 @@ export default function LandingPage({
               {/* Main Centered Text */}
               <text x="400" y="70" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="48" letterSpacing="-1">
                 <tspan fill="#0f172a">ANY </tspan>
-                <tspan fill="#3a9ad9">REPORT</tspan>
+                <tspan fill="#3a9ad9" className="hero-report-text">REPORT</tspan>
               </text>
               <text x="400" y="120" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="48" letterSpacing="-1" fill="#0f172a">
                 FOR TODAY?

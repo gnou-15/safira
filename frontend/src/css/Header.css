@@ -224,7 +224,7 @@
   position: absolute;
   inset: -6px;
   border-radius: 50%;
-  border: 2px dashed rgba(58, 154, 217, 0.4);
+  border: 2px dashed rgba(196, 220, 248, 0.45);
   animation: keyhole-orbit 6s linear infinite;
   pointer-events: none;
 }
@@ -253,11 +253,15 @@
 
   0%,
   100% {
-    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2);
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2),
+                0 0 5px rgba(200, 216, 248, 0.25);
   }
 
   50% {
-    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2), 0 0 0 6px rgba(58, 154, 217, 0.15);
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2),
+                0 0 10px rgba(200, 216, 248, 0.55),
+                0 0 22px rgba(147, 197, 253, 0.25),
+                0 0 0 6px rgba(200, 216, 248, 0.08);
   }
 }
 
@@ -300,7 +304,7 @@
   position: absolute;
   inset: -5px;
   border-radius: 50%;
-  border: 1.5px dashed rgba(251, 191, 36, 0.5);
+  border: 1.5px dashed rgba(253, 224, 71, 0.65);
   animation: key-btn-orbit 8s linear infinite;
   pointer-events: none;
   transition: opacity 0.2s ease;
@@ -338,11 +342,16 @@
 
   0%,
   100% {
-    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18);
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18),
+                0 0 7px rgba(251, 191, 36, 0.38),
+                0 0 14px rgba(253, 224, 71, 0.18);
   }
 
   50% {
-    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18), 0 0 0 5px rgba(251, 191, 36, 0.2);
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18),
+                0 0 14px rgba(251, 191, 36, 0.68),
+                0 0 28px rgba(253, 224, 71, 0.4),
+                0 0 44px rgba(254, 243, 199, 0.2);
   }
 }
 
