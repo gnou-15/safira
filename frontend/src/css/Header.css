@@ -205,29 +205,70 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   background-color: #3a9ad9;
   color: #ffffff;
-  border: none;
+  border: 2.5px solid #3b1c14;
   border-radius: 50%;
   padding: 0 !important;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 10px rgba(58, 154, 217, 0.2);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2);
+  position: relative;
+  animation: keyhole-ring-pulse 3s ease-in-out infinite;
+}
+
+.header-keyhole-btn::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px dashed rgba(58, 154, 217, 0.4);
+  animation: keyhole-orbit 6s linear infinite;
+  pointer-events: none;
 }
 
 .header-keyhole-btn:hover {
   background-color: #2b85bf;
-  transform: translateY(-1.5px) scale(1.05);
+  transform: translate(-2px, -2px) scale(1.08);
+  box-shadow: 5px 5px 0px rgba(59, 28, 20, 0.3);
+  animation: none;
+}
+
+.header-keyhole-btn:active {
+  transform: translate(1px, 1px) scale(0.96);
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.2);
 }
 
 .header-keyhole-btn svg {
-  transition: transform 0.25s ease;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .header-keyhole-btn:hover svg {
-  transform: rotate(-12deg) scale(1.08);
+  transform: rotate(-18deg) scale(1.15);
+}
+
+@keyframes keyhole-ring-pulse {
+
+  0%,
+  100% {
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2);
+  }
+
+  50% {
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2), 0 0 0 6px rgba(58, 154, 217, 0.15);
+  }
+}
+
+@keyframes keyhole-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Key Widget Wrapper */
@@ -240,32 +281,79 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px !important;
-  height: 38px !important;
+  width: 44px !important;
+  height: 44px !important;
   background-color: #fbbf24 !important;
-  border: 2px solid #3b1c14 !important;
+  border: 2.5px solid #3b1c14 !important;
   color: #3b1c14 !important;
   border-radius: 50% !important;
   padding: 0 !important;
   cursor: pointer !important;
-  transition: all 0.15s ease !important;
-  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.15) !important;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18) !important;
+  position: relative !important;
+  animation: key-btn-breathe 4s ease-in-out infinite !important;
+}
+
+.header-key-btn::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(251, 191, 36, 0.5);
+  animation: key-btn-orbit 8s linear infinite;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.header-key-btn:hover::after,
+.header-key-btn.active::after {
+  opacity: 0;
 }
 
 .header-key-btn:hover,
 .header-key-btn.active {
   background-color: #f59e0b !important;
-  transform: translate(-1px, -1px) !important;
-  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.2) !important;
+  transform: translate(-2px, -2px) scale(1.08) !important;
+  box-shadow: 5px 5px 0px rgba(59, 28, 20, 0.25) !important;
+  animation: none !important;
 }
 
 .header-key-btn:active {
-  transform: translate(1px, 1px) !important;
+  transform: translate(1px, 1px) scale(0.96) !important;
   box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.15) !important;
 }
 
 .header-key-btn svg {
   color: #3b1c14 !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.header-key-btn:hover svg,
+.header-key-btn.active svg {
+  transform: rotate(-20deg) scale(1.2) !important;
+}
+
+@keyframes key-btn-breathe {
+
+  0%,
+  100% {
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18);
+  }
+
+  50% {
+    box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18), 0 0 0 5px rgba(251, 191, 36, 0.2);
+  }
+}
+
+@keyframes key-btn-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
 }
 
 /* Dropdown Card */

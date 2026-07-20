@@ -46,10 +46,10 @@ export default function Header({
                 <g filter="url(#logo-glow-ed)">
                   {/* Face under the helmet */}
                   <path d="M 26,44 C 26,62 30,76 50,76 C 70,76 74,62 74,44 Z" fill="#fde0c5" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                  
+
                   {/* Cute Smile (visible below goggles) */}
                   <path d="M 46,65 Q 50,69 54,65" fill="none" stroke="#3b1c14" strokeWidth="2.2" strokeLinecap="round" />
-                  
+
                   {/* Pink Cheeks (peeking out) */}
                   <circle cx="33" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
                   <circle cx="67" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
@@ -88,16 +88,12 @@ export default function Header({
             <span className="brand-text">Safira <span className="brand-subtext">by Nezer</span></span>
           </div>
           <div className="landing-nav-links">
-            <span className="landing-nav-link active">Home</span>
-            <span className="landing-nav-link">About Us</span>
-            <span className="landing-nav-link">Service</span>
-            <span className="landing-nav-link">Contact</span>
-            
+
             {user ? (
               <div className="header-key-widget-container">
-                <button 
-                  type="button" 
-                  className={`header-key-btn ${showKeyDropdown ? 'active' : ''}`} 
+                <button
+                  type="button"
+                  className={`header-key-btn ${showKeyDropdown ? 'active' : ''}`}
                   onClick={() => setShowKeyDropdown(!showKeyDropdown)}
                   title="View your Secure Key"
                 >
@@ -108,7 +104,7 @@ export default function Header({
                 {showKeyDropdown && (
                   <div className="header-key-dropdown">
                     <div className="dropdown-key-title">Your Secure Key</div>
-                    <div 
+                    <div
                       className={`dropdown-key-box ${copyText === "Copied!" ? "success" : ""}`}
                       onClick={async () => {
                         try {
@@ -136,9 +132,9 @@ export default function Header({
               </div>
             ) : (
               <div className="header-keyhole-wrapper">
-                <button 
-                  type="button" 
-                  className="header-keyhole-btn" 
+                <button
+                  type="button"
+                  className="header-keyhole-btn"
                   onClick={async () => {
                     const rememberedKey = localStorage.getItem('safira_remembered_key');
                     if (rememberedKey) {
@@ -150,7 +146,7 @@ export default function Header({
                     } else {
                       handleNavigate('login');
                     }
-                  }} 
+                  }}
                   title="Unlock Safira Workspace"
                 >
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="btn-keyhole-svg">
@@ -159,7 +155,7 @@ export default function Header({
                     <path d="M10 13 L14 13 L15 18 L9 18 Z" fill="currentColor" />
                   </svg>
                 </button>
-                
+
                 {/* Subtle attention-catching prompt bubble */}
                 <div className="keyhole-prompt-bubble">
                   Unlock workspace key!
@@ -184,10 +180,10 @@ export default function Header({
                   <g filter="url(#logo-glow-ed)">
                     {/* Face under the helmet */}
                     <path d="M 26,44 C 26,62 30,76 50,76 C 70,76 74,62 74,44 Z" fill="#fde0c5" stroke="#3b1c14" strokeWidth="2.5" strokeLinejoin="round" />
-                    
+
                     {/* Cute Smile (visible below goggles) */}
                     <path d="M 46,65 Q 50,69 54,65" fill="none" stroke="#3b1c14" strokeWidth="2.2" strokeLinecap="round" />
-                    
+
                     {/* Pink Cheeks (peeking out) */}
                     <circle cx="33" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
                     <circle cx="67" cy="62" r="3.5" fill="#fca5a5" opacity="0.6" />
@@ -228,8 +224,8 @@ export default function Header({
             {currentReport && reports.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
                 <div className="custom-report-selector">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className={`custom-select-trigger ${showReportDropdown ? 'active' : ''}`}
                     onClick={() => setShowReportDropdown(!showReportDropdown)}
                   >
@@ -245,13 +241,13 @@ export default function Header({
                     <>
                       {/* Invisible click backdrop to dismiss dropdown */}
                       <div className="custom-select-backdrop" onClick={() => setShowReportDropdown(false)}></div>
-                      
+
                       <div className="custom-select-menu">
                         <div className="custom-menu-header">Available HIRAC Worksheets</div>
                         <div className="custom-menu-options">
                           {reports.map((report) => (
-                            <div 
-                              key={report.id} 
+                            <div
+                              key={report.id}
                               className={`custom-select-option ${currentReport?.id === report.id ? 'selected' : ''}`}
                               onClick={() => {
                                 loadReport(report.id);
@@ -290,8 +286,8 @@ export default function Header({
             {currentInvestigation && investigations.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
                 <div className="custom-report-selector">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className={`custom-select-trigger ${showReportDropdown ? 'active' : ''}`}
                     onClick={() => setShowReportDropdown(!showReportDropdown)}
                   >
@@ -306,13 +302,13 @@ export default function Header({
                   {showReportDropdown && (
                     <>
                       <div className="custom-select-backdrop" onClick={() => setShowReportDropdown(false)}></div>
-                      
+
                       <div className="custom-select-menu">
                         <div className="custom-menu-header">Available Investigations</div>
                         <div className="custom-menu-options">
                           {investigations.map((inv) => (
-                            <div 
-                              key={inv.id} 
+                            <div
+                              key={inv.id}
                               className={`custom-select-option ${currentInvestigation?.id === inv.id ? 'selected' : ''}`}
                               onClick={() => {
                                 loadInvestigation(inv.id);
@@ -359,9 +355,9 @@ export default function Header({
 
             {/* Back to Home Button when open in workspace */}
             {(currentReport || currentInvestigation) && (
-              <button 
+              <button
                 type="button"
-                className="btn-nav-back-home" 
+                className="btn-nav-back-home"
                 onClick={currentReport ? handleExitToLanding : handleExitInvestigation}
               >
                 ← Back
@@ -371,9 +367,9 @@ export default function Header({
             {/* Secure Key Widget */}
             {user && !currentReport && !currentInvestigation && (
               <div className="header-key-widget-container">
-                <button 
-                  type="button" 
-                  className={`header-key-btn ${showKeyDropdown ? 'active' : ''}`} 
+                <button
+                  type="button"
+                  className={`header-key-btn ${showKeyDropdown ? 'active' : ''}`}
                   onClick={() => setShowKeyDropdown(!showKeyDropdown)}
                   title="View your Secure Key"
                 >
@@ -384,7 +380,7 @@ export default function Header({
                 {showKeyDropdown && (
                   <div className="header-key-dropdown">
                     <div className="dropdown-key-title">Your Secure Key</div>
-                    <div 
+                    <div
                       className={`dropdown-key-box ${copyText === "Copied!" ? "success" : ""}`}
                       onClick={async () => {
                         try {
