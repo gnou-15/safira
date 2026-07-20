@@ -22,6 +22,12 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
   const rawTitle = currentInvestigation.title || 'Aircraft Parking Position Deviation During Marshalling Operations of Flight EK338';
   const cleanTitle = rawTitle.replace(/^(investigation\s+report:\s*)+/i, '').trim();
 
+  const analysisItems = currentInvestigation.analysis || [];
+  const rootCauseItems = currentInvestigation.root_cause || [];
+  const correctiveItems = currentInvestigation.corrective_action || [];
+  const preventiveItems = currentInvestigation.preventive_action || [];
+  const refLines = currentInvestigation.references_text ? currentInvestigation.references_text.split('\n') : [];
+
   return (
     <div className="print-only investigation-print-version">
       {/* PAGE 1: COVER PAGE */}
@@ -33,7 +39,6 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
           </div>
           <div className="print-header-right"></div>
         </div>
-        
         <div className="cover-grid">
           <div className="cover-left-spacer"></div>
           <div className="cover-right-box">
@@ -41,13 +46,9 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
               <div className="cover-logo-container">
                 <img src="/PAGSS.png" alt="PAGSS Logo" className="cover-logo-img" />
               </div>
-              <h1 className="cover-title">
-                Investigation Report:<br />
-                {cleanTitle}
-              </h1>
+              <h1 className="cover-title">Investigation Report:<br />{cleanTitle}</h1>
               <div className="cover-version">Version 01</div>
             </div>
-            
             <div>
               <div className="cover-desc-box">
                 This document contains the investigation report on the {cleanTitle}. 
@@ -58,12 +59,10 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
             </div>
           </div>
         </div>
-        
         <div className="print-footer">
           <div className="print-footer-line"></div>
           <div className="print-footer-content">
-            <span>Investigation Report</span>
-            <span>Cover Page</span>
+            <span>Investigation Report</span><span>Cover Page</span>
           </div>
         </div>
       </div>
@@ -79,69 +78,28 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
             <img src="/PAGSS.png" alt="PAGSS Logo" className="print-header-logo" />
           </div>
         </div>
-        
         <div className="toc-body">
           <h2 className="toc-title">TABLE OF CONTENTS</h2>
           <div className="toc-list">
-            <div className="toc-item">
-              <span className="toc-name">EXECUTIVE SUMMARY</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">2</span>
-            </div>
-            <div className="toc-item">
-              <span className="toc-name">1. Factual Information</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">3</span>
-            </div>
+            <div className="toc-item"><span className="toc-name">EXECUTIVE SUMMARY</span><span className="toc-dots"></span><span className="toc-page-num">2</span></div>
+            <div className="toc-item"><span className="toc-name">1. Factual Information</span><span className="toc-dots"></span><span className="toc-page-num">3</span></div>
             <div className="toc-subitems-group">
               <div className="toc-subitem">1.1 Operational Irregularity</div>
               <div className="toc-subitem">1.2 Risk Index</div>
               <div className="toc-subitem">1.3 Personnel's Information</div>
             </div>
-            
-            <div className="toc-item">
-              <span className="toc-name">2. Analysis</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">3</span>
-            </div>
-            
-            <div className="toc-item">
-              <span className="toc-name">3. Root Cause</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">3</span>
-            </div>
-            
-            <div className="toc-item">
-              <span className="toc-name">4. Immediate Actions/Corrective Action</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">4</span>
-            </div>
-            
-            <div className="toc-item">
-              <span className="toc-name">5. Preventive Action</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">4</span>
-            </div>
-            
-            <div className="toc-item">
-              <span className="toc-name">6. References</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">4</span>
-            </div>
-            
-            <div className="toc-item">
-              <span className="toc-name">7. Investigation Team</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">4</span>
-            </div>
+            <div className="toc-item"><span className="toc-name">2. Analysis</span><span className="toc-dots"></span><span className="toc-page-num">3</span></div>
+            <div className="toc-item"><span className="toc-name">3. Root Cause</span><span className="toc-dots"></span><span className="toc-page-num">3</span></div>
+            <div className="toc-item"><span className="toc-name">4. Immediate Actions/Corrective Action</span><span className="toc-dots"></span><span className="toc-page-num">3</span></div>
+            <div className="toc-item"><span className="toc-name">5. Preventive Action</span><span className="toc-dots"></span><span className="toc-page-num">4</span></div>
+            <div className="toc-item"><span className="toc-name">6. References</span><span className="toc-dots"></span><span className="toc-page-num">4</span></div>
+            <div className="toc-item"><span className="toc-name">7. Investigation Team</span><span className="toc-dots"></span><span className="toc-page-num">4</span></div>
           </div>
         </div>
-        
         <div className="print-footer">
           <div className="print-footer-line"></div>
           <div className="print-footer-content">
-            <span>Investigation Report</span>
-            <span>Page 1</span>
+            <span>Investigation Report</span><span>Page 1</span>
           </div>
         </div>
       </div>
@@ -157,22 +115,19 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
             <img src="/PAGSS.png" alt="PAGSS Logo" className="print-header-logo" />
           </div>
         </div>
-        
         <div className="print-body">
           <h3 className="section-title-simple">Executive Summary:</h3>
           <p className="summary-text-block">{currentInvestigation.executive_summary || 'No summary provided.'}</p>
         </div>
-        
         <div className="print-footer">
           <div className="print-footer-line"></div>
           <div className="print-footer-content">
-            <span>Investigation Report</span>
-            <span>Page 2</span>
+            <span>Investigation Report</span><span>Page 2</span>
           </div>
         </div>
       </div>
 
-      {/* PAGE 4: SECTION 1, 2, 3, 4 */}
+      {/* PAGE 4: SECTIONS 1, 2, 3, 4 */}
       <div className="print-page section-content-page">
         <div className="print-header">
           <div className="print-header-left">
@@ -183,95 +138,91 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
             <img src="/PAGSS.png" alt="PAGSS Logo" className="print-header-logo" />
           </div>
         </div>
-        
         <div className="print-body">
+          {/* 1. Factual Information */}
           <h3 className="section-title">1. Factual Information</h3>
-          
           <h4 className="subsection-title">1.1 Operational Irregularity</h4>
           <p className="factual-text">'{currentInvestigation.operational_irregularity || 'N/A'}'</p>
-          
+
           <h4 className="subsection-title">1.2 Risk Index</h4>
           <div className="print-risk-badge-wrapper">
             <div className="print-risk-badge" style={getRiskIndexStyle(currentInvestigation.risk_index)}>
               {currentInvestigation.risk_index || '2D - LOW'}
             </div>
           </div>
-          
+
           <h4 className="subsection-title">1.3 Personnel Information</h4>
           <table className="print-personnel-table">
             <tbody>
-              <tr>
-                <th>ID Number</th>
-                <td>{currentInvestigation.id_number || 'N/A'}</td>
-              </tr>
-              <tr>
-                <th>Position</th>
-                <td>{currentInvestigation.position || 'N/A'}</td>
-              </tr>
-              <tr>
-                <th>Date of Hiring</th>
-                <td>{currentInvestigation.date_of_hiring || 'N/A'}</td>
-              </tr>
-              <tr>
-                <th>Trainings</th>
-                <td>{currentInvestigation.trainings || 'N/A'}</td>
-              </tr>
+              <tr><th>ID Number</th><td>{currentInvestigation.id_number || 'N/A'}</td></tr>
+              <tr><th>Position</th><td>{currentInvestigation.position || 'N/A'}</td></tr>
+              <tr><th>Date of Hiring</th><td>{currentInvestigation.date_of_hiring || 'N/A'}</td></tr>
+              <tr><th>Trainings</th><td>{currentInvestigation.trainings || 'N/A'}</td></tr>
             </tbody>
           </table>
-          
-          <h3 className="section-title" style={{ marginTop: '20px' }}>2. Analysis</h3>
-          <div className="print-bullet-list">
-            {(currentInvestigation.analysis || []).map((item, idx) => (
-              <div key={idx} className="print-bullet-item">
-                <span className="bullet-letter">{String.fromCharCode(97 + idx)})</span>
-                <span className="bullet-content">{item}</span>
-              </div>
-            ))}
-          </div>
-          
-          <h3 className="section-title" style={{ marginTop: '20px' }}>3. Root Cause:</h3>
-          <div className="print-bullet-list">
-            {(currentInvestigation.root_cause || []).map((item, idx) => {
-              const parts = item.split(/ [-–—] /);
-              return (
-                <div key={idx} className="print-bullet-item">
-                  <span className="bullet-letter">{String.fromCharCode(97 + idx)})</span>
-                  <span className="bullet-content">
-                    {parts.length > 1 ? (
-                      <>
-                        <strong>{parts[0]}</strong> – {parts.slice(1).join(' - ')}
-                      </>
-                    ) : (
-                      item
-                    )}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
 
-          <h3 className="section-title" style={{ marginTop: '20px' }}>4. Immediate/Corrective Action</h3>
-          <div className="print-bullet-list">
-            {(currentInvestigation.corrective_action || []).map((item, idx) => (
-              <div key={idx} className="print-bullet-item">
-                <span className="bullet-letter">{String.fromCharCode(97 + idx)})</span>
-                <span className="bullet-content">{item}</span>
+          {/* 2. Analysis */}
+          {analysisItems.length > 0 && (
+            <>
+              <h3 className="section-title">2. Analysis</h3>
+              <div className="print-bullet-list">
+                {analysisItems.map((item, idx) => (
+                  <div key={idx} className="print-bullet-item">
+                    <span className="bullet-letter">{String.fromCharCode(97 + idx)})</span>
+                    <span className="bullet-content">{item}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
+
+          {/* 3. Root Cause */}
+          {rootCauseItems.length > 0 && (
+            <>
+              <h3 className="section-title">3. Root Cause:</h3>
+              <div className="print-bullet-list">
+                {rootCauseItems.map((item, idx) => {
+                  const parts = item.split(/ [-–—] /);
+                  return (
+                    <div key={idx} className="print-bullet-item">
+                      <span className="bullet-letter">{String.fromCharCode(97 + idx)})</span>
+                      <span className="bullet-content">
+                        {parts.length > 1 ? (
+                          <><strong>{parts[0]}</strong> – {parts.slice(1).join(' - ')}</>
+                        ) : item}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {/* 4. Immediate/Corrective Action */}
+          {correctiveItems.length > 0 && (
+            <>
+              <h3 className="section-title">4. Immediate/Corrective Action</h3>
+              <div className="print-bullet-list">
+                {correctiveItems.map((item, idx) => (
+                  <div key={idx} className="print-bullet-item">
+                    <span className="bullet-letter">{String.fromCharCode(97 + idx)})</span>
+                    <span className="bullet-content">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
-        
         <div className="print-footer">
           <div className="print-footer-line"></div>
           <div className="print-footer-content">
-            <span>Investigation Report</span>
-            <span>Page 3</span>
+            <span>Investigation Report</span><span>Page 3</span>
           </div>
         </div>
       </div>
 
-      {/* PAGE 5: SECTION 5, 6, 7 */}
-      <div className="print-page signature-page">
+      {/* PAGE 5: SECTIONS 5, 6, 7 */}
+      <div className="print-page section-content-page">
         <div className="print-header">
           <div className="print-header-left">
             <div>{currentInvestigation.ref_no || 'SSQA - 032'}</div>
@@ -281,22 +232,27 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
             <img src="/PAGSS.png" alt="PAGSS Logo" className="print-header-logo" />
           </div>
         </div>
-        
         <div className="print-body">
-          <h3 className="section-title">5. Preventive Action</h3>
-          <div className="print-bullet-list">
-            {(currentInvestigation.preventive_action || []).map((item, idx) => (
-              <div key={idx} className="print-bullet-item">
-                <span className="bullet-letter">{String.fromCharCode(97 + idx)})</span>
-                <span className="bullet-content">{item}</span>
+          {/* 5. Preventive Action */}
+          {preventiveItems.length > 0 && (
+            <>
+              <h3 className="section-title">5. Preventive Action</h3>
+              <div className="print-bullet-list">
+                {preventiveItems.map((item, idx) => (
+                  <div key={idx} className="print-bullet-item">
+                    <span className="bullet-letter">{String.fromCharCode(97 + idx)})</span>
+                    <span className="bullet-content">{item}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
 
-          <h3 className="section-title" style={{ marginTop: '25px' }}>4. References</h3>
+          {/* 6. References */}
+          <h3 className="section-title">6. References</h3>
           <div className="print-references-text">
-            {currentInvestigation.references_text ? 
-              currentInvestigation.references_text.split('\n').map((line, lidx) => (
+            {refLines.length > 0 ? 
+              refLines.map((line, lidx) => (
                 <div key={lidx} style={{ marginBottom: '4px' }}>
                   {line.replace(/^:\s*-\s*/, ': ').replace(/^-\s*/, ': ').trim()}
                 </div>
@@ -305,7 +261,8 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
             }
           </div>
 
-          <h3 className="section-title" style={{ marginTop: '25px' }}>5. Investigation Team</h3>
+          {/* 7. Investigation Team */}
+          <h3 className="section-title">7. Investigation Team</h3>
           <div className="print-signatures-container">
             <div className="print-sig-box">
               <span className="sig-label">Prepared by:</span>
@@ -329,12 +286,10 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
             </div>
           </div>
         </div>
-        
         <div className="print-footer">
           <div className="print-footer-line"></div>
           <div className="print-footer-content">
-            <span>Investigation Report</span>
-            <span>Page 4</span>
+            <span>Investigation Report</span><span>Page 4</span>
           </div>
         </div>
       </div>

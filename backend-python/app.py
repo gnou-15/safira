@@ -317,8 +317,8 @@ Your output must be a single valid JSON object containing these exact keys:
     "Item d assessing compliance of personnel with standard operating procedures (SOPs)..."
   ],
   "root_cause": [
-    "Identify root cause a: specific human errors, signal execution errors, miscalculations, or equipment failures...",
-    "Identify root cause b (optional): organizational issues, environmental factors, or visual conditions..."
+    "Each root cause item MUST follow this exact format: 'Root Cause Statement - Detailed Explanation'. E.g. 'Inadequate Marshalling Signal Execution and Operator Miscalculation - The equipment operator miscalculated the aircraft's remaining stopping distance...'. The part before the hyphen is a concise bold header summarizing the safety category, and the part after the hyphen is the detailed explanatory sentence.",
+    "Ensure any additional root causes follow the same 'Statement - Explanation' format."
   ],
   "corrective_action": [
     "Item a: Refresher training, immediate safety briefings, warnings, tool box meetings...",
@@ -460,6 +460,7 @@ We also queried our airport safety manuals (RAG Context):
 """ + rag_context + """
 
 When helping suggestions for Analysis, Root Causes, Corrective actions, or Preventive actions, keep in mind they are bulleted list fields inside the report.
+When suggesting or updating "root_cause" items, you MUST ensure that each root cause follows this exact format: "Root Cause Statement - Detailed Explanation" (separated by a space, hyphen, space). For example: "Inadequate Marshalling Signal Execution and Operator Miscalculation - The equipment operator miscalculated...".
 Be helpful, professional, and precise. Always reference standard procedures from the RAG context if applicable.
 
 If the user asks you to modify, add, or delete information in the Investigation Report, you must adhere to the following workflow:
