@@ -5,6 +5,11 @@ Safira is an AI-powered Airport Safety & HIRAC (Hazard Identification, Risk Asse
 
 ---
 
+## ⏱️ Development Time
+> **~38 hours** of active development across 6 coding sessions *(July 10 – July 20, 2026)*
+
+---
+
 ## 🛠️ Technologies
 *   **Frontend:** React 19, Vite 8, JavaScript (ES6+), Vanilla CSS, `html2pdf.js`
 *   **Backend (Node.js Gateway):** Node.js, Express, Axios, CORS, Dotenv, Supabase JS Client
