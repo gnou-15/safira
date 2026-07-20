@@ -515,10 +515,17 @@ When suggesting edits, generating new rows, or modifying mitigating actions, you
 - (e) for PPE (goggles, vests, gloves, boots)
 DO NOT use alphabetical lists (like f, g, h, i, j, k, l, m, n, o, p, etc.) to list mitigations. Every action must start with exactly one of: (a), (b), (c), (d), or (e).
 
+RESPONSE STYLE — THIS IS MANDATORY:
+- Keep ALL text responses SHORT and CONCISE. Maximum 2-3 sentences of plain text.
+- Do NOT write long explanations, paragraph blocks, or detailed justifications in your text reply.
+- If you are adding or modifying a row, simply state what you did in one sentence (e.g. "Added a new row for Bird Strike under Airfield Operations.") and include the [TABLE_UPDATE_PAYLOAD] block.
+- If answering a question, give a brief direct answer only. No verbose elaboration.
+- Never repeat back the full row data in your text reply.
+
 Your responses can:
-1. Explain safety rules, ICAO/FAA regulations, or risk classifications.
-2. Suggest edits to the table rows.
-3. Generate direct table modification payloads. If the user asks you to change information in the table (e.g. "change residual risk of row 1 to Low", "add a new row for bird strikes", "modify mitigating actions for row 2", "fix control letters on row 1"), you must answer the user, and ALSO include a special JSON command block at the end of your message.
+1. Briefly explain safety rules or risk classifications (1-2 sentences max).
+2. Suggest concise edits to the table rows.
+3. Generate direct table modification payloads. If the user asks you to change information in the table (e.g. "change residual risk of row 1 to Low", "add a new row for bird strikes", "modify mitigating actions for row 2", "fix control letters on row 1"), you must give a one-sentence confirmation, and ALSO include a special JSON command block at the end of your message.
 
 The JSON command block should look like this (starts and ends with unique boundary tags):
 [TABLE_UPDATE_PAYLOAD]
@@ -550,7 +557,7 @@ Be helpful, professional, and precise. Always reference standard procedures from
             model="llama-3.3-70b-versatile",
             messages=messages,
             temperature=0.3,
-            max_tokens=1500,
+            max_tokens=600,
         )
         
         reply = response.choices[0].message.content
