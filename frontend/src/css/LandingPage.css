@@ -1,19 +1,24 @@
-/* Refined Landing Page Styles */
+/* The app-container on landing: transparent so body gradient shows through */
 .landing-active {
-  --bg-app: #cad4da !important;
+  --bg-app: transparent !important;
   --bg-workspace: transparent !important;
-  background: #cad4da !important;
+  background: transparent !important;
   transition: background 0.2s ease;
   height: 100vh;
   max-height: 100vh;
   overflow: hidden;
+  position: relative !important;
 }
 
 .landing-active .main-workspace {
-  height: auto;
+  /* Fixed header takes no layout space — workspace fills full viewport */
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
   overflow: hidden;
   align-items: stretch;
-  z-index: 20 !important;
+  z-index: 10 !important;
   position: relative !important;
 }
 
@@ -23,8 +28,13 @@
   width: 100%;
 }
 
+/* Header: fixed to viewport top, zero layout footprint, sky flows right through */
 .landing-active .top-nav {
-  background-color: #cad4da !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: transparent !important;
   border-bottom: none !important;
   box-shadow: none !important;
   padding: 28px 70px 14px 70px !important;
@@ -881,124 +891,288 @@
 }
 
 /* ============================================================
-   🌙 NIGHT SKY MODE — Logged-out landing page
-   Activated via body.night-mode-active (toggled by LandingPage.jsx useEffect)
+   🌙 NIGHT SKY MODE
+   Activated via body.sky-night (toggled by LandingPage.jsx useEffect)
    ============================================================ */
 
-body.night-mode-active {
+body.sky-night {
   background-color: #06091a;
 }
 
-body.night-mode-active .landing-active {
-  --bg-app: #06091a;
-  background: #06091a !important;
+body.sky-night .landing-active {
+  --bg-app: transparent;
+  background: transparent !important;
 }
 
-body.night-mode-active .landing-active .top-nav {
-  background-color: rgba(6, 9, 26, 0.96) !important;
+body.sky-night .landing-active .top-nav {
+  background-color: transparent !important;
   border-bottom: none !important;
   box-shadow: none !important;
 }
 
 /* Brand text on night nav */
-body.night-mode-active .landing-active .brand-subtext {
+body.sky-night .landing-active .brand-subtext {
   color: rgba(196, 214, 230, 0.5) !important;
   -webkit-text-fill-color: rgba(196, 214, 230, 0.5) !important;
 }
 
-body.night-mode-active .landing-active .landing-nav-link {
+body.sky-night .landing-active .landing-nav-link {
   color: rgba(196, 214, 230, 0.6);
 }
 
-body.night-mode-active .landing-active .landing-nav-link:hover {
+body.sky-night .landing-active .landing-nav-link:hover {
   color: #e2e8f0;
 }
 
 /* SVG scene text — invert to light for readability */
-body.night-mode-active .landing-active .landing-scene-svg text,
-body.night-mode-active .landing-active .landing-scene-svg tspan {
+body.sky-night .landing-active .landing-scene-svg text,
+body.sky-night .landing-active .landing-scene-svg tspan {
   fill: #e2e8f0 !important;
 }
 
 /* Keep "REPORT" as bright sky-blue instead of white */
-body.night-mode-active .landing-active .landing-scene-svg .hero-report-text {
+body.sky-night .landing-active .landing-scene-svg .hero-report-text {
   fill: #7dd3fc !important;
 }
 
 /* Ground line — faint silver */
-body.night-mode-active .landing-active .landing-scene-svg line {
+body.sky-night .landing-active .landing-scene-svg line {
   stroke: rgba(148, 163, 184, 0.22) !important;
 }
 
 /* "Yes There Is!" button — dark glass pill */
-body.night-mode-active .landing-active .btn-yes-today {
+body.sky-night .landing-active .btn-yes-today {
   background-color: rgba(255, 255, 255, 0.06) !important;
   color: #e2e8f0 !important;
   border-color: rgba(200, 220, 255, 0.28) !important;
 }
 
-body.night-mode-active .landing-active .btn-yes-today::before {
+body.sky-night .landing-active .btn-yes-today::before {
   opacity: 0.07 !important;
 }
 
-body.night-mode-active .landing-active .btn-yes-today::after {
+body.sky-night .landing-active .btn-yes-today::after {
   opacity: 0.05 !important;
 }
 
-body.night-mode-active .landing-active .btn-yes-today:hover {
+body.sky-night .landing-active .btn-yes-today:hover {
   background-color: rgba(255, 255, 255, 0.11) !important;
   border-color: rgba(125, 211, 252, 0.45) !important;
 }
 
 /* App description text */
-body.night-mode-active .landing-active .landing-app-description {
+body.sky-night .landing-active .landing-app-description {
   color: rgba(196, 214, 230, 0.62);
 }
 
 /* Recent reports section */
-body.night-mode-active .landing-active .report-logs-title {
+body.sky-night .landing-active .report-logs-title {
   color: rgba(196, 214, 230, 0.38);
 }
 
-body.night-mode-active .landing-active .report-log-pill {
+body.sky-night .landing-active .report-log-pill {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(200, 220, 255, 0.09);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-body.night-mode-active .landing-active .report-log-pill:hover {
+body.sky-night .landing-active .report-log-pill:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(125, 211, 252, 0.32);
   box-shadow: 0 4px 14px rgba(125, 211, 252, 0.12);
 }
 
-body.night-mode-active .landing-active .pill-title {
+body.sky-night .landing-active .pill-title {
   color: #c4d6e8;
 }
 
-body.night-mode-active .landing-active .pill-date {
+body.sky-night .landing-active .pill-date {
   color: rgba(196, 214, 230, 0.38);
   border-left-color: rgba(196, 214, 230, 0.14);
 }
 
 /* Login prompt bubble (logged-out) */
-body.night-mode-active .landing-active .login-prompt-bubble {
+body.sky-night .landing-active .login-prompt-bubble {
   background: rgba(196, 214, 230, 0.05);
   border-color: rgba(196, 214, 230, 0.1);
 }
 
-body.night-mode-active .landing-active .bubble-text {
+body.sky-night .landing-active .bubble-text {
   color: rgba(196, 214, 230, 0.62);
 }
 
 /* City skyline — show as faint luminous silhouette against night sky */
-body.night-mode-active .landing-active .landing-skyline {
+body.sky-night .landing-active .landing-skyline {
   filter: invert(1) opacity(0.11);
 }
 
 /* Footer */
-body.night-mode-active .landing-active .landing-footer-text {
+body.sky-night .landing-active .landing-footer-text {
   color: rgba(196, 214, 230, 0.32);
+}
+
+/* Header keyhole / key btn — light on dark */
+body.sky-night .landing-active .header-keyhole-btn,
+body.sky-night .landing-active .header-key-btn {
+  color: rgba(196, 214, 230, 0.7) !important;
+  border-color: rgba(196, 214, 230, 0.2) !important;
+}
+
+body.sky-night .landing-active .keyhole-prompt-bubble {
+  background: rgba(6, 9, 26, 0.85) !important;
+  color: rgba(196, 214, 230, 0.7) !important;
+  border-color: rgba(196, 214, 230, 0.15) !important;
+}
+
+/* ============================================================
+   🌅 DAWN MODE
+   ============================================================ */
+
+body.sky-dawn {
+  background: linear-gradient(180deg,
+      #1a0a2e 0%,
+      #3d1c5e 18%,
+      #8b3a6e 38%,
+      #e8705a 60%,
+      #f0a86c 78%,
+      #f5cfa0 100%);
+}
+
+body.sky-dawn .landing-active {
+  --bg-app: transparent;
+  background: transparent !important;
+}
+
+body.sky-dawn .landing-active .top-nav {
+  background-color: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+body.sky-dawn .landing-active .brand-subtext {
+  color: rgba(240, 185, 160, 0.6) !important;
+  -webkit-text-fill-color: rgba(240, 185, 160, 0.6) !important;
+}
+
+body.sky-dawn .landing-active .landing-scene-svg text,
+body.sky-dawn .landing-active .landing-scene-svg tspan {
+  fill: #3b1c14 !important;
+}
+
+body.sky-dawn .landing-active .landing-scene-svg .hero-report-text {
+  fill: #e8705a !important;
+}
+
+body.sky-dawn .landing-active .btn-yes-today {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #3b1c14 !important;
+  border-color: rgba(232, 112, 90, 0.45) !important;
+}
+
+body.sky-dawn .landing-active .btn-yes-today:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(232, 112, 90, 0.7) !important;
+}
+
+body.sky-dawn .landing-active .landing-app-description {
+  color: rgba(59, 28, 20, 0.72);
+}
+
+body.sky-dawn .landing-active .landing-skyline {
+  filter: opacity(0.35) sepia(0.5) hue-rotate(340deg);
+}
+
+body.sky-dawn .landing-active .report-log-pill {
+  background: rgba(255, 245, 235, 0.4);
+  border-color: rgba(232, 112, 90, 0.18);
+}
+
+body.sky-dawn .landing-active .report-log-pill:hover {
+  background: rgba(255, 245, 235, 0.7);
+  border-color: rgba(232, 112, 90, 0.45);
+}
+
+/* Day: use body background, keep landing-active transparent */
+body.sky-day {
+  background: #cad4da;
+}
+
+body.sky-day .landing-active {
+  --bg-app: transparent;
+  background: transparent !important;
+}
+
+body.sky-day .landing-active .top-nav {
+  background-color: transparent !important;
+}
+
+/* ============================================================
+   🌇 SUNSET MODE
+   ============================================================ */
+
+body.sky-sunset {
+  background: linear-gradient(180deg,
+      #0d1b35 0%,
+      #1e3a5f 15%,
+      #7b3060 35%,
+      #c94f2a 55%,
+      #e8892a 72%,
+      #f5c56a 88%,
+      #fde9a8 100%);
+}
+
+body.sky-sunset .landing-active {
+  --bg-app: transparent;
+  background: transparent !important;
+}
+
+body.sky-sunset .landing-active .top-nav {
+  background-color: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+body.sky-sunset .landing-active .brand-subtext {
+  color: rgba(253, 186, 116, 0.55) !important;
+  -webkit-text-fill-color: rgba(253, 186, 116, 0.55) !important;
+}
+
+body.sky-sunset .landing-active .landing-scene-svg text,
+body.sky-sunset .landing-active .landing-scene-svg tspan {
+  fill: #3b1c14 !important;
+}
+
+body.sky-sunset .landing-active .landing-scene-svg .hero-report-text {
+  fill: #f97316 !important;
+}
+
+body.sky-sunset .landing-active .btn-yes-today {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #3b1c14 !important;
+  border-color: rgba(249, 115, 22, 0.5) !important;
+}
+
+body.sky-sunset .landing-active .btn-yes-today:hover {
+  background-color: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(249, 115, 22, 0.75) !important;
+}
+
+body.sky-sunset .landing-active .landing-app-description {
+  color: rgba(59, 28, 20, 0.72);
+}
+
+body.sky-sunset .landing-active .landing-skyline {
+  filter: opacity(0.55) sepia(0.6) hue-rotate(355deg) saturate(1.3);
+}
+
+body.sky-sunset .landing-active .report-log-pill {
+  background: rgba(255, 235, 200, 0.35);
+  border-color: rgba(249, 115, 22, 0.18);
+}
+
+body.sky-sunset .landing-active .report-log-pill:hover {
+  background: rgba(255, 235, 200, 0.65);
+  border-color: rgba(249, 115, 22, 0.45);
 }
 
 /* =====================
@@ -1210,12 +1384,11 @@ body.night-mode-active .landing-active .landing-footer-text {
   height: 230px;
   border-radius: 50%;
   background: radial-gradient(circle,
-    rgba(255, 252, 190, 0.55) 0%,
-    rgba(255, 220, 80, 0.32) 30%,
-    rgba(255, 170, 30, 0.14) 58%,
-    rgba(255, 130, 10, 0.04) 80%,
-    transparent 95%
-  );
+      rgba(255, 252, 190, 0.55) 0%,
+      rgba(255, 220, 80, 0.32) 30%,
+      rgba(255, 170, 30, 0.14) 58%,
+      rgba(255, 130, 10, 0.04) 80%,
+      transparent 95%);
   filter: blur(12px);
   animation: sun-pulse 6s ease-in-out infinite;
 }
@@ -1227,11 +1400,10 @@ body.night-mode-active .landing-active .landing-footer-text {
   height: 54px;
   border-radius: 50%;
   background: radial-gradient(circle,
-    #ffffff 0%,
-    #fffef2 40%,
-    #fffac0 72%,
-    rgba(255, 235, 80, 0.6) 100%
-  );
+      #ffffff 0%,
+      #fffef2 40%,
+      #fffac0 72%,
+      rgba(255, 235, 80, 0.6) 100%);
   box-shadow:
     0 0 10px 5px rgba(255, 255, 230, 0.9),
     0 0 30px 14px rgba(255, 228, 70, 0.6),
@@ -1240,6 +1412,7 @@ body.night-mode-active .landing-active .landing-footer-text {
 }
 
 @keyframes sun-pulse {
+
   0%,
   100% {
     transform: scale(1);
@@ -1253,6 +1426,7 @@ body.night-mode-active .landing-active .landing-footer-text {
 }
 
 @keyframes sun-drift {
+
   0%,
   100% {
     transform: translateY(0px);
@@ -1261,4 +1435,208 @@ body.night-mode-active .landing-active .landing-footer-text {
   50% {
     transform: translateY(-7px);
   }
+}
+
+/* =====================
+   🌅 Dawn Sun
+   ===================== */
+.landing-dawn-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.dawn-glow {
+  position: absolute;
+  bottom: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140%;
+  height: 70%;
+  background: radial-gradient(ellipse at center bottom,
+      rgba(255, 160, 80, 0.45) 0%,
+      rgba(255, 100, 60, 0.28) 30%,
+      rgba(180, 60, 120, 0.15) 60%,
+      transparent 80%);
+  filter: blur(20px);
+  animation: dawn-glow-pulse 8s ease-in-out infinite;
+}
+
+@keyframes dawn-glow-pulse {
+
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.dawn-sun-wrapper {
+  position: absolute;
+  bottom: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sun-drift 14s ease-in-out infinite;
+}
+
+.dawn-sun-halo {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      rgba(255, 210, 100, 0.55) 0%,
+      rgba(255, 130, 50, 0.35) 35%,
+      rgba(220, 70, 80, 0.15) 62%,
+      transparent 85%);
+  filter: blur(14px);
+  animation: sun-pulse 7s ease-in-out infinite;
+}
+
+.dawn-sun-disc {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      #ffffff 0%,
+      #fff5d0 40%,
+      #ffb84d 78%,
+      rgba(255, 100, 30, 0.7) 100%);
+  box-shadow:
+    0 0 8px 4px rgba(255, 245, 200, 0.9),
+    0 0 24px 10px rgba(255, 160, 50, 0.55),
+    0 0 60px 26px rgba(255, 100, 30, 0.22);
+}
+
+/* =====================
+   🌇 Sunset Sun
+   ===================== */
+.landing-sunset-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sunset-horizon-glow {
+  position: absolute;
+  bottom: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160%;
+  height: 80%;
+  background: radial-gradient(ellipse at center bottom,
+      rgba(255, 120, 30, 0.5) 0%,
+      rgba(220, 60, 20, 0.32) 28%,
+      rgba(140, 30, 80, 0.18) 55%,
+      transparent 78%);
+  filter: blur(22px);
+  animation: dawn-glow-pulse 9s ease-in-out infinite;
+}
+
+.sunset-sun-wrapper {
+  position: absolute;
+  bottom: 16%;
+  right: 6%;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sun-drift 16s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.sunset-sun-halo {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      rgba(255, 200, 60, 0.5) 0%,
+      rgba(255, 100, 20, 0.32) 32%,
+      rgba(200, 40, 40, 0.14) 60%,
+      transparent 82%);
+  filter: blur(16px);
+  animation: sun-pulse 8s ease-in-out infinite;
+}
+
+.sunset-sun-disc {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      #ffffff 0%,
+      #ffe0a0 38%,
+      #ff8c30 72%,
+      rgba(220, 50, 20, 0.7) 100%);
+  box-shadow:
+    0 0 10px 5px rgba(255, 230, 160, 0.85),
+    0 0 32px 14px rgba(255, 130, 40, 0.55),
+    0 0 80px 36px rgba(220, 60, 20, 0.22);
+}
+
+/* =====================
+   🌧️ Weather Overlays
+   ===================== */
+
+/* Full-screen overlays that tint the sky without covering content */
+.weather-cloud-overlay,
+.weather-rain-overlay,
+.weather-storm-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 1.2s ease;
+}
+
+.weather-cloud-overlay {
+  background: rgba(180, 200, 220, 0.18);
+}
+
+.weather-rain-overlay {
+  background: linear-gradient(180deg,
+      rgba(60, 90, 130, 0.22) 0%,
+      rgba(40, 70, 110, 0.12) 100%);
+}
+
+.weather-storm-overlay {
+  background: linear-gradient(180deg,
+      rgba(20, 30, 55, 0.45) 0%,
+      rgba(10, 20, 40, 0.28) 100%);
+}
+
+/* When weather is rainy or stormy, always show cloud rain drops (not just on hover) */
+.weather-rain-active .cloud-rain-group {
+  opacity: 1;
+}
+
+.weather-rain-active .landing-cloud-bg-left-group .rain-drop,
+.weather-rain-active .landing-cloud-bg-right-group .rain-drop {
+  animation: rain-fall-loop-bg 0.8s infinite linear;
+}
+
+.weather-rain-active .landing-cloud-left-group .rain-drop,
+.weather-rain-active .landing-cloud-right-group .rain-drop {
+  animation: rain-fall-loop 0.8s infinite linear;
+}
+
+/* Storm intensifies rain */
+.weather-storm-active .rain-drop {
+  stroke: #64a8c8;
+  stroke-width: 2.2;
 }

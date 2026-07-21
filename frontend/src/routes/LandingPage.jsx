@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { formatTimestampShort } from '../utils/formatTimestampShort';
+import useTimeAndWeather from '../hooks/useTimeAndWeather';
 import '../css/LandingPage.css';
 
 export default function LandingPage({
@@ -15,10 +16,12 @@ export default function LandingPage({
   handleKeyLogin,
   handleOpenManualsModal
 }) {
+  const { skyPhase, weatherMeta } = useTimeAndWeather();
+  const [showTypeSelector, setShowTypeSelector] = useState(false);
+  const autoLightningRef = useRef(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [lightning, setLightning] = useState(null);
   const [timeString, setTimeString] = useState('');
-  const [showTypeSelector, setShowTypeSelector] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -38,17 +41,39 @@ export default function LandingPage({
     return () => clearInterval(interval);
   }, []);
 
-  // Apply/remove night-mode-active body class for CSS scoping (logged-out = night sky)
+  // Apply sky-phase body class for CSS scoping
   useEffect(() => {
-    if (!user) {
-      document.body.classList.add('night-mode-active');
-    } else {
-      document.body.classList.remove('night-mode-active');
+    const allPhases = ['sky-night', 'sky-dawn', 'sky-day', 'sky-sunset'];
+    allPhases.forEach(cls => document.body.classList.remove(cls));
+    document.body.classList.add(`sky-${skyPhase}`);
+    return () => {
+      allPhases.forEach(cls => document.body.classList.remove(cls));
+    };
+  }, [skyPhase]);
+
+  // Auto-trigger lightning periodically when weather is stormy
+  useEffect(() => {
+    if (autoLightningRef.current) {
+      clearInterval(autoLightningRef.current);
+      autoLightningRef.current = null;
+    }
+    if (weatherMeta.isStormy) {
+      const randomStrike = () => {
+        const cloudChoices = [
+          { id: 'bg-left', x: 270, y: 10 },
+          { id: 'bg-right', x: 560, y: 7 },
+          { id: 'left', x: 80, y: 100 },
+        ];
+        const choice = cloudChoices[Math.floor(Math.random() * cloudChoices.length)];
+        triggerLightning(choice.id, choice.x, choice.y);
+      };
+      autoLightningRef.current = setInterval(randomStrike, 3500 + Math.random() * 3000);
     }
     return () => {
-      document.body.classList.remove('night-mode-active');
+      if (autoLightningRef.current) clearInterval(autoLightningRef.current);
     };
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weatherMeta.isStormy]);
 
   const handleAction = async () => {
     if (!user) {
@@ -154,8 +179,8 @@ export default function LandingPage({
 
   return (
     <div className="landing-page-container">
-      {/* Night Sky: Stars + Crescent Moon + Shooting Stars (logged-out only) */}
-      {!user && (
+      {/* ── Night Sky: Stars + Crescent Moon + Shooting Stars ── */}
+      {skyPhase === 'night' && (
         <>
           <div className="star-field" aria-hidden="true">
             {stars.map(star => (
@@ -202,12 +227,48 @@ export default function LandingPage({
           <div className="shooting-star shooting-star-3" aria-hidden="true" />
         </>
       )}
-      {/* Sun (logged-in / daytime landing only) */}
-      {user && (
+
+      {/* ── Dawn: soft pink/purple glow + dim rising sun ── */}
+      {skyPhase === 'dawn' && (
+        <div className="landing-dawn-wrapper" aria-hidden="true">
+          <div className="dawn-glow" />
+          <div className="dawn-sun-wrapper">
+            <div className="dawn-sun-halo" />
+            <div className="dawn-sun-disc" />
+          </div>
+        </div>
+      )}
+
+      {/* ── Day: bright sun ── */}
+      {skyPhase === 'day' && (
         <div className="landing-sun-wrapper" aria-hidden="true">
           <div className="sun-halo-outer" />
           <div className="sun-disc" />
         </div>
+      )}
+
+      {/* ── Sunset: warm orange/golden sun near horizon ── */}
+      {skyPhase === 'sunset' && (
+        <div className="landing-sunset-wrapper" aria-hidden="true">
+          <div className="sunset-horizon-glow" />
+          <div className="sunset-sun-wrapper">
+            <div className="sunset-sun-halo" />
+            <div className="sunset-sun-disc" />
+          </div>
+        </div>
+      )}
+
+      {/* ── Weather overlay: stormy dark veil ── */}
+      {weatherMeta.isStormy && (
+        <div className="weather-storm-overlay" aria-hidden="true" />
+      )}
+      {/* ── Weather overlay: rainy tint ── */}
+      {weatherMeta.isRainy && !weatherMeta.isStormy && (
+        <div className="weather-rain-overlay" aria-hidden="true" />
+      )}
+      {/* ── Weather overlay: overcast tint ── */}
+      {weatherMeta.isCloudy && (
+        <div className="weather-cloud-overlay" aria-hidden="true" />
       )}
       {/* Selector Modal Overlay */}
       {showTypeSelector && (
@@ -217,9 +278,9 @@ export default function LandingPage({
             <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', fontFamily: "'Outfit', sans-serif" }}>
               Choose which safety report workspace you would like to open:
             </p>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <button 
+              <button
                 type="button"
                 className="btn-select-type hirac-type"
                 onClick={() => {
@@ -230,8 +291,8 @@ export default function LandingPage({
                 <strong>HIRAC Report</strong>
                 <span className="desc-text">Hazard Identification, Risk Assessment & Control</span>
               </button>
-              
-              <button 
+
+              <button
                 type="button"
                 className="btn-select-type investigation-type"
                 onClick={() => {
@@ -243,11 +304,11 @@ export default function LandingPage({
                 <span className="desc-text">Incident & Accident Investigation Dashboard</span>
               </button>
             </div>
-            
+
             <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
-              <button 
-                type="button" 
-                className="btn-modal-cancel" 
+              <button
+                type="button"
+                className="btn-modal-cancel"
                 style={{ width: 'auto', padding: '8px 24px' }}
                 onClick={() => setShowTypeSelector(false)}
               >
@@ -261,7 +322,7 @@ export default function LandingPage({
         {/* Hero Section with Unified SVG Composition */}
         <div className="landing-hero-section">
           <div
-            className="landing-hero-scene"
+            className={`landing-hero-scene${weatherMeta.isRainy || weatherMeta.isStormy ? ' weather-rain-active' : ''}${weatherMeta.isStormy ? ' weather-storm-active' : ''}`}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
@@ -372,26 +433,26 @@ export default function LandingPage({
               <circle cx="617" cy="99" r="6" fill="#ff2a2a" className="port-beacon-glow" />
 
               {/* Safety Manuals Button (under terminal building) */}
-              <g 
-                className="landing-svg-manuals-btn" 
+              <g
+                className="landing-svg-manuals-btn"
                 onClick={handleOpenManualsModal}
                 style={{ cursor: 'pointer' }}
               >
-                <rect 
-                  x="560" 
-                  y="185" 
-                  width="80" 
-                  height="15" 
-                  rx="7.5" 
-                  fill="#3a9ad9" 
+                <rect
+                  x="560"
+                  y="185"
+                  width="80"
+                  height="15"
+                  rx="7.5"
+                  fill="#3a9ad9"
                 />
-                <text 
-                  x="600" 
-                  y="195" 
-                  textAnchor="middle" 
-                  fill="#ffffff" 
-                  fontFamily="'Outfit', 'Inter', sans-serif" 
-                  fontWeight="800" 
+                <text
+                  x="600"
+                  y="195"
+                  textAnchor="middle"
+                  fill="#ffffff"
+                  fontFamily="'Outfit', 'Inter', sans-serif"
+                  fontWeight="800"
                   fontSize="7.5"
                   letterSpacing="0.2"
                 >
@@ -446,7 +507,7 @@ export default function LandingPage({
                   >
                     <span className="pill-dot" style={{ backgroundColor: report.docType === 'investigation' ? '#f59e0b' : '#3a9ad9' }}></span>
                     <span className="pill-title" title={report.title}>
-                      {report.docType === 'investigation' ? 
+                      {report.docType === 'investigation' ?
                         (report.title || 'Untitled Report').replace(/^(Safety Incident\s+)?Investigation\s+Report(:\s*)?/i, '').trim() || 'Safety Incident Investigation'
                         : (report.title || 'Untitled Report')
                       }
