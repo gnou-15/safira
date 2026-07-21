@@ -32,7 +32,8 @@ export default async function handler(req, res) {
       const {
         title, ref_no, location, activity_assessed, assessor_team,
         department, prepared_by_name, prepared_by_role, approved_by_name,
-        approved_by_role, acknowledged_by_name, acknowledged_by_role, footer_remarks
+        approved_by_role, acknowledged_by_name, acknowledged_by_role, footer_remarks,
+        doc_code, doc_revision
       } = req.body;
 
       const { data, error } = await supabase
@@ -48,6 +49,8 @@ export default async function handler(req, res) {
           approved_by_name, approved_by_role,
           acknowledged_by_name, acknowledged_by_role,
           footer_remarks,
+          doc_code: doc_code || 'SSQA - 009',
+          doc_revision: doc_revision || 'FEB2023/Rev06',
           user_id: user.id
         }])
         .select()

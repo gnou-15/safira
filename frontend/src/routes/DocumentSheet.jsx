@@ -454,6 +454,29 @@ export default function DocumentSheet({
           Delete This Report
         </button>
       </div>
+
+      {/* Document Footer — doc code + revision (right-aligned, editable) */}
+      <div className="doc-footer">
+        <div className="doc-footer-fields">
+          <input
+            type="text"
+            className="doc-footer-input screen-only"
+            placeholder="Doc Code (e.g. SSQA - 009)"
+            value={currentReport.doc_code !== undefined ? currentReport.doc_code : 'SSQA - 009'}
+            onChange={(e) => handleMetaEdit('doc_code', e.target.value)}
+          />
+          <div className="print-only doc-footer-text">{currentReport.doc_code !== undefined ? currentReport.doc_code : 'SSQA - 009'}</div>
+
+          <input
+            type="text"
+            className="doc-footer-input screen-only"
+            placeholder="Revision (e.g. FEB2023/Rev06)"
+            value={currentReport.doc_revision !== undefined ? currentReport.doc_revision : 'FEB2023/Rev06'}
+            onChange={(e) => handleMetaEdit('doc_revision', e.target.value)}
+          />
+          <div className="print-only doc-footer-text">{currentReport.doc_revision !== undefined ? currentReport.doc_revision : 'FEB2023/Rev06'}</div>
+        </div>
+      </div>
     </div>
   );
 }

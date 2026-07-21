@@ -138,3 +138,10 @@ CREATE TABLE IF NOT EXISTS safira_investigations (
     
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
+
+-- 7. HIRAC Report Document Footer Fields
+--    doc_code     e.g. "SSOA - 009"
+--    doc_revision e.g. "FEB2023/Rev06"
+ALTER TABLE hirac_reports ADD COLUMN IF NOT EXISTS doc_code VARCHAR(100);
+ALTER TABLE hirac_reports ADD COLUMN IF NOT EXISTS doc_revision VARCHAR(100);
+

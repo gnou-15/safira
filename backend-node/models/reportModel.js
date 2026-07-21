@@ -111,7 +111,9 @@ export const ReportModel = {
       approved_by_role,
       acknowledged_by_name,
       acknowledged_by_role,
-      footer_remarks
+      footer_remarks,
+      doc_code,
+      doc_revision
     } = reportData;
 
     const { data, error } = await supabase
@@ -130,6 +132,8 @@ export const ReportModel = {
         acknowledged_by_name,
         acknowledged_by_role,
         footer_remarks,
+        doc_code: doc_code || 'SSQA - 009',
+        doc_revision: doc_revision || 'FEB2023/Rev06',
         user_id: userId
       }])
       .select()
