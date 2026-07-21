@@ -688,6 +688,7 @@
   z-index: 100 !important;
   transform-origin: top left;
   animation: selectMenuFadeIn 0.2s ease-out both;
+  text-align: left !important;
 }
 
 @keyframes selectMenuFadeIn {
@@ -713,6 +714,7 @@
   border-bottom: 1px solid #f1f5f9;
   margin-bottom: 4px;
   user-select: none;
+  text-align: left !important;
 }
 
 .custom-menu-options {
@@ -745,6 +747,7 @@
   transition: all 0.15s ease;
   user-select: none;
   gap: 8px;
+  text-align: left !important;
 }
 
 .custom-select-option:hover {
@@ -777,6 +780,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   transition: color 0.15s ease;
+  text-align: left !important;
 }
 
 .custom-select-option:hover .option-title,
