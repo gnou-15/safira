@@ -1,4 +1,5 @@
 import React from 'react';
+import useTimeAndWeather from '../hooks/useTimeAndWeather';
 import '../css/BufferLoader.css';
 
 const CloudSVG = ({ className }) => (
@@ -8,8 +9,10 @@ const CloudSVG = ({ className }) => (
 );
 
 export default function BufferLoader({ message = "Preparing safety dashboard..." }) {
+  const { skyPhase } = useTimeAndWeather();
+
   return (
-    <div className="buffer-loader-overlay">
+    <div className={`buffer-loader-overlay sky-${skyPhase || 'day'}`}>
       <div className="sky-bg"></div>
       
       {/* Moving clouds layers */}

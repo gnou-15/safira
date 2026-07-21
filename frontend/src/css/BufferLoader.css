@@ -12,6 +12,43 @@
   overflow: hidden;
   font-family: 'Inter', sans-serif;
   background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+  transition: background 0.6s ease;
+}
+
+/* Time of Day Sky Background Variations */
+.buffer-loader-overlay.sky-day {
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.buffer-loader-overlay.sky-night {
+  background: linear-gradient(180deg, #06091a 0%, #0d1b35 100%);
+}
+
+.buffer-loader-overlay.sky-dawn {
+  background: linear-gradient(180deg, #1a0a2e 0%, #3d1c5e 25%, #8b3a6e 50%, #e8705a 75%, #f0a86c 100%);
+}
+
+.buffer-loader-overlay.sky-sunset {
+  background: linear-gradient(180deg, #0d1b35 0%, #1e3a5f 25%, #7b3060 50%, #c94f2a 75%, #e8892a 100%);
+}
+
+/* Text and wind contrast for dark sky phases */
+.buffer-loader-overlay.sky-night .please-wait-text,
+.buffer-loader-overlay.sky-dawn .please-wait-text,
+.buffer-loader-overlay.sky-sunset .please-wait-text {
+  color: #f1f5f9;
+}
+
+.buffer-loader-overlay.sky-night .sub-wait-text,
+.buffer-loader-overlay.sky-dawn .sub-wait-text,
+.buffer-loader-overlay.sky-sunset .sub-wait-text {
+  color: #cbd5e1;
+}
+
+.buffer-loader-overlay.sky-night .wind-line,
+.buffer-loader-overlay.sky-dawn .wind-line,
+.buffer-loader-overlay.sky-sunset .wind-line {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
 }
 
 /* Clouds Parallax */
