@@ -260,7 +260,7 @@
   .print-footer {
     display: block !important;
     position: absolute !important;
-    bottom: 1mm !important;
+    bottom: -2mm !important;
     left: 0 !important;
     right: 0 !important;
     box-sizing: border-box !important;
@@ -270,14 +270,14 @@
   .print-footer-line {
     border-top: 1px solid #000000 !important;
     width: 100% !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 3px !important;
   }
 
   .print-footer-content {
     display: flex !important;
     justify-content: space-between !important;
-    font-size: 10px !important;
-    color: #000000 !important;
+    font-size: 8px !important;
+    color: #444444 !important;
     font-family: 'Calibri', 'Segoe UI', Arial, sans-serif !important;
   }
 

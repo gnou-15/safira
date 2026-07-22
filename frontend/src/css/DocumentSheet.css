@@ -831,7 +831,7 @@
 /* Print Overrides for Document Sheet */
 @page hirac-landscape-page {
   size: A4 landscape;
-  margin: 10mm;
+  margin: 8mm 10mm 15mm 10mm;
 }
 
 @media print {
@@ -1137,27 +1137,32 @@
     white-space: pre-wrap !important;
   }
 
-  /* ─── Document Footer (print) ─── */
+  /* ─── Document Footer (print - repeated on every page) ─── */
   .doc-footer {
+    position: fixed !important;
+    bottom: 0mm !important;
+    right: 2mm !important;
     display: flex !important;
     justify-content: flex-end !important;
-    margin-top: 28px !important;
-    padding-right: 4px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 9999 !important;
+    pointer-events: none !important;
   }
 
   .doc-footer-fields {
     display: flex !important;
     flex-direction: column !important;
     align-items: flex-end !important;
-    gap: 1px !important;
+    gap: 0px !important;
   }
 
   .doc-footer-text {
-    font-size: 10px !important;
-    color: #444444 !important;
+    font-size: 7px !important;
+    color: #666666 !important;
     font-family: Arial, sans-serif !important;
     text-align: right !important;
-    line-height: 1.5 !important;
+    line-height: 1.1 !important;
   }
 }
 
