@@ -216,7 +216,7 @@
     position: relative !important;
     height: 268mm !important;
     padding: 0 !important;
-    padding-bottom: 10mm !important;
+    padding-bottom: 12mm !important;
     overflow: hidden !important;
     font-family: 'Calibri', 'Segoe UI', Arial, sans-serif !important;
     display: block !important;
@@ -260,7 +260,7 @@
   .print-footer {
     display: block !important;
     position: absolute !important;
-    bottom: -2mm !important;
+    bottom: 0mm !important;
     left: 0 !important;
     right: 0 !important;
     box-sizing: border-box !important;
