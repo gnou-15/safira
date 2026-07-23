@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getRiskLevel } from '../utils/riskCalculations';
+import { createDefaultReportMeta, createDefaultRow } from '../utils/createDefaultHiracData';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -506,49 +507,36 @@ export default function useReports() {
     } else {
       setIsGenerating(true);
       try {
-        const title = 'Untitled HIRAC Report';
-        const location = 'Mactan Cebu International Airport';
-        const department = 'Operations';
-        const activity_assessed = 'General Operations';
-        const assessor_team = 'Safety Team';
-        const ref_no = `CSC-${Date.now().toString().slice(-6)}`;
+        let token = user?.token || localStorage.getItem('safira_token');
+        if (!token) {
+          try {
+            await handleKeyGenerate();
+          } catch (keyErr) {
+            console.warn('Auto key generation failed during report creation:', keyErr);
+          }
+        }
+
+        const defaultMeta = createDefaultReportMeta();
+        const defaultRow = createDefaultRow();
 
         const metaRes = await authedFetch(`${API_URL}/api/reports`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            title,
-            location,
-            activity_assessed,
-            assessor_team,
-            department,
-            ref_no
+            title: defaultMeta.title,
+            location: defaultMeta.location,
+            activity_assessed: defaultMeta.activity_assessed,
+            assessor_team: defaultMeta.assessor_team,
+            department: defaultMeta.department,
+            ref_no: defaultMeta.ref_no
           })
         });
 
-        if (!metaRes.ok) throw new Error('Failed to create default report');
+        if (!metaRes.ok) {
+          const errData = await metaRes.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to create default report');
+        }
         const savedReportMeta = await metaRes.json();
-
-        // Create one default empty row
-        const defaultRow = {
-          row_order: 1,
-          operation_type: 'Operations',
-          generic_hazard: 'New Hazard Description',
-          risks: 'Potential consequences...',
-          existing_defenses: 'Current active controls...',
-          initial_likelihood: 3,
-          initial_severity: 3,
-          initial_risk_score: 9,
-          initial_risk_index: 'Medium',
-          mitigating_actions: '(c) Engineering controls...',
-          residual_likelihood: 2,
-          residual_severity: 2,
-          residual_risk_score: 4,
-          residual_risk_index: 'Low',
-          remarks: '',
-          target_date: '',
-          department_responsible: 'Safety'
-        };
 
         const rowsRes = await authedFetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
           method: 'PUT',
@@ -556,15 +544,22 @@ export default function useReports() {
           body: JSON.stringify({ rows: [defaultRow] })
         });
 
-        if (!rowsRes.ok) throw new Error('Failed to save default row');
+        if (!rowsRes.ok) {
+          const errData = await rowsRes.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to save default row');
+        }
 
-        // 1s delay to show transition animation
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setReports([savedReportMeta, ...reports]);
+        await new Promise(resolve => setTimeout(resolve, 800));
+        setReports(prev => [savedReportMeta, ...prev]);
         setCurrentReport(savedReportMeta);
         setRows([defaultRow]);
       } catch (err) {
-        alert(`Error creating blank report: ${err.message}`);
+        console.warn('Backend report creation warning, routing to local empty HIRAC report:', err);
+        const fallbackMeta = createDefaultReportMeta();
+        const fallbackRow = createDefaultRow();
+        setReports(prev => [fallbackMeta, ...prev]);
+        setCurrentReport(fallbackMeta);
+        setRows([fallbackRow]);
       } finally {
         setIsGenerating(false);
         setIsPageLoading(false);
