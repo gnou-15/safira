@@ -17,16 +17,21 @@ import { getWeatherMeta } from '../utils/getWeatherMeta';
  *   isLoading: boolean,
  * }}
  */
+// Module-level cache so component remounts across page transitions don't flicker to null
+let cachedSunriseISO = null;
+let cachedSunsetISO = null;
+let cachedWeatherCode = null;
+
 export default function useTimeAndWeather() {
   const LAT = 10.31;
   const LON = 123.95;
   const REFRESH_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
-  const [sunriseISO, setSunriseISO]   = useState(null);
-  const [sunsetISO,  setSunsetISO]    = useState(null);
-  const [weatherCode, setWeatherCode] = useState(null);
-  const [skyPhase, setSkyPhase]       = useState('day');
-  const [isLoading, setIsLoading]     = useState(true);
+  const [sunriseISO, setSunriseISO]   = useState(cachedSunriseISO);
+  const [sunsetISO,  setSunsetISO]    = useState(cachedSunsetISO);
+  const [weatherCode, setWeatherCode] = useState(cachedWeatherCode);
+  const [skyPhase, setSkyPhase]       = useState(() => getSkyPhase(new Date(), cachedSunriseISO, cachedSunsetISO));
+  const [isLoading, setIsLoading]     = useState(!cachedSunriseISO);
   const timerRef = useRef(null);
 
   // --- Fetch from Open-Meteo ---
@@ -46,6 +51,10 @@ export default function useTimeAndWeather() {
       const sunrise = data?.daily?.sunrise?.[0] ?? null;
       const sunset  = data?.daily?.sunset?.[0]  ?? null;
       const code    = data?.current?.weather_code ?? null;
+
+      cachedSunriseISO = sunrise;
+      cachedSunsetISO = sunset;
+      cachedWeatherCode = code;
 
       setSunriseISO(sunrise);
       setSunsetISO(sunset);

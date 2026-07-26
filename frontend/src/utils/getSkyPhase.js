@@ -8,12 +8,15 @@
  * @returns {'night'|'dawn'|'day'|'sunset'}
  */
 export function getSkyPhase(now, sunriseISO, sunsetISO) {
-  // Fallback: if API data is missing, derive a rough phase from hour alone
+  // Fallback: if API data is missing, derive a precise phase from local time
   if (!sunriseISO || !sunsetISO) {
-    const hour = now.getHours();
-    if (hour >= 5 && hour < 7)  return 'dawn';
-    if (hour >= 7 && hour < 17) return 'day';
-    if (hour >= 17 && hour < 19) return 'sunset';
+    const totalMinutes = now.getHours() * 60 + now.getMinutes();
+    // 5:15 AM to 5:45 AM: dawn
+    if (totalMinutes >= 315 && totalMinutes < 345) return 'dawn';
+    // 5:45 AM to 5:45 PM: day
+    if (totalMinutes >= 345 && totalMinutes < 1065) return 'day';
+    // 5:45 PM to 6:45 PM: sunset
+    if (totalMinutes >= 1065 && totalMinutes < 1125) return 'sunset';
     return 'night';
   }
 
