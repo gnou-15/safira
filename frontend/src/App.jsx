@@ -118,6 +118,20 @@ function App() {
     }
   }, [currentPage, currentInvestigation, currentReport, setChatHistory]);
 
+  // Safety timeout auto-recovery: Ensure buffer loader never hangs indefinitely
+  useEffect(() => {
+    if (isPageLoading || isLoadingInvestigations) {
+      const timer = setTimeout(() => {
+        if (isPageLoading) {
+          console.warn("Buffer loader safety timeout reached, restoring landing view");
+          sessionStorage.setItem('safira_current_page', 'landing');
+          setCurrentPage('landing');
+        }
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [isPageLoading, isLoadingInvestigations, setCurrentPage]);
+
   return (
     <div className={`app-container ${(!currentReport && !currentInvestigation) ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
       {/* Top Navbar */}

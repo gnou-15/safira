@@ -1,60 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getRiskLevel } from '../utils/riskCalculations';
 import { createDefaultReportMeta, createDefaultRow } from '../utils/createDefaultHiracData';
+import useAuth from './useAuth';
+import useSafetyManuals from './useSafetyManuals';
+import useChatbot from './useChatbot';
+import useConfirmModal from './useConfirmModal';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
-const PRESET_MANUALS = ['OSH-Standards-2020-Edition.pdf', 'iata-safety-report-2021.pdf'];
-
-const getStoredManualsMeta = () => {
-  const defaultPresets = [
-    { filename: 'OSH-Standards-2020-Edition.pdf', isPreset: true, uploadedBy: 'system', status: 'approved' },
-    { filename: 'iata-safety-report-2021.pdf', isPreset: true, uploadedBy: 'system', status: 'approved' }
-  ];
-  let deletedPresets = [];
-  try {
-    deletedPresets = JSON.parse(localStorage.getItem('safira_deleted_presets') || '[]');
-  } catch (e) {}
-
-  const activePresets = defaultPresets.filter(p => !deletedPresets.includes(p.filename));
-  let meta = [...activePresets];
-
-  try {
-    const stored = localStorage.getItem('safira_manuals_metadata');
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) {
-        parsed.forEach(item => {
-          const fname = typeof item === 'string' ? item : item.filename;
-          if (fname && !meta.some(m => m.filename === fname)) {
-            if (!PRESET_MANUALS.includes(fname) || !deletedPresets.includes(fname)) {
-              meta.push(typeof item === 'string' ? { filename: item, isPreset: PRESET_MANUALS.includes(item), uploadedBy: 'system', status: 'approved' } : item);
-            }
-          }
-        });
-      }
-    }
-  } catch (e) {}
-  localStorage.setItem('safira_manuals_metadata', JSON.stringify(meta));
-  return meta;
-};
-
-const saveStoredManualsMeta = (metaArray) => {
-  localStorage.setItem('safira_manuals_metadata', JSON.stringify(metaArray));
-};
-
 export default function useReports() {
-  // Auth State
-  const [user, setUser] = useState(() => {
-    try {
-      const cachedToken = localStorage.getItem('safira_token');
-      const cachedUser = localStorage.getItem('safira_user');
-      return cachedToken && cachedUser ? { token: cachedToken, ...JSON.parse(cachedUser) } : null;
-    } catch (e) {
-      return null;
-    }
-  });
-
   const [currentPage, setCurrentPage] = useState(() => {
     const cachedPage = sessionStorage.getItem('safira_current_page');
     const token = localStorage.getItem('safira_token');
@@ -62,7 +16,10 @@ export default function useReports() {
     return cachedPage || 'landing';
   });
 
-  // App State
+  // Auth Sub-Hook
+  const { user, setUser, authedFetch, handleKeyLogin, handleKeyGenerate, handleLogout: handleLogoutAuth } = useAuth(setCurrentPage);
+
+  // App & HIRAC Report State
   const [reports, setReports] = useState([]);
   const [currentReport, setCurrentReport] = useState(() => {
     try {
@@ -91,16 +48,7 @@ export default function useReports() {
   const stateRef = useRef({ currentReport, rows });
   stateRef.current = { currentReport, rows };
 
-
-  // Chat Sidebar State
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatHistory, setChatHistory] = useState([
-    { role: 'assistant', content: 'Hello! I am SAFIRA, your airport safety AI assistant. Describe an incident or select a report to get started. I can help explain regulations or make inline edits to your report.' }
-  ]);
-  const [chatInput, setChatInput] = useState('');
-  const [isLoadingChat, setIsLoadingChat] = useState(false);
-
-  // New Report Modal State
+  // New Report Generation Modal State
   const [showModal, setShowModal] = useState(false);
   const [incidentPrompt, setIncidentPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -112,685 +60,34 @@ export default function useReports() {
     department: 'Operations'
   });
 
-  // Safety Manuals Modal State
-  const [showManualsModal, setShowManualsModal] = useState(false);
-  const [manuals, setManuals] = useState(() => getStoredManualsMeta());
-  const [isLoadingManuals, setIsLoadingManuals] = useState(false);
-  const [isUploadingManual, setIsUploadingManual] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
-  const [manualsAlert, setManualsAlert] = useState({ type: '', message: '' });
-
-  // In-App Confirmation Modal State
-  const [confirmModalState, setConfirmModalState] = useState({
-    isOpen: false,
-    title: '',
-    message: '',
-    confirmText: 'Delete',
-    useCountdown: false,
-    onConfirm: null
-  });
-
-  const requestConfirm = useCallback(({ title, message, confirmText = 'Delete', useCountdown = false, onConfirm }) => {
-    setConfirmModalState({
-      isOpen: true,
-      title,
-      message,
-      confirmText,
-      useCountdown,
-      onConfirm
-    });
-  }, []);
-
-  const closeConfirmModal = useCallback(() => {
-    setConfirmModalState(prev => ({ ...prev, isOpen: false }));
-  }, []);
-
-  // Ref to track the 5-second idle timer
-  const idleTimerRef = useRef(null);
-
-  // Sync page state to sessionStorage
-  useEffect(() => {
-    sessionStorage.setItem('safira_current_page', currentPage);
-  }, [currentPage]);
-
-  // Fetch list of all reports and restore active report session in background
-  useEffect(() => {
-    if (user) {
-      fetchReports();
-      const storedId = sessionStorage.getItem('activeReportId');
-      if (storedId) {
-        loadReport(storedId);
-      }
-    }
-  }, [user]);
-
-  // Persist active report session and metadata in sessionStorage
-  useEffect(() => {
-    if (currentReport && currentReport.id) {
-      sessionStorage.setItem('activeReportId', currentReport.id);
-      sessionStorage.setItem('activeReport', JSON.stringify(currentReport));
-    } else if (currentReport === null) {
-      sessionStorage.removeItem('activeReportId');
-      sessionStorage.removeItem('activeReport');
-      sessionStorage.removeItem('activeReportRows');
-    }
-  }, [currentReport]);
-
-  // Persist active rows in sessionStorage
-  useEffect(() => {
-    if (currentReport && rows && rows.length > 0) {
-      sessionStorage.setItem('activeReportRows', JSON.stringify(rows));
-    }
-  }, [rows, currentReport]);
-
-  // Track mouse coordinates for subtle interactive background spotlights
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth) * 100;
-      const y = (e.clientY / window.innerHeight) * 100;
-      document.documentElement.style.setProperty('--mouse-x', `${x}%`);
-      document.documentElement.style.setProperty('--mouse-y', `${y}%`);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  // Authenticated Fetch wrapper helper
-  const authedFetch = async (url, options = {}) => {
-    const token = user?.token || localStorage.getItem('safira_token');
-    const headers = { ...options.headers };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    return fetch(url, { ...options, headers });
-  };
-
-  // Auth Operations
-  const handleNavigate = async (pageName) => {
-    if (pageName === 'login' || pageName === 'landing') {
-      setCurrentPage(pageName);
-      return;
-    }
-
-    let msg = "Navigating...";
-    if (pageName === 'document') msg = "Loading safety worksheets...";
-    setLoadingMessage(msg);
-    setIsPageLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setCurrentPage(pageName);
-    setIsPageLoading(false);
-  };
-
-  const handleKeyLogin = async (key) => {
-    const res = await fetch(`${API_URL}/api/auth/key-login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key })
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Login failed');
-
-    const cleanKey = key.trim().toUpperCase();
-    const loginUser = { token: data.token, ...data.user };
-    setUser(loginUser);
-    localStorage.setItem('safira_token', data.token);
-    localStorage.setItem('safira_user', JSON.stringify(data.user));
-    localStorage.setItem('safira_remembered_key', cleanKey);
-    sessionStorage.setItem('safira_current_page', 'landing');
-    setCurrentPage('landing');
-    return true;
-  };
-
-  const handleKeyGenerate = async () => {
-    const res = await fetch(`${API_URL}/api/auth/key-generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Key generation failed');
-
-    const loginUser = { token: data.token, ...data.user };
-    setUser(loginUser);
-    localStorage.setItem('safira_token', data.token);
-    localStorage.setItem('safira_user', JSON.stringify(data.user));
-    localStorage.setItem('safira_remembered_key', data.key);
-    sessionStorage.setItem('safira_current_page', 'landing');
-    setCurrentPage('landing');
-
-    try {
-      await navigator.clipboard.writeText(data.key);
-    } catch (e) {
-      console.warn("Clipboard access failed, key was:", data.key);
-    }
-
-    return data.key;
-  };
-
-  const handleLogout = async () => {
-    setLoadingMessage("Till we meet again...");
-    setIsPageLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setUser(null);
-    setCurrentReport(null);
-    setRows([]);
-    setReports([]);
-    localStorage.removeItem('safira_token');
-    localStorage.removeItem('safira_user');
-    sessionStorage.removeItem('safira_current_page');
-    sessionStorage.removeItem('activeReportId');
-    sessionStorage.removeItem('activeReport');
-    sessionStorage.removeItem('activeReportRows');
-    setCurrentPage('landing');
-    setIsPageLoading(false);
-  };
-
-  const fetchReports = async () => {
-    try {
-      const res = await authedFetch(`${API_URL}/api/reports`);
-      if (res.ok) {
-        const data = await res.json();
-        setReports(data);
-      }
-    } catch (err) {
-      console.error('Failed to fetch reports:', err);
-    }
-  };
-
-  const loadReport = async (id) => {
-    if (stateRef.current.currentReport && hasChanges) {
-      await handleSave();
-    }
-    setLastSaved(null);
-    setIsReportLoading(true);
-    try {
-      const res = await authedFetch(`${API_URL}/api/reports/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        const { rows: fetchedRows, ...meta } = data;
-        // 800ms delay to show transition animation smoothly
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setCurrentReport(meta);
-        setRows(fetchedRows || []);
-        setHasChanges(false);
-        setShowSavePrompt(false);
-      } else {
-        setCurrentReport(null);
-      }
-    } catch (err) {
-      console.error(`Failed to load report ${id}:`, err);
-    } finally {
-      setIsReportLoading(false);
-    }
-  };
-
-  // Transition back to landing page with loader animation
-  const handleExitToLanding = async () => {
-    if (hasChanges) {
-      await handleSave();
-    }
-    setLoadingMessage("Closing safety worksheet...");
-    setIsPageLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setCurrentReport(null);
-      setCurrentPage('landing');
-    } finally {
-      setIsPageLoading(false);
-    }
-  };
-
-  // Triggers 2-second idle timer on change for autosave
-  const markChanged = () => {
-    setHasChanges(true);
-    if (idleTimerRef.current) {
-      clearTimeout(idleTimerRef.current);
-    }
-    // Auto-save after 2 seconds of inactivity
-    idleTimerRef.current = setTimeout(() => {
-      handleSave();
-    }, 2000);
-  };
-
-  // Clean timer on unmount
-  useEffect(() => {
-    return () => {
-      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-    };
-  }, []);
-
-  // Save changes (rows + metadata) to Supabase
-  const handleSave = async () => {
-    const { currentReport: latestReport, rows: latestRows } = stateRef.current;
-    if (!latestReport) return;
-    setIsSaving(true);
-    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-
-    try {
-      // 1. Update report metadata
-      const metaRes = await authedFetch(`${API_URL}/api/reports/${latestReport.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(latestReport)
-      });
-
-      if (!metaRes.ok) throw new Error('Failed to save report headers');
-
-      // 2. Update report rows
-      const rowsRes = await authedFetch(`${API_URL}/api/reports/${latestReport.id}/rows`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rows: latestRows })
-      });
-
-      if (!rowsRes.ok) throw new Error('Failed to save table rows');
-
-      setHasChanges(false);
-      setShowSavePrompt(false);
-      setLastSaved(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-      fetchReports();
-    } catch (err) {
-      console.error(`Save error: ${err.message}`);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // Discard changes and reload from db
-  const handleDiscard = () => {
-    if (currentReport) {
-      loadReport(currentReport.id);
-    }
-  };
-
-  // Create a new empty row
-  const handleAddRow = () => {
-    const newRow = {
-      operation_type: 'Passenger terminal operations',
-      generic_hazard: 'New Hazard Description',
-      risks: 'Potential consequences...',
-      existing_defenses: 'Current active controls...',
-      initial_likelihood: 3,
-      initial_severity: 3,
-      initial_risk_score: 9,
-      initial_risk_index: 'Medium',
-      mitigating_actions: '(c) Engineering controls...',
-      residual_likelihood: 2,
-      residual_severity: 2,
-      residual_risk_score: 4,
-      residual_risk_index: 'Low',
-      remarks: '',
-      target_date: '',
-      department_responsible: 'SSQA'
-    };
-    setRows([...rows, newRow]);
-    markChanged();
-  };
-
-  // Delete a specific row with in-app modal confirmation
-  const handleDeleteRow = useCallback((index) => {
-    requestConfirm({
-      title: `Delete Hazard Row ${index + 1}?`,
-      message: 'This action cannot be undone.',
-      confirmText: 'Delete Row',
-      onConfirm: () => {
-        setRows(prev => prev.filter((_, idx) => idx !== index));
-        markChanged();
-      }
-    });
-  }, [requestConfirm, markChanged]);
-
-  // Load safety manuals instantly
-  const fetchManuals = useCallback(async () => {
-    const localMeta = getStoredManualsMeta();
-    setManuals(localMeta);
-    setIsLoadingManuals(false);
-
-    try {
-      const res = await authedFetch(`${API_URL}/api/ai/documents`).catch(() => null);
-      if (res && res.ok) {
-        const backendDocs = await res.json().catch(() => []);
-        if (Array.isArray(backendDocs) && backendDocs.length > 0) {
-          let metaList = [...localMeta];
-          backendDocs.forEach(filename => {
-            if (!metaList.some(m => m.filename === filename)) {
-              const isPreset = PRESET_MANUALS.includes(filename);
-              metaList.push({
-                filename,
-                isPreset,
-                uploadedBy: isPreset ? 'system' : 'User',
-                status: isPreset ? 'approved' : 'pending'
-              });
-            }
-          });
-          saveStoredManualsMeta(metaList);
-          setManuals(metaList);
-        }
-      }
-    } catch (err) {
-      console.error('Error fetching manuals in background:', err);
-    }
-  }, []);
-
-  const handleOpenManualsModal = () => {
-    setShowManualsModal(true);
-    setManualsAlert({ type: '', message: '' });
-    fetchManuals();
-  };
-
-  // Convert file to base64
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
-  // Upload file retained for user key account
-  const handleUploadFile = async (file) => {
-    if (!file) return;
-    if (!file.name.toLowerCase().endsWith('.pdf') && !file.name.toLowerCase().endsWith('.txt')) {
-      setManualsAlert({ type: 'error', message: 'Only .pdf and .txt files are supported.' });
-      return;
-    }
-
-    setIsUploadingManual(true);
-    setManualsAlert({ type: 'info', message: `Processing and ingesting ${file.name}...` });
-
-    try {
-      const base64Data = await fileToBase64(file);
-      const res = await authedFetch(`${API_URL}/api/ai/upload`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          filename: file.name,
-          base64_data: base64Data
-        })
-      }).catch(() => null);
-
-      const isPreset = PRESET_MANUALS.includes(file.name);
-      const isAdmin = user?.username === 'ADM-000';
-      const newMeta = {
-        filename: file.name,
-        isPreset,
-        uploadedBy: user?.username || 'User',
-        status: (isAdmin || isPreset) ? 'approved' : 'pending'
-      };
-
-      const currentMeta = getStoredManualsMeta().filter(m => m.filename !== file.name);
-      const updatedMeta = [newMeta, ...currentMeta];
-      saveStoredManualsMeta(updatedMeta);
-      setManuals(updatedMeta);
-
-      if (res && res.ok) {
-        setManualsAlert({
-          type: 'success',
-          message: isAdmin || isPreset
-            ? `Successfully uploaded "${file.name}"!`
-            : `Successfully uploaded "${file.name}" to your account (${user?.username}). Pending admin approval for global access.`
-        });
-      } else {
-        setManualsAlert({
-          type: 'success',
-          message: `Uploaded "${file.name}" to your key account (${user?.username}).`
-        });
-      }
-    } catch (err) {
-      console.error('Upload error:', err);
-      const isPreset = PRESET_MANUALS.includes(file.name);
-      const isAdmin = user?.username === 'ADM-000';
-      const newMeta = {
-        filename: file.name,
-        isPreset,
-        uploadedBy: user?.username || 'User',
-        status: (isAdmin || isPreset) ? 'approved' : 'pending'
-      };
-      const currentMeta = getStoredManualsMeta().filter(m => m.filename !== file.name);
-      const updatedMeta = [newMeta, ...currentMeta];
-      saveStoredManualsMeta(updatedMeta);
-      setManuals(updatedMeta);
-      setManualsAlert({ type: 'success', message: `Saved "${file.name}" to your key account (${user?.username}).` });
-    } finally {
-      setIsUploadingManual(false);
-    }
-  };
-
-  // Admin approves user-uploaded manual for global access
-  const handleApproveManual = (filename) => {
-    const currentMeta = getStoredManualsMeta();
-    const updatedMeta = currentMeta.map(m => {
-      if (m.filename === filename) {
-        return { ...m, status: 'approved' };
-      }
-      return m;
-    });
-    saveStoredManualsMeta(updatedMeta);
-    setManuals(updatedMeta);
-    setManualsAlert({ type: 'success', message: `Approved "${filename}" for all users!` });
-  };
-
-  // Delete safety manual with role-based permissions
-  const handleDeleteManual = async (filename) => {
-    const isAdmin = user?.username === 'ADM-000';
-    const isPreset = PRESET_MANUALS.includes(filename);
-
-    if (!isAdmin && isPreset) {
-      setManualsAlert({ type: 'error', message: 'Preset system manuals can only be deleted by the Admin key (ADM-000).' });
-      return;
-    }
-
-    setManualsAlert({ type: 'info', message: `Deleting ${filename}...` });
-
-    try {
-      await authedFetch(`${API_URL}/api/ai/documents?name=${encodeURIComponent(filename)}`, {
-        method: 'DELETE'
-      }).catch(() => null);
-    } catch (e) {}
-
-    if (isPreset) {
-      try {
-        const deletedPresets = JSON.parse(localStorage.getItem('safira_deleted_presets') || '[]');
-        if (!deletedPresets.includes(filename)) {
-          deletedPresets.push(filename);
-          localStorage.setItem('safira_deleted_presets', JSON.stringify(deletedPresets));
-        }
-      } catch (e) {}
-    }
-
-    try {
-      const stored = localStorage.getItem('safira_manuals_metadata');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const filtered = parsed.filter(m => (typeof m === 'string' ? m : m.filename) !== filename);
-        localStorage.setItem('safira_manuals_metadata', JSON.stringify(filtered));
-      }
-    } catch (e) {}
-
-    setManuals(prev => prev.filter(m => (typeof m === 'string' ? m : m.filename) !== filename));
-    setManualsAlert({ type: 'success', message: `Successfully deleted "${filename}"` });
-  };
-
-  // Edit cell value directly
-  const handleCellEdit = (index, field, value) => {
-    const updated = [...rows];
-    updated[index] = { ...updated[index], [field]: value };
-
-    if (field === 'initial_likelihood' || field === 'initial_severity') {
-      const l = parseInt(updated[index].initial_likelihood) || 1;
-      const s = parseInt(updated[index].initial_severity) || 1;
-      const score = l * s;
-      updated[index].initial_risk_score = score;
-      updated[index].initial_risk_index = getRiskLevel(l, s);
-    }
-
-    if (field === 'residual_likelihood' || field === 'residual_severity') {
-      const l = parseInt(updated[index].residual_likelihood) || 1;
-      const s = parseInt(updated[index].residual_severity) || 1;
-      const score = l * s;
-      updated[index].residual_risk_score = score;
-      updated[index].residual_risk_index = getRiskLevel(l, s);
-    }
-
-    setRows(updated);
-    markChanged();
-  };
-
-  // Meta header editing handler
-  const handleMetaEdit = (field, value) => {
-    setCurrentReport({ ...currentReport, [field]: value });
-    markChanged();
-  };
-
-  // Redirect to workspace page (load most recent report, or auto-create a default empty report if no reports exist)
-  const handleGetToWork = async () => {
-    setLoadingMessage("Loading workspace...");
-    setIsPageLoading(true);
-    if (reports.length > 0) {
-      await loadReport(reports[0].id);
-      setIsPageLoading(false);
-    } else {
-      setIsGenerating(true);
-      try {
-        let token = user?.token || localStorage.getItem('safira_token');
-        if (!token) {
-          try {
-            await handleKeyGenerate();
-          } catch (keyErr) {
-            console.warn('Auto key generation failed during report creation:', keyErr);
-          }
-        }
-
-        const defaultMeta = createDefaultReportMeta();
-        const defaultRow = createDefaultRow();
-
-        const metaRes = await authedFetch(`${API_URL}/api/reports`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: defaultMeta.title,
-            location: defaultMeta.location,
-            activity_assessed: defaultMeta.activity_assessed,
-            assessor_team: defaultMeta.assessor_team,
-            department: defaultMeta.department,
-            ref_no: defaultMeta.ref_no
-          })
-        });
-
-        if (!metaRes.ok) {
-          const errData = await metaRes.json().catch(() => ({}));
-          throw new Error(errData.error || 'Failed to create default report');
-        }
-        const savedReportMeta = await metaRes.json();
-
-        const rowsRes = await authedFetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rows: [defaultRow] })
-        });
-
-        if (!rowsRes.ok) {
-          const errData = await rowsRes.json().catch(() => ({}));
-          throw new Error(errData.error || 'Failed to save default row');
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setReports(prev => [savedReportMeta, ...prev]);
-        setCurrentReport(savedReportMeta);
-        setRows([defaultRow]);
-      } catch (err) {
-        console.warn('Backend report creation warning, routing to local empty HIRAC report:', err);
-        const fallbackMeta = createDefaultReportMeta();
-        const fallbackRow = createDefaultRow();
-        setReports(prev => [fallbackMeta, ...prev]);
-        setCurrentReport(fallbackMeta);
-        setRows([fallbackRow]);
-      } finally {
-        setIsGenerating(false);
-        setIsPageLoading(false);
-      }
-    }
-  };
-
-  // Create report using AI generation prompt
-  const handleCreateReport = async (e) => {
-    e.preventDefault();
-    if (!incidentPrompt.trim()) return;
-    setIsGenerating(true);
-
-    try {
-      // 1. Generate Rows using Groq Proxy
-      const aiRes = await authedFetch(`${API_URL}/api/ai/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          incident_prompt: incidentPrompt,
-          location: newReportMeta.location,
-          department: newReportMeta.department
-        })
-      });
-
-      if (!aiRes.ok) {
-        const errData = await aiRes.json().catch(() => ({}));
-        throw new Error(errData.error || 'AI Generation failed');
-      }
-      const generatedRows = await aiRes.json();
-
-      // 2. Save metadata and get report ID
-      const metaRes = await authedFetch(`${API_URL}/api/reports`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: newReportMeta.title,
-          location: newReportMeta.location,
-          activity_assessed: newReportMeta.activity_assessed,
-          assessor_team: newReportMeta.assessor_team,
-          department: newReportMeta.department,
-          ref_no: `CSC-${Date.now().toString().slice(-4)}`
-        })
-      });
-
-      if (!metaRes.ok) throw new Error('Failed to create report database entry');
-      const savedReportMeta = await metaRes.json();
-
-      // 3. Save generated rows to Supabase
-      const rowsRes = await authedFetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rows: generatedRows })
-      });
-
-      if (!rowsRes.ok) throw new Error('Failed to save generated rows');
-
-      // 1s delay to show transition animation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // Refresh list, load new report, close modal
-      setReports([savedReportMeta, ...reports]);
-      setCurrentReport(savedReportMeta);
-      setRows(generatedRows);
-      setShowModal(false);
-      setIncidentPrompt('');
-      setChatHistory([
-        { role: 'assistant', content: `Successfully generated HIRAC report for: "${newReportMeta.title}". You can now edit the cells directly or ask me to modify any specific rows.` }
-      ]);
-    } catch (err) {
-      alert(`Error generating report: ${err.message}`);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  // Perform chatbot-driven modifications
+  // Confirm Modal Sub-Hook
+  const { confirmModalState, requestConfirm, closeConfirmModal } = useConfirmModal();
+
+  // Safety Manuals Sub-Hook
+  const {
+    showManualsModal,
+    setShowManualsModal,
+    manuals,
+    isLoadingManuals,
+    isUploadingManual,
+    dragOver,
+    setDragOver,
+    manualsAlert,
+    setManualsAlert,
+    fetchManuals,
+    handleOpenManualsModal,
+    handleUploadFile,
+    handleApproveManual,
+    handleDeleteManual
+  } = useSafetyManuals(authedFetch, user);
+
+  // Table Update Executor for AI Chat payloads
   const executeTableUpdate = useCallback((payload) => {
     const { action, row_index, data } = payload;
-
     setRows(prev => {
       let updated = [...prev];
       if (action === 'modify_row' && typeof row_index === 'number' && updated[row_index]) {
         updated[row_index] = { ...updated[row_index], ...data };
-        // Redo risk indices
         if ('initial_likelihood' in data || 'initial_severity' in data) {
           const l = parseInt(updated[row_index].initial_likelihood) || 1;
           const s = parseInt(updated[row_index].initial_severity) || 1;
@@ -803,10 +100,8 @@ export default function useReports() {
           updated[row_index].residual_risk_score = l * s;
           updated[row_index].residual_risk_index = getRiskLevel(l, s);
         }
-        setChatHistory(h => [...h, { role: 'system', content: `Applied edit to Row ${row_index + 1}` }]);
-        markChanged();
-      }
-      else if (action === 'add_row' && data) {
+        setHasChanges(true);
+      } else if (action === 'add_row' && data) {
         const fullNewRow = {
           operation_type: data.operation_type || 'Operations',
           generic_hazard: data.generic_hazard || 'Hazard',
@@ -826,143 +121,338 @@ export default function useReports() {
           department_responsible: data.department_responsible || 'Safety'
         };
         updated = [...updated, fullNewRow];
-        setChatHistory(h => [...h, { role: 'system', content: 'Added a new row to the table.' }]);
-        markChanged();
-      }
-      else if (action === 'delete_row' && typeof row_index === 'number') {
+        setHasChanges(true);
+      } else if (action === 'delete_row' && typeof row_index === 'number') {
         updated = updated.filter((_, idx) => idx !== row_index);
-        markChanged();
+        setHasChanges(true);
       }
       return updated;
     });
-  }, [handleDeleteRow]);
+  }, []);
 
-  // Send message to chatbot (RAG Chat API)
-  const handleSendMessage = async (e, activeReport = currentReport, activeInvestigation = null, onInvestigationUpdate = null) => {
-    e.preventDefault();
-    if (!chatInput.trim() || isLoadingChat) return;
+  // Chatbot Sub-Hook
+  const {
+    chatOpen,
+    setChatOpen,
+    chatHistory,
+    setChatHistory,
+    chatInput,
+    setChatInput,
+    isLoadingChat,
+    handleSendMessage: sendMessageToChatbot
+  } = useChatbot(authedFetch, executeTableUpdate);
 
-    const userMsg = chatInput;
-    setChatInput('');
-    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
-    setIsLoadingChat(true);
+  const handleSendMessage = (e, activeReport, activeInvestigation, onInvestigationUpdate) => {
+    return sendMessageToChatbot(e, activeReport || currentReport, rows, activeInvestigation, onInvestigationUpdate);
+  };
 
+  // Sync page state to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem('safira_current_page', currentPage);
+  }, [currentPage]);
+
+  // Sync active report & rows to sessionStorage
+  useEffect(() => {
+    if (currentReport && currentReport.id) {
+      sessionStorage.setItem('activeReportId', currentReport.id);
+      sessionStorage.setItem('activeReport', JSON.stringify(currentReport));
+    } else if (currentReport === null) {
+      sessionStorage.removeItem('activeReportId');
+      sessionStorage.removeItem('activeReport');
+      sessionStorage.removeItem('activeReportRows');
+    }
+  }, [currentReport]);
+
+  useEffect(() => {
+    if (currentReport && rows && rows.length > 0) {
+      sessionStorage.setItem('activeReportRows', JSON.stringify(rows));
+    }
+  }, [rows, currentReport]);
+
+  // Fetch reports list
+  const fetchReports = useCallback(async () => {
+    if (!user) return;
     try {
-      const chatPayload = {
-        message: userMsg,
-        chat_history: chatHistory.slice(-6),
-        current_table: activeReport ? rows : [],
-        doc_type: activeInvestigation ? 'investigation' : 'hirac',
-        current_investigation: activeInvestigation
-      };
-      const res = await authedFetch(`${API_URL}/api/ai/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(chatPayload)
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Failed to fetch AI reply');
+      const res = await authedFetch(`${API_URL}/api/reports`);
+      if (res.ok) {
+        const data = await res.json();
+        setReports(data || []);
       }
-      const data = await res.json();
-      let replyContent = data.response;
-
-      // Extract and execute TABLE_UPDATE_PAYLOAD if present
-      const payloadRegex = /\[TABLE_UPDATE_PAYLOAD\]([\s\S]*?)\[\/TABLE_UPDATE_PAYLOAD\]/;
-      const match = replyContent.match(payloadRegex);
-
-      if (match) {
-        try {
-          const payload = JSON.parse(match[1].trim());
-          executeTableUpdate(payload);
-          // Strip payload from the visible text for the user
-          replyContent = replyContent.replace(payloadRegex, '').trim();
-        } catch (jsonErr) {
-          console.error("Failed to parse update command:", jsonErr);
-        }
-      }
-
-      // Extract and execute INVESTIGATION_UPDATE_PAYLOAD if present
-      const invPayloadRegex = /\[INVESTIGATION_UPDATE_PAYLOAD\]([\s\S]*?)\[\/INVESTIGATION_UPDATE_PAYLOAD\]/;
-      const invMatch = replyContent.match(invPayloadRegex);
-
-      if (invMatch && onInvestigationUpdate) {
-        try {
-          const payload = JSON.parse(invMatch[1].trim());
-          if (payload.field && payload.value !== undefined) {
-            onInvestigationUpdate(payload.field, payload.value);
-            // Append system message
-            setChatHistory(h => [...h, { role: 'system', content: `Applied edit to field: "${payload.field}"` }]);
-          }
-          // Strip payload from the visible text for the user
-          replyContent = replyContent.replace(invPayloadRegex, '').trim();
-        } catch (jsonErr) {
-          console.error("Failed to parse investigation update command:", jsonErr);
-        }
-      }
-
-      setChatHistory(prev => [...prev, { role: 'assistant', content: replyContent }]);
     } catch (err) {
-      setChatHistory(prev => [...prev, { role: 'system', content: `Error: ${err.message}` }]);
+      console.error('Error fetching reports:', err);
+    }
+  }, [user, authedFetch]);
+
+  useEffect(() => {
+    if (user) {
+      fetchReports();
+    } else {
+      setReports([]);
+      setCurrentReport(null);
+      setRows([]);
+    }
+  }, [user, fetchReports]);
+
+  // Navigation Helper
+  const handleNavigate = async (pageName) => {
+    if (pageName === 'login' || pageName === 'landing') {
+      setCurrentPage(pageName);
+      return;
+    }
+    let msg = "Navigating...";
+    if (pageName === 'document') msg = "Loading safety worksheets...";
+    setLoadingMessage(msg);
+    setIsPageLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setCurrentPage(pageName);
+    setIsPageLoading(false);
+  };
+
+  const handleExitToLanding = async () => {
+    setLoadingMessage("Returning to home dashboard...");
+    setIsPageLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setCurrentPage('landing');
+    setIsPageLoading(false);
+  };
+
+  const handleLogout = async () => {
+    return handleLogoutAuth(setLoadingMessage, setIsPageLoading, () => {
+      setCurrentReport(null);
+      setRows([]);
+      setReports([]);
+    });
+  };
+
+  // Load active report
+  const loadReport = async (reportId) => {
+    setIsReportLoading(true);
+    try {
+      const metaRes = await authedFetch(`${API_URL}/api/reports/${reportId}`);
+      if (!metaRes.ok) throw new Error('Failed to load report metadata');
+      const metaData = await metaRes.json();
+
+      const rowsRes = await authedFetch(`${API_URL}/api/reports/${reportId}/rows`);
+      if (!rowsRes.ok) throw new Error('Failed to load report rows');
+      const rowsData = await rowsRes.json();
+
+      setCurrentReport(metaData);
+      setRows(rowsData || []);
+      setHasChanges(false);
+      sessionStorage.setItem('activeReportId', reportId);
+      sessionStorage.setItem('safira_current_page', 'document');
+      setCurrentPage('document');
+    } catch (err) {
+      alert(`Error loading report: ${err.message}`);
     } finally {
-      setIsLoadingChat(false);
+      setIsReportLoading(false);
     }
   };
 
-  const handleDeleteReport = async (id) => {
-    if (!id) return;
+  // Direct edit handlers
+  const handleCellEdit = (index, field, value) => {
+    setRows(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      if (field === 'initial_likelihood' || field === 'initial_severity') {
+        const l = parseInt(updated[index].initial_likelihood) || 1;
+        const s = parseInt(updated[index].initial_severity) || 1;
+        updated[index].initial_risk_score = l * s;
+        updated[index].initial_risk_index = getRiskLevel(l, s);
+      }
+      if (field === 'residual_likelihood' || field === 'residual_severity') {
+        const l = parseInt(updated[index].residual_likelihood) || 1;
+        const s = parseInt(updated[index].residual_severity) || 1;
+        updated[index].residual_risk_score = l * s;
+        updated[index].residual_risk_index = getRiskLevel(l, s);
+      }
+      return updated;
+    });
+    setHasChanges(true);
+  };
+
+  const handleMetaEdit = (field, value) => {
+    setCurrentReport(prev => prev ? { ...prev, [field]: value } : prev);
+    setHasChanges(true);
+  };
+
+  const handleAddRow = () => {
+    setRows(prev => [...prev, createDefaultRow()]);
+    setHasChanges(true);
+  };
+
+  const handleDeleteRow = useCallback((index) => {
     requestConfirm({
-      title: 'Delete Safety Worksheet?',
-      message: 'This action cannot be undone.',
+      title: 'Delete Hazard Row?',
+      message: `Are you sure you want to remove row #${index + 1}?`,
+      confirmText: 'Delete Row',
+      onConfirm: () => {
+        setRows(prev => prev.filter((_, idx) => idx !== index));
+        setHasChanges(true);
+      }
+    });
+  }, [requestConfirm]);
+
+  const handleDeleteReport = useCallback((reportId, title) => {
+    requestConfirm({
+      title: 'Delete HIRAC Report?',
+      message: `Are you sure you want to delete "${title || 'Untitled Report'}"? All hazard assessments inside will be permanently removed.`,
       confirmText: 'Delete Report',
       useCountdown: true,
       onConfirm: async () => {
-        setLoadingMessage("Deleting safety worksheet...");
+        setLoadingMessage("Deleting report...");
         setIsPageLoading(true);
         try {
-          const res = await authedFetch(`${API_URL}/api/reports/${id}`, {
+          const res = await authedFetch(`${API_URL}/api/reports/${reportId}`, {
             method: 'DELETE'
           });
-
-          if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(data.error || 'Failed to delete report');
+          if (!res.ok) throw new Error('Failed to delete report');
+          setReports(prev => prev.filter(r => r.id !== reportId));
+          if (currentReport?.id === reportId) {
+            setCurrentReport(null);
+            setRows([]);
+            setCurrentPage('landing');
           }
-
-          // Remove from states
-          setReports(prev => prev.filter(r => r.id !== id));
-          setCurrentReport(null);
-          setRows([]);
-
-          // Clear session cache
-          sessionStorage.removeItem('activeReportId');
-          sessionStorage.removeItem('activeReport');
-          sessionStorage.removeItem('activeReportRows');
-
-          setCurrentPage('landing');
         } catch (err) {
-          console.error("Error deleting report:", err);
+          alert(`Error deleting report: ${err.message}`);
         } finally {
           setIsPageLoading(false);
         }
       }
     });
+  }, [authedFetch, currentReport, requestConfirm]);
+
+  const handleSave = async () => {
+    if (!currentReport) return;
+    setIsSaving(true);
+    try {
+      const metaRes = await authedFetch(`${API_URL}/api/reports/${currentReport.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentReport)
+      });
+      if (!metaRes.ok) throw new Error('Failed to save report metadata');
+
+      const rowsRes = await authedFetch(`${API_URL}/api/reports/${currentReport.id}/rows`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rows })
+      });
+      if (!rowsRes.ok) throw new Error('Failed to save report rows');
+
+      setHasChanges(false);
+      setLastSaved(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      fetchReports();
+    } catch (err) {
+      alert(`Save error: ${err.message}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  // Launch browser native print interface (styled by print stylesheet)
+  const handleDiscard = () => {
+    if (currentReport?.id) {
+      loadReport(currentReport.id);
+    }
+  };
+
+  const handleGetToWork = async () => {
+    setIsPageLoading(true);
+    setLoadingMessage("Opening latest safety assessment...");
+    try {
+      if (reports.length > 0) {
+        await loadReport(reports[0].id);
+      } else {
+        const defaultMeta = createDefaultReportMeta();
+        const defaultRow = createDefaultRow();
+        const metaRes = await authedFetch(`${API_URL}/api/reports`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(defaultMeta)
+        });
+        if (!metaRes.ok) throw new Error('Failed to create default report');
+        const savedMeta = await metaRes.json();
+        await authedFetch(`${API_URL}/api/reports/${savedMeta.id}/rows`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rows: [defaultRow] })
+        });
+        setReports([savedMeta, ...reports]);
+        setCurrentReport(savedMeta);
+        setRows([defaultRow]);
+      }
+    } catch (err) {
+      console.warn("Fallback to default report view:", err);
+    } finally {
+      setIsPageLoading(false);
+    }
+  };
+
+  const handleCreateReport = async (e) => {
+    e.preventDefault();
+    if (!incidentPrompt.trim()) return;
+    setIsGenerating(true);
+    try {
+      const aiRes = await authedFetch(`${API_URL}/api/ai/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          incident_prompt: incidentPrompt,
+          location: newReportMeta.location,
+          department: newReportMeta.department
+        })
+      });
+      if (!aiRes.ok) throw new Error('AI Generation failed');
+      const generatedRows = await aiRes.json();
+
+      const metaRes = await authedFetch(`${API_URL}/api/reports`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newReportMeta.title,
+          location: newReportMeta.location,
+          activity_assessed: newReportMeta.activity_assessed,
+          assessor_team: newReportMeta.assessor_team,
+          department: newReportMeta.department,
+          ref_no: `CSC-${Date.now().toString().slice(-4)}`
+        })
+      });
+      if (!metaRes.ok) throw new Error('Failed to create report database entry');
+      const savedReportMeta = await metaRes.json();
+
+      await authedFetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rows: generatedRows })
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setReports([savedReportMeta, ...reports]);
+      setCurrentReport(savedReportMeta);
+      setRows(generatedRows);
+      setShowModal(false);
+      setIncidentPrompt('');
+      setChatHistory([
+        { role: 'assistant', content: `Successfully generated HIRAC report for: "${newReportMeta.title}". You can now edit the cells directly or ask me to modify any specific rows.` }
+      ]);
+    } catch (err) {
+      alert(`Error generating report: ${err.message}`);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const handlePrint = () => {
-    if (window.innerWidth <= 768) return;
-
-    const formElements = document.querySelectorAll('textarea, input, select');
+    const formElements = document.querySelectorAll('input, select, textarea');
     const savedStyles = [];
-    formElements.forEach((el) => {
-      savedStyles.push(el.getAttribute('style'));
-      el.removeAttribute('style');
+    formElements.forEach(el => {
+      savedStyles.push(el.getAttribute('style') || '');
+      const width = el.getBoundingClientRect().width;
+      if (width > 0) {
+        el.style.width = `${width}px`;
+      }
     });
-
     window.print();
-
     formElements.forEach((el, i) => {
       if (savedStyles[i]) {
         el.setAttribute('style', savedStyles[i]);

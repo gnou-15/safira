@@ -53,7 +53,11 @@ export default function useInvestigations(user, setCurrentPage) {
       sessionStorage.setItem('safira_current_page', 'investigation');
       setCurrentPage('investigation');
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      console.warn(`Could not load investigation ${id}:`, err.message);
+      sessionStorage.removeItem('activeInvestigationId');
+      sessionStorage.setItem('safira_current_page', 'landing');
+      setCurrentInvestigation(null);
+      setCurrentPage('landing');
     } finally {
       setIsLoading(false);
     }
