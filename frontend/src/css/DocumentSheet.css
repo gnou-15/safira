@@ -1276,7 +1276,9 @@
 
   .pagss-logo {
     width: 210px !important;
+    max-width: 100% !important;
     height: auto !important;
+    object-fit: contain !important;
     margin: 0 auto !important;
   }
 
