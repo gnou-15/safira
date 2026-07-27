@@ -107,8 +107,9 @@ function App() {
     }
   };
 
-  // Reset chat context when switching between HIRAC and Investigation modes
+  // Automatically close chatbot sidebar & reset context when switching pages/documents
   useEffect(() => {
+    setChatOpen(false);
     if (currentPage === 'investigation' && currentInvestigation) {
       setChatHistory([
         { role: 'assistant', content: `Hello! I am SAFIRA, your airport safety AI assistant. I see you're working on the Investigation Report: "${currentInvestigation.title || 'Untitled'}". I can help you analyze findings, suggest corrective/preventive actions, or answer safety-related questions.` }
@@ -118,7 +119,14 @@ function App() {
         { role: 'assistant', content: 'Hello! I am SAFIRA, your airport safety AI assistant. Describe an incident or select a report to get started. I can help explain regulations or make inline edits to your report.' }
       ]);
     }
-  }, [currentPage, currentInvestigation, currentReport, setChatHistory]);
+  }, [currentPage, currentInvestigation?.id, currentReport?.id, setChatHistory, setChatOpen]);
+
+  // Instantly close chatbot BEFORE buffer screen routes to next page
+  useEffect(() => {
+    if (isPageLoading || isReportLoading || isLoadingInvestigations || isGenerating || isGeneratingInvestigation) {
+      setChatOpen(false);
+    }
+  }, [isPageLoading, isReportLoading, isLoadingInvestigations, isGenerating, isGeneratingInvestigation, setChatOpen]);
 
   // Safety timeout auto-recovery: Ensure buffer loader never hangs indefinitely
   useEffect(() => {

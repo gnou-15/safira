@@ -195,6 +195,7 @@ export default function useReports() {
 
   // Navigation Helper
   const handleNavigate = async (pageName) => {
+    setChatOpen(false);
     if (pageName === 'login' || pageName === 'landing') {
       setCurrentPage(pageName);
       return;
@@ -209,6 +210,7 @@ export default function useReports() {
   };
 
   const handleExitToLanding = async () => {
+    setChatOpen(false);
     setLoadingMessage("Returning to home dashboard...");
     setIsPageLoading(true);
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -223,6 +225,7 @@ export default function useReports() {
   };
 
   const handleLogout = async () => {
+    setChatOpen(false);
     return handleLogoutAuth(setLoadingMessage, setIsPageLoading, () => {
       setCurrentReport(null);
       setRows([]);
@@ -232,6 +235,7 @@ export default function useReports() {
 
   // Load active report
   const loadReport = async (reportId) => {
+    setChatOpen(false);
     setIsReportLoading(true);
     try {
       const metaRes = await authedFetch(`${API_URL}/api/reports/${reportId}`);
