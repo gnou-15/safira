@@ -64,6 +64,7 @@ function App() {
     handleDeleteRow,
     handleOpenManualsModal,
     handleUploadFile,
+    handleApproveManual,
     handleDeleteManual,
     handleCellEdit,
     handleMetaEdit,
@@ -309,7 +310,9 @@ function App() {
         setDragOver={setDragOver}
         manualsAlert={manualsAlert}
         handleUploadFile={handleUploadFile}
+        handleApproveManual={handleApproveManual}
         handleDeleteManual={handleDeleteManual}
+        user={user}
       />
 
       {/* In-App Deletion Confirmation Modal */}

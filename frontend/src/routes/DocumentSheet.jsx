@@ -348,7 +348,13 @@ export default function DocumentSheet({
                     onClick={() => handleDeleteRow(idx)}
                     title="Delete Row"
                   >
-                    🗑️
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M 4 6 L 19 3 M 9.5 3.5 L 13.5 2.7" stroke="#ef4444" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M 6 7 L 7.3 19 C 7.4 20.1 8.3 21 9.4 21 L 14.6 21 C 15.7 21 16.6 20.1 16.7 19 L 18 7 Z" fill="#ef4444" stroke="#ef4444" strokeWidth="1.2" strokeLinejoin="round" />
+                      <line x1="9.5" y1="10" x2="10" y2="17" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" />
+                      <line x1="12" y1="10" x2="12" y2="17" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" />
+                      <line x1="14.5" y1="10" x2="14" y2="17" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" />
+                    </svg>
                   </button>
                 </td>
               </tr>

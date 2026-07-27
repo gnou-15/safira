@@ -100,13 +100,28 @@ router.post('/key-login', async (req, res) => {
   }
 
   try {
-    const { data: user, error: fetchError } = await supabase
+    let { data: user, error: fetchError } = await supabase
       .from('safira_users')
       .select('*')
       .eq('username', cleanKey)
       .maybeSingle();
 
     if (fetchError) throw fetchError;
+
+    // Auto-create Admin Key ADM-000 if logging in for the first time
+    if (!user && cleanKey === 'ADM-000') {
+      const email = 'admin@safira.key';
+      const password_hash = hashPassword('ADM-000');
+      const { data: adminUser, error: adminInsertErr } = await supabase
+        .from('safira_users')
+        .insert([{ username: 'ADM-000', email, password_hash }])
+        .select('*')
+        .single();
+      if (!adminInsertErr) {
+        user = adminUser;
+      }
+    }
+
     if (!user) {
       return res.status(400).json({ error: 'Key is not registered or invalid' });
     }

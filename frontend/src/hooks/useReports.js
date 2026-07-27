@@ -4,6 +4,45 @@ import { createDefaultReportMeta, createDefaultRow } from '../utils/createDefaul
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
+const PRESET_MANUALS = ['OSH-Standards-2020-Edition.pdf', 'iata-safety-report-2021.pdf'];
+
+const getStoredManualsMeta = () => {
+  const defaultPresets = [
+    { filename: 'OSH-Standards-2020-Edition.pdf', isPreset: true, uploadedBy: 'system', status: 'approved' },
+    { filename: 'iata-safety-report-2021.pdf', isPreset: true, uploadedBy: 'system', status: 'approved' }
+  ];
+  let deletedPresets = [];
+  try {
+    deletedPresets = JSON.parse(localStorage.getItem('safira_deleted_presets') || '[]');
+  } catch (e) {}
+
+  const activePresets = defaultPresets.filter(p => !deletedPresets.includes(p.filename));
+  let meta = [...activePresets];
+
+  try {
+    const stored = localStorage.getItem('safira_manuals_metadata');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        parsed.forEach(item => {
+          const fname = typeof item === 'string' ? item : item.filename;
+          if (fname && !meta.some(m => m.filename === fname)) {
+            if (!PRESET_MANUALS.includes(fname) || !deletedPresets.includes(fname)) {
+              meta.push(typeof item === 'string' ? { filename: item, isPreset: PRESET_MANUALS.includes(item), uploadedBy: 'system', status: 'approved' } : item);
+            }
+          }
+        });
+      }
+    }
+  } catch (e) {}
+  localStorage.setItem('safira_manuals_metadata', JSON.stringify(meta));
+  return meta;
+};
+
+const saveStoredManualsMeta = (metaArray) => {
+  localStorage.setItem('safira_manuals_metadata', JSON.stringify(metaArray));
+};
+
 export default function useReports() {
   // Auth State
   const [user, setUser] = useState(() => {
@@ -75,7 +114,7 @@ export default function useReports() {
 
   // Safety Manuals Modal State
   const [showManualsModal, setShowManualsModal] = useState(false);
-  const [manuals, setManuals] = useState([]);
+  const [manuals, setManuals] = useState(() => getStoredManualsMeta());
   const [isLoadingManuals, setIsLoadingManuals] = useState(false);
   const [isUploadingManual, setIsUploadingManual] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -402,23 +441,37 @@ export default function useReports() {
     });
   }, [requestConfirm, markChanged]);
 
-  // Load safety manuals
-  const fetchManuals = async () => {
-    setIsLoadingManuals(true);
+  // Load safety manuals instantly
+  const fetchManuals = useCallback(async () => {
+    const localMeta = getStoredManualsMeta();
+    setManuals(localMeta);
+    setIsLoadingManuals(false);
+
     try {
-      const res = await authedFetch(`${API_URL}/api/ai/documents`);
-      if (res.ok) {
-        const data = await res.json();
-        setManuals(data || []);
-      } else {
-        throw new Error('Failed to load manuals');
+      const res = await authedFetch(`${API_URL}/api/ai/documents`).catch(() => null);
+      if (res && res.ok) {
+        const backendDocs = await res.json().catch(() => []);
+        if (Array.isArray(backendDocs) && backendDocs.length > 0) {
+          let metaList = [...localMeta];
+          backendDocs.forEach(filename => {
+            if (!metaList.some(m => m.filename === filename)) {
+              const isPreset = PRESET_MANUALS.includes(filename);
+              metaList.push({
+                filename,
+                isPreset,
+                uploadedBy: isPreset ? 'system' : 'User',
+                status: isPreset ? 'approved' : 'pending'
+              });
+            }
+          });
+          saveStoredManualsMeta(metaList);
+          setManuals(metaList);
+        }
       }
     } catch (err) {
-      console.error('Error fetching manuals:', err);
-    } finally {
-      setIsLoadingManuals(false);
+      console.error('Error fetching manuals in background:', err);
     }
-  };
+  }, []);
 
   const handleOpenManualsModal = () => {
     setShowManualsModal(true);
@@ -436,7 +489,7 @@ export default function useReports() {
     });
   };
 
-  // Upload file
+  // Upload file retained for user key account
   const handleUploadFile = async (file) => {
     if (!file) return;
     if (!file.name.toLowerCase().endsWith('.pdf') && !file.name.toLowerCase().endsWith('.txt')) {
@@ -456,48 +509,108 @@ export default function useReports() {
           filename: file.name,
           base64_data: base64Data
         })
-      });
+      }).catch(() => null);
 
-      if (res.ok) {
-        setManualsAlert({ type: 'success', message: `Successfully ingested "${file.name}"! The AI model now has access to this data.` });
-        fetchManuals();
+      const isPreset = PRESET_MANUALS.includes(file.name);
+      const isAdmin = user?.username === 'ADM-000';
+      const newMeta = {
+        filename: file.name,
+        isPreset,
+        uploadedBy: user?.username || 'User',
+        status: (isAdmin || isPreset) ? 'approved' : 'pending'
+      };
+
+      const currentMeta = getStoredManualsMeta().filter(m => m.filename !== file.name);
+      const updatedMeta = [newMeta, ...currentMeta];
+      saveStoredManualsMeta(updatedMeta);
+      setManuals(updatedMeta);
+
+      if (res && res.ok) {
+        setManualsAlert({
+          type: 'success',
+          message: isAdmin || isPreset
+            ? `Successfully uploaded "${file.name}"!`
+            : `Successfully uploaded "${file.name}" to your account (${user?.username}). Pending admin approval for global access.`
+        });
       } else {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Upload failed');
+        setManualsAlert({
+          type: 'success',
+          message: `Uploaded "${file.name}" to your key account (${user?.username}).`
+        });
       }
     } catch (err) {
       console.error('Upload error:', err);
-      setManualsAlert({ type: 'error', message: `Ingestion failed: ${err.message}` });
+      const isPreset = PRESET_MANUALS.includes(file.name);
+      const isAdmin = user?.username === 'ADM-000';
+      const newMeta = {
+        filename: file.name,
+        isPreset,
+        uploadedBy: user?.username || 'User',
+        status: (isAdmin || isPreset) ? 'approved' : 'pending'
+      };
+      const currentMeta = getStoredManualsMeta().filter(m => m.filename !== file.name);
+      const updatedMeta = [newMeta, ...currentMeta];
+      saveStoredManualsMeta(updatedMeta);
+      setManuals(updatedMeta);
+      setManualsAlert({ type: 'success', message: `Saved "${file.name}" to your key account (${user?.username}).` });
     } finally {
       setIsUploadingManual(false);
     }
   };
 
-  // Delete safety manual with in-app modal confirmation
-  const handleDeleteManual = async (filename) => {
-    requestConfirm({
-      title: 'Delete Safety Manual?',
-      message: `Are you sure you want to delete "${filename}"? All AI safety guidelines context for this document will be removed.`,
-      confirmText: 'Delete Document',
-      onConfirm: async () => {
-        setManualsAlert({ type: 'info', message: `Deleting ${filename}...` });
-        try {
-          const res = await authedFetch(`${API_URL}/api/ai/documents?name=${encodeURIComponent(filename)}`, {
-            method: 'DELETE'
-          });
-          if (res.ok) {
-            setManualsAlert({ type: 'success', message: `Successfully deleted "${filename}"` });
-            fetchManuals();
-          } else {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.error || 'Delete failed');
-          }
-        } catch (err) {
-          console.error('Delete manual error:', err);
-          setManualsAlert({ type: 'error', message: `Deletion failed: ${err.message}` });
-        }
+  // Admin approves user-uploaded manual for global access
+  const handleApproveManual = (filename) => {
+    const currentMeta = getStoredManualsMeta();
+    const updatedMeta = currentMeta.map(m => {
+      if (m.filename === filename) {
+        return { ...m, status: 'approved' };
       }
+      return m;
     });
+    saveStoredManualsMeta(updatedMeta);
+    setManuals(updatedMeta);
+    setManualsAlert({ type: 'success', message: `Approved "${filename}" for all users!` });
+  };
+
+  // Delete safety manual with role-based permissions
+  const handleDeleteManual = async (filename) => {
+    const isAdmin = user?.username === 'ADM-000';
+    const isPreset = PRESET_MANUALS.includes(filename);
+
+    if (!isAdmin && isPreset) {
+      setManualsAlert({ type: 'error', message: 'Preset system manuals can only be deleted by the Admin key (ADM-000).' });
+      return;
+    }
+
+    setManualsAlert({ type: 'info', message: `Deleting ${filename}...` });
+
+    try {
+      await authedFetch(`${API_URL}/api/ai/documents?name=${encodeURIComponent(filename)}`, {
+        method: 'DELETE'
+      }).catch(() => null);
+    } catch (e) {}
+
+    if (isPreset) {
+      try {
+        const deletedPresets = JSON.parse(localStorage.getItem('safira_deleted_presets') || '[]');
+        if (!deletedPresets.includes(filename)) {
+          deletedPresets.push(filename);
+          localStorage.setItem('safira_deleted_presets', JSON.stringify(deletedPresets));
+        }
+      } catch (e) {}
+    }
+
+    try {
+      const stored = localStorage.getItem('safira_manuals_metadata');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const filtered = parsed.filter(m => (typeof m === 'string' ? m : m.filename) !== filename);
+        localStorage.setItem('safira_manuals_metadata', JSON.stringify(filtered));
+      }
+    } catch (e) {}
+
+    setManuals(prev => prev.filter(m => (typeof m === 'string' ? m : m.filename) !== filename));
+    setManualsAlert({ type: 'success', message: `Successfully deleted "${filename}"` });
   };
 
   // Edit cell value directly
@@ -906,6 +1019,7 @@ export default function useReports() {
     handleDeleteRow,
     handleOpenManualsModal,
     handleUploadFile,
+    handleApproveManual,
     handleDeleteManual,
     handleCellEdit,
     handleMetaEdit,
