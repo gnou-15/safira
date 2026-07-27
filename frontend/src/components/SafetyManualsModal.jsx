@@ -37,34 +37,89 @@ export default function SafetyManualsModal({
     return isPreset || isMine || isApproved;
   });
 
+  const handleDownloadFile = (filename, item) => {
+    const presetPath = `/documents/${encodeURIComponent(filename)}`;
+
+    // 1. System preset download from public/documents
+    if (PRESET_MANUALS.includes(filename)) {
+      const link = document.createElement('a');
+      link.href = presetPath;
+      link.download = filename;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
+    // 2. Custom uploaded file download via blob
+    if (item && typeof item === 'object' && item.base64_data) {
+      try {
+        let base64 = item.base64_data;
+        if (base64.includes(',')) base64 = base64.split(',')[1];
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const mimeType = filename.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'text/plain';
+        const blob = new Blob([byteArray], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        return;
+      } catch (e) {
+        console.warn("Base64 blob conversion error:", e);
+      }
+    }
+
+    // 3. Fallback direct download link
+    const link = document.createElement('a');
+    link.href = presetPath;
+    link.download = filename;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="modal-overlay">
-      <div className="modal-content manuals-modal-content" style={{ maxWidth: '650px', width: '90%' }}>
-        <div className="manuals-modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <div>
-            <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800' }}>Airport Safety Manuals Manager</h3>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-              {isAdmin 
-                ? '🔑 Admin Key Dashboard (ADM-000) — Manage & approve all user manuals' 
-                : `Account: ${user?.username || 'User'} — Retained custom safety SOPs`}
-            </span>
+      <div className="modal-content manuals-modal-content" style={{ maxWidth: '640px', width: '92%', padding: '28px' }}>
+        {/* Header */}
+        <div className="manuals-modal-header">
+          <div className="manuals-header-text">
+            <h3 className="manuals-modal-title">Airport Safety Manuals Manager</h3>
+            <div className="manuals-subtitle-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '3px', flexWrap: 'nowrap' }}>
+              <span className="manuals-modal-subtitle">
+                {isAdmin 
+                  ? '🔑 Admin Key Dashboard (ADM-000) — Manage & approve all user manuals' 
+                  : `Account: ${user?.username || 'User'} — Retained custom safety SOPs`}
+              </span>
+              {manualsAlert.message && (
+                <span className={`manuals-alert-pill alert-${manualsAlert.type}`}>
+                  {manualsAlert.type === 'info' && <span className="spinner-small" style={{ marginRight: '4px' }}>⏳</span>}
+                  {manualsAlert.message}
+                </span>
+              )}
+            </div>
           </div>
           <button 
             type="button" 
-            style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'var(--text-muted)' }} 
+            className="manuals-close-btn"
             onClick={() => setShowManualsModal(false)}
+            title="Close Manager"
           >
             ✕
           </button>
         </div>
-
-        {/* Alert Message Banner */}
-        {manualsAlert.message && (
-          <div className={`manuals-alert alert-${manualsAlert.type}`} style={{ padding: '10px 14px', borderRadius: '8px', fontSize: '13px', marginBottom: '16px' }}>
-            {manualsAlert.type === 'info' && <span className="spinner-small" style={{ marginRight: '8px' }}>⏳</span>}
-            {manualsAlert.message}
-          </div>
-        )}
 
         {/* Drag & Drop File Upload Area */}
         <div 
@@ -93,7 +148,14 @@ export default function SafetyManualsModal({
               handleUploadFile(file);
             }}
           />
-          <div className="dropzone-icon">📥</div>
+          {/* Flat Blue Upload Icon from reference sample */}
+          <div className="dropzone-icon-wrapper">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#3a9ad9" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M 4 12 v 6 a 2 2 0 0 0 2 2 h 12 a 2 2 0 0 0 2 -2 v -6" />
+              <polyline points="16 8 12 4 8 8" />
+              <line x1="12" y1="4" x2="12" y2="16" />
+            </svg>
+          </div>
           <p className="dropzone-text">
             <strong>Click to upload</strong> or drag and drop custom safety guidelines
           </p>
@@ -105,22 +167,22 @@ export default function SafetyManualsModal({
         </div>
 
         {/* Uploaded Manuals List */}
-        <div className="manuals-list-section" style={{ marginTop: '24px' }}>
-          <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: '700', color: 'var(--text-primary)' }}>
+        <div className="manuals-list-section">
+          <h4 className="manuals-section-heading">
             Active Safety Reference Documents ({visibleManuals.length})
           </h4>
           
           {isLoadingManuals ? (
-            <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '13px' }}>
+            <div className="manuals-loading-text">
               Loading referenced safety manuals...
             </div>
           ) : visibleManuals.length === 0 ? (
-            <div className="manuals-empty-state" style={{ textAlign: 'center', padding: '30px 20px', border: '1px dashed var(--border-color)', borderRadius: '8px', color: 'var(--text-muted)' }}>
-              <p style={{ margin: 0, fontSize: '13px' }}>No reference manuals found for your account.</p>
-              <span style={{ fontSize: '11px' }}>System presets (OSH Standards & IATA Safety) are enabled by default.</span>
+            <div className="manuals-empty-card">
+              <p style={{ margin: 0, fontSize: '13px', fontWeight: '600' }}>No reference manuals found for your account.</p>
+              <span style={{ fontSize: '11.5px', color: '#64748b' }}>System presets (OSH Standards & IATA Safety) are enabled by default.</span>
             </div>
           ) : (
-            <div className="manuals-scroll-list" style={{ maxHeight: '220px', overflowY: 'auto', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
+            <div className="manuals-scroll-list">
               {visibleManuals.map((item, i) => {
                 const filename = typeof item === 'string' ? item : item.filename;
                 const isPreset = PRESET_MANUALS.includes(filename) || (typeof item === 'object' && item.isPreset);
@@ -128,31 +190,45 @@ export default function SafetyManualsModal({
                 const isPending = typeof item === 'object' && item.status === 'pending';
 
                 return (
-                  <div key={i} className="manuals-list-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderBottom: i < visibleManuals.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '16px' }}>{filename.toLowerCase().endsWith('.pdf') ? '📄' : '📝'}</span>
-                      <div>
-                        <div style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-primary)', wordBreak: 'break-all' }}>{filename}</div>
-                        <div style={{ fontSize: '10.5px', color: 'var(--text-muted)', display: 'flex', gap: '6px', marginTop: '2px', alignItems: 'center' }}>
+                  <div key={i} className="manuals-list-item">
+                    <div 
+                      className="manual-item-left clickable-download-zone"
+                      onClick={() => handleDownloadFile(filename, item)}
+                      title="Click to download"
+                    >
+                      {/* Flat Blue Document Icon from reference sample */}
+                      <div className="file-flat-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3a9ad9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M 14 2 H 6 a 2 2 0 0 0 -2 2 v 16 a 2 2 0 0 0 2 2 h 12 a 2 2 0 0 0 2 -2 V 8 Z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <line x1="8" y1="12" x2="16" y2="12" />
+                          <line x1="8" y1="15" x2="16" y2="15" />
+                          <line x1="8" y1="18" x2="13" y2="18" />
+                        </svg>
+                      </div>
+
+                      <div className="file-info-col">
+                        <div className="file-name-row">
+                          <span className="file-name-text">{filename}</span>
                           {isPreset ? (
-                            <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '1px 6px', borderRadius: '4px', fontWeight: '700' }}>Preset</span>
+                            <span className="badge-tag tag-preset">Preset</span>
                           ) : (
-                            <span style={{ background: '#f1f5f9', color: '#475569', padding: '1px 6px', borderRadius: '4px' }}>
+                            <span className="badge-tag tag-user">
                               {isMine ? 'My Upload' : `Uploaded by ${item.uploadedBy || 'User'}`}
                             </span>
                           )}
 
                           {isPending && (
-                            <span style={{ background: '#fef3c7', color: '#92400e', padding: '1px 6px', borderRadius: '4px', fontWeight: '700' }}>Pending Approval</span>
+                            <span className="badge-tag tag-pending">Pending Approval</span>
                           )}
                           {typeof item === 'object' && item.status === 'approved' && !isPreset && (
-                            <span style={{ background: '#dcfce7', color: '#166534', padding: '1px 6px', borderRadius: '4px', fontWeight: '700' }}>Approved Global</span>
+                            <span className="badge-tag tag-approved">Approved Global</span>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div className="manual-actions-right">
                       {/* Admin Check (✓ Approve) and Wrong (✕ Reject) Buttons */}
                       {isAdmin && isPending && (
                         <>
@@ -164,7 +240,6 @@ export default function SafetyManualsModal({
                               e.stopPropagation();
                               if (handleApproveManual) handleApproveManual(filename);
                             }}
-                            style={{ background: '#dcfce7', color: '#166534', border: '1px solid #86efac', borderRadius: '6px', width: '26px', height: '26px', cursor: 'pointer', fontWeight: '800', fontSize: '13px' }}
                           >
                             ✓
                           </button>
@@ -176,7 +251,6 @@ export default function SafetyManualsModal({
                               e.stopPropagation();
                               handleDeleteManual(filename);
                             }}
-                            style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #fca5a5', borderRadius: '6px', width: '26px', height: '26px', cursor: 'pointer', fontWeight: '800', fontSize: '12px' }}
                           >
                             ✕
                           </button>
@@ -193,7 +267,6 @@ export default function SafetyManualsModal({
                             e.stopPropagation();
                             handleDeleteManual(filename);
                           }}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'inline-flex' }}
                         >
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M 4 6 L 19 3 M 9.5 3.5 L 13.5 2.7" stroke="#ef4444" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -212,12 +285,12 @@ export default function SafetyManualsModal({
           )}
         </div>
 
-        <div className="modal-actions" style={{ marginTop: '24px', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
+        {/* Modal Actions Footer */}
+        <div className="manuals-modal-footer">
           <button 
             type="button" 
-            className="btn-secondary" 
+            className="btn-close-manager" 
             onClick={() => setShowManualsModal(false)}
-            style={{ width: '100%', borderRadius: '8px' }}
           >
             Close Manager
           </button>

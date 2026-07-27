@@ -212,6 +212,12 @@ export default function useReports() {
     setLoadingMessage("Returning to home dashboard...");
     setIsPageLoading(true);
     await new Promise(resolve => setTimeout(resolve, 800));
+    setCurrentReport(null);
+    setRows([]);
+    sessionStorage.removeItem('activeReportId');
+    sessionStorage.removeItem('activeReport');
+    sessionStorage.removeItem('activeReportRows');
+    sessionStorage.setItem('safira_current_page', 'landing');
     setCurrentPage('landing');
     setIsPageLoading(false);
   };
@@ -232,18 +238,30 @@ export default function useReports() {
       if (!metaRes.ok) throw new Error('Failed to load report metadata');
       const metaData = await metaRes.json();
 
-      const rowsRes = await authedFetch(`${API_URL}/api/reports/${reportId}/rows`);
-      if (!rowsRes.ok) throw new Error('Failed to load report rows');
-      const rowsData = await rowsRes.json();
+      let reportRows = Array.isArray(metaData.rows) ? metaData.rows : [];
+      if (!reportRows.length) {
+        const rowsRes = await authedFetch(`${API_URL}/api/reports/${reportId}/rows`).catch(() => null);
+        if (rowsRes && rowsRes.ok) {
+          const fetchedRows = await rowsRes.json();
+          if (Array.isArray(fetchedRows)) reportRows = fetchedRows;
+        }
+      }
 
       setCurrentReport(metaData);
-      setRows(rowsData || []);
+      setRows(reportRows);
       setHasChanges(false);
       sessionStorage.setItem('activeReportId', reportId);
       sessionStorage.setItem('safira_current_page', 'document');
       setCurrentPage('document');
     } catch (err) {
-      alert(`Error loading report: ${err.message}`);
+      console.warn(`Could not load report ${reportId}:`, err.message);
+      sessionStorage.removeItem('activeReportId');
+      sessionStorage.removeItem('activeReport');
+      sessionStorage.removeItem('activeReportRows');
+      sessionStorage.setItem('safira_current_page', 'landing');
+      setCurrentReport(null);
+      setRows([]);
+      setCurrentPage('landing');
     } finally {
       setIsReportLoading(false);
     }

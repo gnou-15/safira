@@ -1,55 +1,114 @@
-/* Safety Manuals Manager Styles */
+/* Safety Manuals Manager Styles — Safira Design System */
 
-
-/* Alert States */
-.manuals-alert {
-  font-weight: 500;
+.manuals-modal-header {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.manuals-header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.manuals-modal-title {
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: #3b1c14;
+  letter-spacing: -0.3px;
+  text-align: left;
+}
+
+.manuals-modal-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+  display: block;
+  margin-top: 2px;
+}
+
+.manuals-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.manuals-close-btn:hover {
+  background: #f1f5f9;
+  color: #3b1c14;
+}
+
+/* Pill Alert Banner in Modal Header matching screenshot sample */
+.manuals-alert-pill {
+  display: inline-flex;
   align-items: center;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  border: 1.2px solid transparent;
+  animation: fadeInPill 0.2s ease-out;
+  line-height: 1.2;
 }
 
-.alert-info {
-  background-color: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+.manuals-alert-pill.alert-success {
+  background-color: #bbf7d0;
+  color: #15803d;
+  border-color: #16a34a;
 }
 
-.alert-success {
-  background-color: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
+.manuals-alert-pill.alert-error {
+  background-color: #fecaca;
+  color: #991b1b;
+  border-color: #dc2626;
 }
 
-.alert-error {
-  background-color: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
+.manuals-alert-pill.alert-info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border-color: #0284c7;
+}
+
+@keyframes fadeInPill {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Drag and Drop Zone */
 .manuals-dropzone {
-  border: 2px dashed var(--border-dark);
-  border-radius: 12px;
-  padding: 30px 20px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 24px 20px;
   text-align: center;
-  background-color: var(--bg-workspace);
+  background-color: #f8fafc;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .manuals-dropzone:hover {
-  border-color: var(--primary-color);
-  background-color: rgba(99, 102, 241, 0.04);
+  border-color: #3a9ad9;
+  background-color: #f0f9ff;
 }
 
 .manuals-dropzone.drag-over {
-  border-color: var(--primary-color);
-  background-color: rgba(99, 102, 241, 0.08);
-  transform: scale(1.02);
+  border-color: #3a9ad9;
+  background-color: #e0f2fe;
+  transform: scale(1.01);
 }
 
 .manuals-dropzone.disabled {
@@ -57,45 +116,261 @@
   cursor: not-allowed;
 }
 
-.dropzone-icon {
-  font-size: 32px;
-  color: var(--primary-color);
+.dropzone-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
 }
 
 .dropzone-text {
   margin: 0;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: #334155;
+}
+
+.dropzone-text strong {
+  color: #3a9ad9;
 }
 
 .dropzone-hint {
-  font-size: 11px;
-  color: var(--text-muted);
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+/* Section Heading */
+.manuals-list-section {
+  margin-top: 22px;
+}
+
+.manuals-section-heading {
+  margin: 0 0 12px 0;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #3b1c14;
+}
+
+.manuals-loading-text {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.manuals-empty-card {
+  text-align: center;
+  padding: 28px 20px;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  color: #64748b;
 }
 
 /* Manuals List Items */
+.manuals-scroll-list {
+  max-height: 220px;
+  overflow-y: auto;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
 .manuals-list-item {
-  background-color: var(--bg-card);
-  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.15s ease;
+}
+
+.manuals-list-item:last-child {
+  border-bottom: none;
 }
 
 .manuals-list-item:hover {
-  background-color: var(--bg-app);
+  background-color: #f8fafc;
+}
+
+.manual-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.clickable-download-zone {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clickable-download-zone:hover .file-name-text {
+  color: #3a9ad9;
+  text-decoration: underline;
+}
+
+.clickable-download-zone:hover .file-flat-icon svg {
+  transform: scale(1.1);
+  stroke: #2b85bf;
+}
+
+.file-flat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.file-info-col {
+  display: flex;
+  align-items: center;
+}
+
+.file-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.file-name-text {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  word-break: break-all;
+}
+
+.badge-tag {
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.tag-preset {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.tag-user {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.tag-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.tag-approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* Actions Right */
+.manual-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-admin-approve {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-admin-approve:hover {
+  background: #bbf7d0;
+  transform: scale(1.08);
+}
+
+.btn-admin-reject {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-admin-reject:hover {
+  background: #fca5a5;
+  transform: scale(1.08);
 }
 
 .btn-delete-manual {
-  opacity: 0.6;
-  transition: opacity 0.2s, transform 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.75;
+  transition: all 0.15s ease;
 }
 
 .btn-delete-manual:hover {
   opacity: 1;
+  background-color: #fef2f2;
   transform: scale(1.15);
+}
+
+/* Footer Close Button — Safira Primary Blue Style */
+.manuals-modal-footer {
+  margin-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 18px;
+}
+
+.btn-close-manager {
+  width: 100%;
+  background: #3a9ad9 !important;
+  border: 2px solid #3b1c14 !important;
+  color: #ffffff !important;
+  padding: 11px 24px !important;
+  border-radius: 20px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2) !important;
+}
+
+.btn-close-manager:hover {
+  background: #2b85bf !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0px rgba(59, 28, 20, 0.25) !important;
+}
+
+.btn-close-manager:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.2) !important;
 }
 
 .spinner-small {
   display: inline-block;
   animation: spin 1.2s linear infinite;
 }
-
-

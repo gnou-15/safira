@@ -59,6 +59,18 @@ export const ReportController = {
     }
   },
 
+  // GET /api/reports/:id/rows
+  async getRows(req, res) {
+    const { id } = req.params;
+    try {
+      const data = await ReportModel.getById(id, req.user?.id);
+      res.json(data.rows || []);
+    } catch (error) {
+      console.error(`Error fetching rows for report ${id}:`, error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
   // PUT /api/reports/:id/rows
   async upsertRows(req, res) {
     const { id } = req.params;

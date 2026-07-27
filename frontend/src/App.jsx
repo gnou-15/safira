@@ -120,7 +120,7 @@ function App() {
 
   // Safety timeout auto-recovery: Ensure buffer loader never hangs indefinitely
   useEffect(() => {
-    if (isPageLoading || isLoadingInvestigations) {
+    if (isPageLoading || isLoadingInvestigations || isReportLoading) {
       const timer = setTimeout(() => {
         if (isPageLoading) {
           console.warn("Buffer loader safety timeout reached, restoring landing view");
@@ -130,7 +130,7 @@ function App() {
       }, 3500);
       return () => clearTimeout(timer);
     }
-  }, [isPageLoading, isLoadingInvestigations, setCurrentPage]);
+  }, [isPageLoading, isLoadingInvestigations, isReportLoading, setCurrentPage]);
 
   return (
     <div className={`app-container ${(!currentReport && !currentInvestigation) ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>

@@ -10,6 +10,7 @@ router.use(authMiddleware);
 // Define report endpoints
 router.get('/', ReportController.getReports);
 router.get('/:id', ReportController.getReportById);
+router.get('/:id/rows', ReportController.getRows);
 router.post('/', ReportController.createReport);
 router.put('/:id', ReportController.updateReport);
 router.delete('/:id', ReportController.deleteReport);

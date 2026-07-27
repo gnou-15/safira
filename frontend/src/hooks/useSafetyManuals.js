@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 const PRESET_MANUALS = ['OSH-Standards-2020-Edition.pdf', 'iata-safety-report-2021.pdf'];
@@ -47,6 +47,16 @@ export default function useSafetyManuals(authedFetch, user) {
   const [isUploadingManual, setIsUploadingManual] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [manualsAlert, setManualsAlert] = useState({ type: '', message: '' });
+
+  // Auto-dismiss success/error alert prompts after 3.5 seconds
+  useEffect(() => {
+    if (manualsAlert.message && manualsAlert.type !== 'info') {
+      const timer = setTimeout(() => {
+        setManualsAlert({ type: '', message: '' });
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [manualsAlert]);
 
   // Load safety manuals instantly
   const fetchManuals = useCallback(async () => {
@@ -122,7 +132,8 @@ export default function useSafetyManuals(authedFetch, user) {
         filename: file.name,
         isPreset,
         uploadedBy: user?.username || 'User',
-        status: (isAdmin || isPreset) ? 'approved' : 'pending'
+        status: (isAdmin || isPreset) ? 'approved' : 'pending',
+        base64_data: base64Data
       };
 
       const currentMeta = getStoredManualsMeta().filter(m => m.filename !== file.name);
@@ -133,14 +144,12 @@ export default function useSafetyManuals(authedFetch, user) {
       if (res && res.ok) {
         setManualsAlert({
           type: 'success',
-          message: isAdmin || isPreset
-            ? `Successfully uploaded "${file.name}"!`
-            : `Successfully uploaded "${file.name}" to your account (${user?.username}). Pending admin approval for global access.`
+          message: 'File Added Successfully'
         });
       } else {
         setManualsAlert({
           type: 'success',
-          message: `Uploaded "${file.name}" to your key account (${user?.username}).`
+          message: 'File Added Successfully'
         });
       }
     } catch (err) {
@@ -157,7 +166,7 @@ export default function useSafetyManuals(authedFetch, user) {
       const updatedMeta = [newMeta, ...currentMeta];
       saveStoredManualsMeta(updatedMeta);
       setManuals(updatedMeta);
-      setManualsAlert({ type: 'success', message: `Saved "${file.name}" to your key account (${user?.username}).` });
+      setManualsAlert({ type: 'success', message: 'File Added Successfully' });
     } finally {
       setIsUploadingManual(false);
     }
@@ -173,7 +182,7 @@ export default function useSafetyManuals(authedFetch, user) {
     });
     saveStoredManualsMeta(updatedMeta);
     setManuals(updatedMeta);
-    setManualsAlert({ type: 'success', message: `Approved "${filename}" for all users!` });
+    setManualsAlert({ type: 'success', message: 'File Approved' });
   };
 
   const handleDeleteManual = async (filename) => {
@@ -181,11 +190,11 @@ export default function useSafetyManuals(authedFetch, user) {
     const isPreset = PRESET_MANUALS.includes(filename);
 
     if (!isAdmin && isPreset) {
-      setManualsAlert({ type: 'error', message: 'Preset system manuals can only be deleted by the Admin key (ADM-000).' });
+      setManualsAlert({ type: 'error', message: 'Admin Only Action' });
       return;
     }
 
-    setManualsAlert({ type: 'info', message: `Deleting ${filename}...` });
+    setManualsAlert({ type: 'info', message: 'Deleting...' });
 
     try {
       await authedFetch(`${API_URL}/api/ai/documents?name=${encodeURIComponent(filename)}`, {
@@ -213,7 +222,7 @@ export default function useSafetyManuals(authedFetch, user) {
     } catch (e) {}
 
     setManuals(prev => prev.filter(m => (typeof m === 'string' ? m : m.filename) !== filename));
-    setManualsAlert({ type: 'success', message: `Successfully deleted "${filename}"` });
+    setManualsAlert({ type: 'error', message: 'File Deleted' });
   };
 
   return {
