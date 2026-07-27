@@ -325,17 +325,52 @@
 /* ─── Mobile View Overrides for Chatbot Sidebar (Screen width <= 768px) ─── */
 @media screen and (max-width: 768px) {
   .chatbot-sidebar {
-    width: calc(100vw - 24px) !important;
-    right: 12px !important;
-    bottom: 80px !important;
-    max-height: calc(100vh - 120px) !important;
-    height: 480px !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 340px !important;
+    right: 16px !important;
+    bottom: 76px !important;
+    height: 340px !important;
+    max-height: 52vh !important;
+    border-radius: 12px !important;
+  }
+
+  .chatbot-header {
+    padding: 10px 14px !important;
+  }
+
+  .chatbot-title {
+    font-size: 12.5px !important;
+  }
+
+  .chat-history {
+    padding: 12px 10px !important;
+    gap: 10px !important;
+  }
+
+  .chat-msg {
+    max-width: 88% !important;
+    padding: 8px 11px !important;
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  .chat-input-area {
+    padding: 8px 10px !important;
+  }
+
+  .chat-input-wrapper {
+    padding: 2px 10px !important;
+  }
+
+  .chat-input-wrapper input {
+    padding: 6px 2px !important;
+    font-size: 11.5px !important;
   }
 
   .chatbot-toggle-btn {
     bottom: 16px !important;
     right: 16px !important;
-    width: 54px !important;
-    height: 54px !important;
+    width: 50px !important;
+    height: 50px !important;
   }
 }
