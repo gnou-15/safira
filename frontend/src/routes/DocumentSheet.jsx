@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import AutoResizeTextarea from '../components/AutoResizeTextarea';
 import { getRiskCode } from '../utils/riskCalculations';
 import '../css/DocumentSheet.css';
@@ -10,7 +11,7 @@ const getRiskClass = (index) => {
 
 export default function DocumentSheet({
   currentReport,
-  rows,
+  rows = [],
   isReportLoading,
   handleCellEdit,
   handleMetaEdit,
@@ -18,6 +19,19 @@ export default function DocumentSheet({
   handleDeleteRow,
   handleDeleteReport
 }) {
+  const [mobileActiveRowIndex, setMobileActiveRowIndex] = useState(0);
+
+  // Keep mobile active row index bounded safely
+  useEffect(() => {
+    if (rows && rows.length > 0 && mobileActiveRowIndex >= rows.length) {
+      setMobileActiveRowIndex(Math.max(0, rows.length - 1));
+    }
+  }, [rows, mobileActiveRowIndex]);
+
+  if (!currentReport) return null;
+
+  const activeRow = rows && rows.length > 0 ? rows[mobileActiveRowIndex] : null;
+
   return (
     <div className={`document-sheet ${isReportLoading ? 'skeleton-active' : ''}`}>
       {/* Header Box */}
@@ -36,11 +50,11 @@ export default function DocumentSheet({
           <tr>
             <td className="meta-label" style={{ width: '18%' }}>REPORT TITLE:</td>
             <td className="meta-value" colSpan={3} style={{ width: '62%' }}>
-              <input
-                type="text"
-                className="screen-only"
+              <AutoResizeTextarea
+                className="meta-textarea screen-only"
                 value={currentReport.title || ''}
                 onChange={(e) => handleMetaEdit('title', e.target.value)}
+                placeholder="Enter report title..."
               />
               <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.title || ''}</div>
             </td>
@@ -59,21 +73,21 @@ export default function DocumentSheet({
           <tr>
             <td className="meta-label">DEPARTMENT:</td>
             <td className="meta-value">
-              <input
-                type="text"
-                className="screen-only"
+              <AutoResizeTextarea
+                className="meta-textarea screen-only"
                 value={currentReport.department || ''}
                 onChange={(e) => handleMetaEdit('department', e.target.value)}
+                placeholder="Enter department..."
               />
               <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.department || ''}</div>
             </td>
             <td className="meta-label" style={{ width: '15%' }}>LOCATION:</td>
             <td className="meta-value" style={{ width: '25%' }}>
-              <input
-                type="text"
-                className="screen-only"
+              <AutoResizeTextarea
+                className="meta-textarea screen-only"
                 value={currentReport.location || ''}
                 onChange={(e) => handleMetaEdit('location', e.target.value)}
+                placeholder="Enter location..."
               />
               <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.location || ''}</div>
             </td>
@@ -81,11 +95,11 @@ export default function DocumentSheet({
           <tr>
             <td className="meta-label">ACTIVITY/AREA ASSESSED:</td>
             <td className="meta-value" colSpan={3}>
-              <input
-                type="text"
-                className="screen-only"
+              <AutoResizeTextarea
+                className="meta-textarea screen-only"
                 value={currentReport.activity_assessed || ''}
                 onChange={(e) => handleMetaEdit('activity_assessed', e.target.value)}
+                placeholder="Enter activity assessed..."
               />
               <div className="print-only cell-print-text" style={{ fontWeight: 'bold' }}>{currentReport.activity_assessed || ''}</div>
             </td>
@@ -124,8 +138,8 @@ export default function DocumentSheet({
         </tbody>
       </table>
 
-      {/* Editable HIRAC Grid */}
-      <div className="hirac-table-container">
+      {/* Editable HIRAC Grid (Desktop Table View) */}
+      <div className="hirac-table-container screen-only-desktop">
         <table className="hirac-table">
           <thead>
             <tr>
@@ -343,8 +357,285 @@ export default function DocumentSheet({
         </table>
       </div>
 
-      <div className="add-row-container">
+      <div className="add-row-container screen-only-desktop">
         <button className="btn-add-row" onClick={handleAddRow}>+ Add New Hazard Row</button>
+      </div>
+
+      {/* Mobile Paginated Single-Row Card View (Screen Only on <= 768px) */}
+      <div className="mobile-hirac-container screen-only-mobile">
+        {activeRow ? (
+          <div className="mobile-row-card">
+            {/* 1. TOP: Minimal Row Header */}
+            <div className="mobile-row-top-bar">
+              <span className="mobile-row-title-text">Hazard Row {mobileActiveRowIndex + 1} of {rows.length}</span>
+              <button
+                type="button"
+                className="mobile-delete-icon-btn"
+                onClick={() => {
+                  const deleted = handleDeleteRow(mobileActiveRowIndex);
+                  if (deleted && mobileActiveRowIndex >= rows.length - 1) {
+                    setMobileActiveRowIndex(Math.max(0, rows.length - 2));
+                  }
+                }}
+                title="Delete Row"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                <span>Delete Row</span>
+              </button>
+            </div>
+
+            {/* 2. MIDDLE: Row Fields Content */}
+            <div className="mobile-row-fields">
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">TYPE OF OPERATION OR ACTIVITY:</label>
+                <AutoResizeTextarea
+                  className="mobile-field-input op-type-text"
+                  value={activeRow.operation_type || ''}
+                  onChange={(e) => handleCellEdit(mobileActiveRowIndex, 'operation_type', e.target.value)}
+                  placeholder="Enter operation or activity..."
+                />
+              </div>
+
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">GENERIC HAZARD:</label>
+                <AutoResizeTextarea
+                  className="mobile-field-input"
+                  value={activeRow.generic_hazard || ''}
+                  onChange={(e) => handleCellEdit(mobileActiveRowIndex, 'generic_hazard', e.target.value)}
+                  placeholder="Enter generic hazard..."
+                />
+              </div>
+
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">RISKS (CONSEQUENCES OF THE HAZARD):</label>
+                <AutoResizeTextarea
+                  className="mobile-field-input"
+                  value={activeRow.risks || ''}
+                  onChange={(e) => handleCellEdit(mobileActiveRowIndex, 'risks', e.target.value)}
+                  placeholder="Enter risks..."
+                />
+              </div>
+
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">EXISTING DEFENSES TO CONTROL SAFETY RISKS:</label>
+                <AutoResizeTextarea
+                  className="mobile-field-input"
+                  value={activeRow.existing_defenses || ''}
+                  onChange={(e) => handleCellEdit(mobileActiveRowIndex, 'existing_defenses', e.target.value)}
+                  placeholder="Enter existing defenses..."
+                />
+              </div>
+
+              {/* Safety Risk Index */}
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">SAFETY RISK INDEX:</label>
+                <div className={`mobile-risk-widget risk-${getRiskClass(activeRow.initial_risk_index)}`}>
+                  <div className="risk-level-label">
+                    {activeRow.initial_risk_index ? activeRow.initial_risk_index.toUpperCase() : 'LOW'}
+                    <span className="risk-score-number"> ({getRiskCode(activeRow.initial_likelihood, activeRow.initial_severity)})</span>
+                  </div>
+                  <div className="risk-score-selectors">
+                    <div className="risk-selector-group">
+                      <span className="risk-selector-label">PROBABILITY</span>
+                      <div className="risk-selector-circles">
+                        {[
+                          { label: 'A', val: 5 },
+                          { label: 'B', val: 4 },
+                          { label: 'C', val: 3 },
+                          { label: 'D', val: 2 },
+                          { label: 'E', val: 1 }
+                        ].map(opt => (
+                          <button
+                            key={opt.val}
+                            type="button"
+                            className={`risk-circle-btn ${(activeRow.initial_likelihood || 3) === opt.val ? 'active' : ''}`}
+                            onClick={() => handleCellEdit(mobileActiveRowIndex, 'initial_likelihood', opt.val)}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="risk-selector-group">
+                      <span className="risk-selector-label">SEVERITY</span>
+                      <div className="risk-selector-circles">
+                        {[1, 2, 3, 4, 5].map(v => (
+                          <button
+                            key={v}
+                            type="button"
+                            className={`risk-circle-btn ${(activeRow.initial_severity || 3) === v ? 'active' : ''}`}
+                            onClick={() => handleCellEdit(mobileActiveRowIndex, 'initial_severity', v)}
+                          >
+                            {v}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">
+                  MITIGATING ACTIONS TO FURTHER REDUCE SAFETY RISKS
+                  <div className="header-subtext" style={{ color: '#64748b' }}>(a) Elimination (b) Substitution (c) Engineering control (d) Administrative (e) PPE</div>
+                </label>
+                <AutoResizeTextarea
+                  className="mobile-field-input"
+                  value={activeRow.mitigating_actions || ''}
+                  onChange={(e) => handleCellEdit(mobileActiveRowIndex, 'mitigating_actions', e.target.value)}
+                  placeholder="Enter mitigating actions..."
+                />
+              </div>
+
+              {/* Residual Risk Index */}
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">RESIDUAL RISK INDEX:</label>
+                <div className={`mobile-risk-widget risk-${getRiskClass(activeRow.residual_risk_index)}`}>
+                  <div className="risk-level-label">
+                    {activeRow.residual_risk_index ? activeRow.residual_risk_index.toUpperCase() : 'LOW'}
+                    <span className="risk-score-number"> ({getRiskCode(activeRow.residual_likelihood, activeRow.residual_severity)})</span>
+                  </div>
+                  <div className="risk-score-selectors">
+                    <div className="risk-selector-group">
+                      <span className="risk-selector-label">PROBABILITY</span>
+                      <div className="risk-selector-circles">
+                        {[
+                          { label: 'A', val: 5 },
+                          { label: 'B', val: 4 },
+                          { label: 'C', val: 3 },
+                          { label: 'D', val: 2 },
+                          { label: 'E', val: 1 }
+                        ].map(opt => (
+                          <button
+                            key={opt.val}
+                            type="button"
+                            className={`risk-circle-btn ${(activeRow.residual_likelihood || 2) === opt.val ? 'active' : ''}`}
+                            onClick={() => handleCellEdit(mobileActiveRowIndex, 'residual_likelihood', opt.val)}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="risk-selector-group">
+                      <span className="risk-selector-label">SEVERITY</span>
+                      <div className="risk-selector-circles">
+                        {[1, 2, 3, 4, 5].map(v => (
+                          <button
+                            key={v}
+                            type="button"
+                            className={`risk-circle-btn ${(activeRow.residual_severity || 2) === v ? 'active' : ''}`}
+                            onClick={() => handleCellEdit(mobileActiveRowIndex, 'residual_severity', v)}
+                          >
+                            {v}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">REMARKS:</label>
+                <AutoResizeTextarea
+                  className="mobile-field-input"
+                  value={activeRow.remarks || ''}
+                  onChange={(e) => handleCellEdit(mobileActiveRowIndex, 'remarks', e.target.value)}
+                  placeholder="Enter remarks..."
+                />
+              </div>
+
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">TARGET DATE:</label>
+                <AutoResizeTextarea
+                  className="mobile-field-input"
+                  value={activeRow.target_date || ''}
+                  onChange={(e) => handleCellEdit(mobileActiveRowIndex, 'target_date', e.target.value)}
+                  placeholder="e.g. 2026-12-31"
+                />
+              </div>
+
+              <div className="mobile-field-group">
+                <label className="mobile-field-label">DEPT RESPONSIBLE:</label>
+                <AutoResizeTextarea
+                  className="mobile-field-input"
+                  value={activeRow.department_responsible || ''}
+                  onChange={(e) => handleCellEdit(mobileActiveRowIndex, 'department_responsible', e.target.value)}
+                  placeholder="Enter department responsible..."
+                />
+              </div>
+            </div>
+
+            {/* 3. BELOW CONTENT: Horizontal Scrollable Pagination Controls */}
+            <div className="mobile-pagination-bar">
+              <button
+                type="button"
+                className="mobile-page-nav-btn"
+                disabled={mobileActiveRowIndex === 0}
+                onClick={() => setMobileActiveRowIndex(prev => Math.max(0, prev - 1))}
+                title="Previous Row"
+              >
+                ‹
+              </button>
+              <div className="mobile-page-dots">
+                {rows.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`mobile-dot-btn ${i === mobileActiveRowIndex ? 'active' : ''}`}
+                    onClick={() => setMobileActiveRowIndex(i)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="mobile-page-nav-btn"
+                disabled={mobileActiveRowIndex >= rows.length - 1}
+                onClick={() => setMobileActiveRowIndex(prev => Math.min(rows.length - 1, prev + 1))}
+                title="Next Row"
+              >
+                ›
+              </button>
+            </div>
+
+            {/* 4. BELOW PAGINATION: Add Row Button */}
+            <div className="mobile-add-row-wrapper">
+              <button
+                type="button"
+                className="btn-add-row-mobile"
+                onClick={() => {
+                  handleAddRow();
+                  setMobileActiveRowIndex(rows.length);
+                }}
+              >
+                + Add New Hazard Row
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mobile-empty-rows-card">
+            <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '12px' }}>No hazard rows found.</p>
+            <button
+              type="button"
+              className="btn-add-row-mobile"
+              onClick={() => {
+                handleAddRow();
+                setMobileActiveRowIndex(0);
+              }}
+            >
+              + Add New Hazard Row
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Document Signatures */}
@@ -446,9 +737,9 @@ export default function DocumentSheet({
       </div>
 
       <div className="delete-report-container screen-only">
-        <button 
-          type="button" 
-          className="btn-delete-report" 
+        <button
+          type="button"
+          className="btn-delete-report"
           onClick={() => handleDeleteReport(currentReport.id)}
         >
           Delete This Report

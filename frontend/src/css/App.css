@@ -534,3 +534,29 @@ body,
   color: #3a9ad9 !important;
   transform: translate(-10px, -5px) scale(1.1);
 }
+
+/* ─── Mobile View Overrides for App Container (Screen width <= 768px) ─── */
+@media screen and (max-width: 768px) {
+  .bg-silhouette-plane,
+  .bg-silhouette-hangar,
+  .bg-silhouette-compass,
+  .bg-silhouette-plane-far {
+    display: none !important;
+  }
+
+  .main-workspace {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .app-container:not(.landing-active) .main-workspace {
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .landing-active .main-workspace {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}

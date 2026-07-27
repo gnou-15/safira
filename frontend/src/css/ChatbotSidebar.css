@@ -321,3 +321,21 @@
     opacity: 0;
   }
 }
+
+/* ─── Mobile View Overrides for Chatbot Sidebar (Screen width <= 768px) ─── */
+@media screen and (max-width: 768px) {
+  .chatbot-sidebar {
+    width: calc(100vw - 24px) !important;
+    right: 12px !important;
+    bottom: 80px !important;
+    max-height: calc(100vh - 120px) !important;
+    height: 480px !important;
+  }
+
+  .chatbot-toggle-btn {
+    bottom: 16px !important;
+    right: 16px !important;
+    width: 54px !important;
+    height: 54px !important;
+  }
+}

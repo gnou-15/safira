@@ -651,3 +651,51 @@
   color: #991b1b;
 }
 
+/* ─── Mobile View Overrides for Investigation Report (Screen width <= 768px) ─── */
+@media screen and (max-width: 768px) {
+  .investigation-report-page {
+    padding: 10px 8px 0 8px !important;
+  }
+
+  .investigation-sheet-canvas {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 10px 16px 10px !important;
+  }
+
+  .sheet-continuous-card {
+    width: 100% !important;
+    padding: 16px 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .doc-toolbar {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .btn-toolbar-export {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  .print-signatures-container {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .print-sig-box {
+    width: 100% !important;
+  }
+
+  .print-personnel-table {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .factual-text {
+    margin-left: 0 !important;
+  }
+}
+

@@ -301,3 +301,17 @@
   50% { opacity: 1; transform: scale(1.02); }
   100% { opacity: 0.75; transform: scale(0.98); }
 }
+
+/* ─── Mobile View Overrides for NewReportModal (Screen width <= 768px) ─── */
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: calc(100vw - 24px) !important;
+    padding: 20px 16px !important;
+    margin: 12px !important;
+  }
+
+  .modal-grid-2col {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}

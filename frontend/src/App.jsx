@@ -12,6 +12,7 @@ import LoginPage from './routes/LoginPage';
 import DocumentSkeleton from './components/DocumentSkeleton';
 import useInvestigations from './hooks/useInvestigations';
 import NewInvestigationModal from './components/NewInvestigationModal';
+import ConfirmModal from './components/ConfirmModal';
 import './css/App.css';
 
 function App() {
@@ -70,6 +71,8 @@ function App() {
     handleCreateReport,
     handleSendMessage,
     handlePrint,
+    confirmModalState,
+    closeConfirmModal,
     handleDeleteReport,
     handleExitToLanding,
     loadingMessage,
@@ -307,6 +310,17 @@ function App() {
         manualsAlert={manualsAlert}
         handleUploadFile={handleUploadFile}
         handleDeleteManual={handleDeleteManual}
+      />
+
+      {/* In-App Deletion Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmModalState?.isOpen}
+        title={confirmModalState?.title}
+        message={confirmModalState?.message}
+        confirmText={confirmModalState?.confirmText}
+        useCountdown={confirmModalState?.useCountdown}
+        onConfirm={confirmModalState?.onConfirm}
+        onCancel={closeConfirmModal}
       />
 
       {currentPage === 'login' && (

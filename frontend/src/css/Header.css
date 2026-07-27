@@ -254,14 +254,14 @@
   0%,
   100% {
     box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2),
-                0 0 5px rgba(200, 216, 248, 0.25);
+      0 0 5px rgba(200, 216, 248, 0.25);
   }
 
   50% {
     box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.2),
-                0 0 10px rgba(200, 216, 248, 0.55),
-                0 0 22px rgba(147, 197, 253, 0.25),
-                0 0 0 6px rgba(200, 216, 248, 0.08);
+      0 0 10px rgba(200, 216, 248, 0.55),
+      0 0 22px rgba(147, 197, 253, 0.25),
+      0 0 0 6px rgba(200, 216, 248, 0.08);
   }
 }
 
@@ -343,15 +343,15 @@
   0%,
   100% {
     box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18),
-                0 0 7px rgba(251, 191, 36, 0.38),
-                0 0 14px rgba(253, 224, 71, 0.18);
+      0 0 7px rgba(251, 191, 36, 0.38),
+      0 0 14px rgba(253, 224, 71, 0.18);
   }
 
   50% {
     box-shadow: 3px 3px 0px rgba(59, 28, 20, 0.18),
-                0 0 14px rgba(251, 191, 36, 0.68),
-                0 0 28px rgba(253, 224, 71, 0.4),
-                0 0 44px rgba(254, 243, 199, 0.2);
+      0 0 14px rgba(251, 191, 36, 0.68),
+      0 0 28px rgba(253, 224, 71, 0.4),
+      0 0 44px rgba(254, 243, 199, 0.2);
   }
 }
 
@@ -822,4 +822,213 @@
   background: #f8fafc !important;
   transform: translateY(0.5px) !important;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ─── Aesthetic Single-Line Header Layout for Mobile View (<= 768px) ─── */
+@media screen and (max-width: 768px) {
+  .top-nav {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 12px !important;
+    height: 52px !important;
+    box-sizing: border-box !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  /* 1. LEFTMOST: Custom Report Dropdown Selector */
+  .custom-report-selector {
+    order: 1 !important;
+    max-width: 105px !important;
+    flex-shrink: 1 !important;
+  }
+
+  .custom-select-trigger {
+    padding: 5px 9px !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    background: rgba(248, 250, 252, 0.9) !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 16px !important;
+    gap: 4px !important;
+    max-width: 105px !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .trigger-text {
+    font-size: 10.5px !important;
+    max-width: 75px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    color: #334155 !important;
+  }
+
+  .chevron-icon {
+    width: 12px !important;
+    height: 12px !important;
+    color: #64748b !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* LEFT SIDE: Safira Brand & Aviator Logo (Close together on left side) */
+  .logo-container {
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: auto !important;
+    max-width: fit-content !important;
+    gap: 1.5px !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .safira-logo-wrapper {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .safira-logo {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .brand-text {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: #3a9ad9 !important;
+    font-family: 'Outfit', sans-serif !important;
+    letter-spacing: -0.4px !important;
+    display: inline-block !important;
+  }
+
+  .brand-subtext {
+    display: none !important;
+  }
+
+  /* 3. RIGHTMOST: Key Button Container */
+  .landing-nav-links {
+    position: absolute !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    z-index: 10 !important;
+  }
+
+  /* 3. RIGHTMOST: Nav Actions Container */
+  .nav-actions {
+    order: 3 !important;
+    margin-left: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    z-index: 2 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Back button on mobile: placed to the left of the generate (+) button */
+  .btn-nav-back-home {
+    order: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px 11px !important;
+    font-size: 10.5px !important;
+    font-weight: 650 !important;
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+    color: #475569 !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+    white-space: nowrap !important;
+    transition: all 0.15s ease !important;
+    cursor: pointer !important;
+  }
+
+  .btn-nav-back-home:active {
+    background: #f8fafc !important;
+    transform: scale(0.95) !important;
+  }
+
+  /* Remove Export button on mobile */
+  .btn-nav-export {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  /* 4. Generate Button: Circular Hollow Sky Blue Plus Icon (Absolute 50/50 Centering) */
+  .btn-nav-generate {
+    order: 2 !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    font-size: 0 !important; /* Hide text */
+    display: block !important;
+    position: relative !important;
+    background: #e6f4fe !important;
+    color: #0284c7 !important;
+    border: 2px solid #0284c7 !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+    overflow: hidden !important;
+  }
+
+  .btn-nav-generate::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 15px !important;
+    height: 15px !important;
+    background-color: #0284c7 !important;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='4' x2='12' y2='20'%3E%3C/line%3E%3Cline x1='4' y1='12' x2='20' y2='12'%3E%3C/line%3E%3C/svg%3E") center / contain no-repeat !important;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='4' x2='12' y2='20'%3E%3C/line%3E%3Cline x1='4' y1='12' x2='20' y2='12'%3E%3C/line%3E%3C/svg%3E") center / contain no-repeat !important;
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  .btn-nav-generate:hover {
+    background: #dbeafe !important;
+  }
+
+  .btn-nav-generate:active {
+    background: #bfdbfe !important;
+    transform: scale(0.94) !important;
+  }
+
+  /* Hide save status on mobile header */
+  .header-save-status {
+    display: none !important;
+  }
+
+  /* Scale key widget buttons cleanly on mobile header */
+  .header-key-btn,
+  .header-keyhole-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
 }

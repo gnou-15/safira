@@ -6,13 +6,17 @@ export default function AutoResizeTextarea({ value, onChange, className, style, 
   const adjustHeight = useCallback(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
+      textarea.style.setProperty('height', 'auto', 'important');
+      const newHeight = Math.max(textarea.scrollHeight + 10, 42);
+      textarea.style.setProperty('height', `${newHeight}px`, 'important');
     }
   }, []);
 
   useEffect(() => {
     adjustHeight();
+    // Re-calculate height on window resize or font load
+    window.addEventListener('resize', adjustHeight);
+    return () => window.removeEventListener('resize', adjustHeight);
   }, [value, adjustHeight]);
 
   return (
@@ -29,8 +33,7 @@ export default function AutoResizeTextarea({ value, onChange, className, style, 
         ...style, 
         resize: 'none', 
         overflowY: 'hidden',
-        minHeight: 'auto',
-        height: 'auto'
+        boxSizing: 'border-box'
       }}
     />
   );

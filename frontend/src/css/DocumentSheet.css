@@ -1,4 +1,12 @@
 /* Document Sheet Workspace Layout */
+.screen-only-desktop {
+  display: block;
+}
+
+.screen-only-mobile {
+  display: none;
+}
+
 .document-workspace {
   width: 100%;
   padding: 30px 15px;
@@ -85,7 +93,8 @@
   width: 32%;
 }
 
-.meta-value input {
+.meta-value input,
+.meta-textarea {
   width: 100%;
   border: none;
   outline: none;
@@ -95,10 +104,14 @@
   font-weight: 600;
   color: var(--text-primary);
   padding: 2px 0;
+  resize: none;
+  overflow-y: hidden;
+  line-height: 1.35;
   transition: all 0.15s ease;
 }
 
-.meta-value input:focus {
+.meta-value input:focus,
+.meta-textarea:focus {
   border-bottom: 1px solid var(--primary-color);
 }
 
@@ -273,6 +286,24 @@
   font-size: 11px;
   transition: background-color 0.2s ease;
   min-width: 120px !important;
+}
+
+.risk-level-label {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: currentColor !important;
+  text-align: center !important;
+  line-height: 1.3 !important;
+  font-family: inherit !important;
+}
+
+.risk-score-number {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: currentColor !important;
+  font-family: inherit !important;
 }
 
 /* Premium Circle Button Selectors for Risk matrix */
@@ -1203,4 +1234,465 @@
 .doc-footer-input:focus {
   border-bottom-color: var(--primary-color);
   color: var(--text-primary);
+}
+
+/* ─── Mobile View Overrides for DocumentSheet (Screen width <= 768px) ─── */
+@media screen and (max-width: 768px) {
+  .document-workspace {
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+  }
+
+  .app-container:not(.landing-active) .document-sheet {
+    padding: 16px 12px !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Header Layout: Centered Logo + Styled Title */
+  .doc-header-layout {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-align: center !important;
+    padding-bottom: 14px !important;
+    margin-bottom: 18px !important;
+    border-bottom: 2px solid #0f172a !important;
+  }
+
+  .logo-placeholder {
+    margin-right: 0 !important;
+  }
+
+  .pagss-logo {
+    width: 210px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+  }
+
+  .doc-title-container {
+    text-align: center !important;
+  }
+
+  .doc-title {
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    letter-spacing: 0.1px !important;
+  }
+
+  /* Metadata Section: Clean Mobile Cards instead of crushed HTML table */
+  .meta-table {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    border: none !important;
+    margin-bottom: 20px !important;
+  }
+
+  .meta-table tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .meta-table tr {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .meta-table td {
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    padding: 10px 12px !important;
+    background: #f8fafc !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+  }
+
+  .meta-label {
+    width: 100% !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    color: #475569 !important;
+    letter-spacing: 0.5px !important;
+    background: transparent !important;
+    margin-bottom: 4px !important;
+    padding: 0 !important;
+  }
+
+  .meta-value input,
+  .meta-textarea,
+  .sidebar-input,
+  .sidebar-textarea {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    resize: none !important;
+    overflow: hidden !important;
+    line-height: 1.5 !important;
+    text-align: left !important;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03) !important;
+  }
+
+  .meta-value-sidebar {
+    width: 100% !important;
+    background: #f8fafc !important;
+    border-radius: 10px !important;
+    padding: 10px 12px !important;
+  }
+
+  .sidebar-label {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    color: #475569 !important;
+    margin-bottom: 4px !important;
+  }
+
+  .sidebar-input,
+  .sidebar-textarea {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 7px 10px !important;
+    font-size: 12.5px !important;
+    color: #0f172a !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Main HIRAC Worksheet Table Container - Hidden on mobile screen */
+  .hirac-table-container,
+  .add-row-container {
+    display: none !important;
+  }
+
+  /* Mobile Single-Row Card Container */
+  .mobile-hirac-container {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 24px !important;
+    font-family: inherit !important;
+  }
+
+  .mobile-row-card {
+    background: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    padding: 0 !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    font-family: inherit !important;
+  }
+
+  /* 1. Header Bar matching desktop .hirac-table th */
+  .mobile-row-top-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    padding: 8px 12px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    font-family: inherit !important;
+  }
+
+  .mobile-row-title-text {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    background: transparent !important;
+    padding: 0 !important;
+    border: none !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.4px !important;
+    font-family: inherit !important;
+    opacity: 0.9 !important;
+  }
+
+  .mobile-delete-icon-btn {
+    background: rgba(239, 68, 68, 0.14) !important;
+    color: #ef4444 !important;
+    border: 1px solid rgba(239, 68, 68, 0.32) !important;
+    border-radius: 5px !important;
+    padding: 3px 7px !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    font-family: inherit !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .mobile-delete-icon-btn:hover,
+  .mobile-delete-icon-btn:active {
+    background: rgba(239, 68, 68, 0.28) !important;
+    border-color: rgba(239, 68, 68, 0.5) !important;
+    transform: scale(0.96) !important;
+  }
+
+  /* 2. Field Groups matching desktop th + td structure */
+  .mobile-row-fields {
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    background-color: #ffffff !important;
+  }
+
+  .mobile-field-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .mobile-field-label {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    text-transform: uppercase !important;
+    line-height: 1.4 !important;
+    text-align: center !important;
+    display: block !important;
+    font-family: inherit !important;
+    margin-bottom: 2px !important;
+  }
+
+  .mobile-field-label .header-subtext {
+    font-size: 9px !important;
+    font-weight: 400 !important;
+    text-transform: none !important;
+    margin-top: 4px !important;
+    opacity: 0.85 !important;
+    color: #64748b !important;
+  }
+
+  .mobile-field-input {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+    padding: 8px 10px !important;
+    font-size: 12.5px !important;
+    line-height: 1.5 !important;
+    font-weight: 600 !important;
+    color: var(--text-secondary) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    resize: none !important;
+    overflow: hidden !important;
+    font-family: inherit !important;
+    text-align: left !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-field-input.op-type-text {
+    color: var(--danger-color) !important;
+    font-weight: 600 !important;
+  }
+
+  /* 3. Risk Widgets matching desktop .risk-index-cell */
+  .mobile-risk-widget {
+    border: 1px solid var(--border-color) !important;
+    border-radius: 6px !important;
+    padding: 10px 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    transition: background-color 0.2s ease !important;
+    font-family: inherit !important;
+  }
+
+  .mobile-risk-widget.risk-low {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+  }
+
+  .mobile-risk-widget.risk-moderate {
+    background-color: #fef9c3 !important;
+    color: #854d0e !important;
+  }
+
+  .mobile-risk-widget.risk-high {
+    background-color: #ffedd5 !important;
+    color: #c2410c !important;
+  }
+
+  .mobile-risk-widget .risk-level-label {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: currentColor !important;
+    text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .mobile-risk-widget .risk-score-number {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: currentColor !important;
+  }
+
+  .mobile-risk-widget.risk-extreme {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+  }
+
+  /* 4. Horizontal Scrollable Pagination bar */
+  .mobile-pagination-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 8px 10px !important;
+    margin: 0 12px 12px 12px !important;
+    background-color: var(--bg-workspace) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    gap: 8px !important;
+    font-family: inherit !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-page-nav-btn {
+    min-width: 32px !important;
+    height: 32px !important;
+    border-radius: 6px !important;
+    background-color: #ffffff !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    font-family: inherit !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    box-shadow: none !important;
+    line-height: 1 !important;
+  }
+
+  .mobile-page-nav-btn:disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+  }
+
+  .mobile-page-dots {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    scrollbar-width: none !important;
+    padding: 2px 0 !important;
+    flex: 1 !important;
+  }
+
+  .mobile-page-dots::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mobile-dot-btn {
+    min-width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+    background-color: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    font-family: inherit !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    padding: 0 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-dot-btn.active {
+    background-color: #3a9ad9 !important;
+    color: #ffffff !important;
+    border-color: #3a9ad9 !important;
+    font-weight: 800 !important;
+  }
+
+  /* 5. Add Row Button matching desktop .btn-add-row */
+  .mobile-add-row-wrapper {
+    width: 100% !important;
+    padding: 0 12px 12px 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .btn-add-row-mobile {
+    width: 100% !important;
+    background-color: #3a9ad9 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    font-family: inherit !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+  }
+
+  .btn-add-row-mobile:active {
+    background-color: #2b85bf !important;
+    transform: scale(0.98) !important;
+  }
+
+  /* Signatures section on mobile */
+  .doc-footer-signatures {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    margin-top: 18px !important;
+  }
+
+  .sig-column {
+    min-height: 200px !important;
+  }
+
+  .sig-column:nth-child(1) {
+    border-right: none !important;
+    border-bottom: 1.2px solid #000000 !important;
+  }
 }

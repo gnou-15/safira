@@ -81,6 +81,31 @@ export default function useReports() {
   const [dragOver, setDragOver] = useState(false);
   const [manualsAlert, setManualsAlert] = useState({ type: '', message: '' });
 
+  // In-App Confirmation Modal State
+  const [confirmModalState, setConfirmModalState] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'Delete',
+    useCountdown: false,
+    onConfirm: null
+  });
+
+  const requestConfirm = useCallback(({ title, message, confirmText = 'Delete', useCountdown = false, onConfirm }) => {
+    setConfirmModalState({
+      isOpen: true,
+      title,
+      message,
+      confirmText,
+      useCountdown,
+      onConfirm
+    });
+  }, []);
+
+  const closeConfirmModal = useCallback(() => {
+    setConfirmModalState(prev => ({ ...prev, isOpen: false }));
+  }, []);
+
   // Ref to track the 5-second idle timer
   const idleTimerRef = useRef(null);
 
@@ -194,7 +219,7 @@ export default function useReports() {
     localStorage.setItem('safira_remembered_key', data.key);
     sessionStorage.setItem('safira_current_page', 'landing');
     setCurrentPage('landing');
-    
+
     try {
       await navigator.clipboard.writeText(data.key);
     } catch (e) {
@@ -364,14 +389,18 @@ export default function useReports() {
     markChanged();
   };
 
-  // Delete a specific row
+  // Delete a specific row with in-app modal confirmation
   const handleDeleteRow = useCallback((index) => {
-    setRows(prev => {
-      const updated = prev.filter((_, idx) => idx !== index);
-      return updated;
+    requestConfirm({
+      title: `Delete Hazard Row ${index + 1}?`,
+      message: 'This action cannot be undone.',
+      confirmText: 'Delete Row',
+      onConfirm: () => {
+        setRows(prev => prev.filter((_, idx) => idx !== index));
+        markChanged();
+      }
     });
-    markChanged();
-  }, []);
+  }, [requestConfirm, markChanged]);
 
   // Load safety manuals
   const fetchManuals = async () => {
@@ -444,26 +473,31 @@ export default function useReports() {
     }
   };
 
-  // Delete safety manual
+  // Delete safety manual with in-app modal confirmation
   const handleDeleteManual = async (filename) => {
-    if (!window.confirm(`Are you sure you want to delete "${filename}"? All AI safety guidelines context for this document will be removed.`)) return;
-
-    setManualsAlert({ type: 'info', message: `Deleting ${filename}...` });
-    try {
-      const res = await authedFetch(`${API_URL}/api/ai/documents?name=${encodeURIComponent(filename)}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        setManualsAlert({ type: 'success', message: `Successfully deleted "${filename}"` });
-        fetchManuals();
-      } else {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Delete failed');
+    requestConfirm({
+      title: 'Delete Safety Manual?',
+      message: `Are you sure you want to delete "${filename}"? All AI safety guidelines context for this document will be removed.`,
+      confirmText: 'Delete Document',
+      onConfirm: async () => {
+        setManualsAlert({ type: 'info', message: `Deleting ${filename}...` });
+        try {
+          const res = await authedFetch(`${API_URL}/api/ai/documents?name=${encodeURIComponent(filename)}`, {
+            method: 'DELETE'
+          });
+          if (res.ok) {
+            setManualsAlert({ type: 'success', message: `Successfully deleted "${filename}"` });
+            fetchManuals();
+          } else {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Delete failed');
+          }
+        } catch (err) {
+          console.error('Delete manual error:', err);
+          setManualsAlert({ type: 'error', message: `Deletion failed: ${err.message}` });
+        }
       }
-    } catch (err) {
-      console.error('Delete manual error:', err);
-      setManualsAlert({ type: 'error', message: `Failed to delete manual: ${err.message}` });
-    }
+    });
   };
 
   // Edit cell value directly
@@ -765,41 +799,48 @@ export default function useReports() {
 
   const handleDeleteReport = async (id) => {
     if (!id) return;
-    const confirmDelete = window.confirm("Are you sure you want to delete this report? This action cannot be undone.");
-    if (!confirmDelete) return;
+    requestConfirm({
+      title: 'Delete Safety Worksheet?',
+      message: 'This action cannot be undone.',
+      confirmText: 'Delete Report',
+      useCountdown: true,
+      onConfirm: async () => {
+        setLoadingMessage("Deleting safety worksheet...");
+        setIsPageLoading(true);
+        try {
+          const res = await authedFetch(`${API_URL}/api/reports/${id}`, {
+            method: 'DELETE'
+          });
 
-    setLoadingMessage("Deleting safety worksheet...");
-    setIsPageLoading(true);
-    try {
-      const res = await authedFetch(`${API_URL}/api/reports/${id}`, {
-        method: 'DELETE'
-      });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || 'Failed to delete report');
+          }
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to delete report');
+          // Remove from states
+          setReports(prev => prev.filter(r => r.id !== id));
+          setCurrentReport(null);
+          setRows([]);
+
+          // Clear session cache
+          sessionStorage.removeItem('activeReportId');
+          sessionStorage.removeItem('activeReport');
+          sessionStorage.removeItem('activeReportRows');
+
+          setCurrentPage('landing');
+        } catch (err) {
+          console.error("Error deleting report:", err);
+        } finally {
+          setIsPageLoading(false);
+        }
       }
-
-      // Remove from states
-      setReports(prev => prev.filter(r => r.id !== id));
-      setCurrentReport(null);
-      setRows([]);
-
-      // Clear session cache
-      sessionStorage.removeItem('activeReportId');
-      sessionStorage.removeItem('activeReport');
-      sessionStorage.removeItem('activeReportRows');
-
-      setCurrentPage('landing');
-    } catch (err) {
-      alert(`Error deleting report: ${err.message}`);
-    } finally {
-      setIsPageLoading(false);
-    }
+    });
   };
 
   // Launch browser native print interface (styled by print stylesheet)
   const handlePrint = () => {
+    if (window.innerWidth <= 768) return;
+
     const formElements = document.querySelectorAll('textarea, input, select');
     const savedStyles = [];
     formElements.forEach((el) => {
@@ -872,6 +913,8 @@ export default function useReports() {
     handleCreateReport,
     handleSendMessage,
     handlePrint,
+    confirmModalState,
+    closeConfirmModal,
     handleDeleteReport,
     lastSaved,
     isReportLoading

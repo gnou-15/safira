@@ -1640,3 +1640,162 @@ body.sky-sunset .landing-active .report-log-pill:hover {
   stroke: #64a8c8;
   stroke-width: 2.2;
 }
+
+/* ─── Mobile View Overrides for Landing Page (Screen width <= 768px) ─── */
+@media screen and (max-width: 768px) {
+  .landing-active {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+  }
+
+  .landing-active .top-nav {
+    padding: 12px 16px 8px 16px !important;
+  }
+
+  .landing-page-container {
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .landing-page-content {
+    margin-top: 0 !important;
+    padding: 0 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Make hero scene / headline banner "ANY REPORT FOR TODAY?" a lot bigger on mobile */
+  .landing-hero-scene {
+    width: 124% !important;
+    max-width: 124% !important;
+    margin: -10px -12% 4px -12% !important;
+  }
+
+  .landing-scene-svg {
+    transform: scale(1.22) !important;
+    transform-origin: center top !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* Make "Yes There Is!" button smaller on mobile */
+  .btn-yes-today {
+    padding: 7px 28px !important;
+    font-size: 12.5px !important;
+    border-width: 2px !important;
+    border-radius: 18px !important;
+    margin-top: 4px !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Make landing app description significantly smaller on mobile */
+  .landing-app-description {
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+    max-width: 280px !important;
+    margin: 4px auto 10px auto !important;
+    color: rgba(15, 23, 42, 0.7) !important;
+    text-align: center !important;
+  }
+
+  .landing-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Ultra-Aesthetic Mobile Styling & Proportional Spacing for Select Report Type Modal */
+  .select-report-type-modal {
+    max-width: 290px !important;
+    width: 82% !important;
+    padding: 16px 14px 14px 14px !important;
+    border-radius: 20px !important;
+    border: 2px solid #3b1c14 !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .select-report-type-modal .modal-header-title {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 16.5px !important;
+    font-weight: 900 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.3px !important;
+    margin-top: 0 !important;
+    margin-bottom: 3px !important;
+  }
+
+  .select-report-type-modal p {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 10.5px !important;
+    color: #64748b !important;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+    line-height: 1.3 !important;
+  }
+
+  .select-report-type-modal > div:nth-of-type(1) {
+    gap: 8px !important;
+  }
+
+  .select-report-type-modal > div:nth-of-type(2) {
+    margin-top: 10px !important;
+  }
+
+  .btn-select-type {
+    position: relative !important;
+    padding: 8px 12px !important;
+    border-radius: 12px !important;
+    border: 2px solid #3b1c14 !important;
+    box-shadow: 2px 2px 0px rgba(59, 28, 20, 0.15) !important;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .btn-select-type.hirac-type {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%) !important;
+    border-left: 4px solid #3a9ad9 !important;
+  }
+
+  .btn-select-type.investigation-type {
+    background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%) !important;
+    border-left: 4px solid #f59e0b !important;
+  }
+
+  .btn-select-type strong {
+    font-size: 12.5px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin-bottom: 1px !important;
+  }
+
+  .btn-select-type .desc-text {
+    font-size: 9.5px !important;
+    color: #64748b !important;
+    line-height: 1.25 !important;
+  }
+
+  .btn-select-type:active {
+    transform: scale(0.97) !important;
+    box-shadow: 1px 1px 0px rgba(59, 28, 20, 0.1) !important;
+  }
+
+  .select-report-type-modal .btn-modal-cancel {
+    background: #ffffff !important;
+    border: 2px solid #3b1c14 !important;
+    color: #3b1c14 !important;
+    padding: 5px 20px !important;
+    border-radius: 18px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    font-family: 'Outfit', sans-serif !important;
+    box-shadow: 2px 2px 0px rgba(59, 28, 20, 0.12) !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .select-report-type-modal .btn-modal-cancel:active {
+    transform: scale(0.96) !important;
+  }
+}
