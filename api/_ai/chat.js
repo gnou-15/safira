@@ -1,6 +1,7 @@
 import { setCorsHeaders } from '../_lib/supabase.js';
 import { getAuthenticatedUser } from '../_lib/auth.js';
 import { checkRateLimit } from '../_lib/rateLimiter.js';
+import { fallbackChat } from '../_lib/groqFallback.js';
 
 const PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL;
 
@@ -25,28 +26,31 @@ export default async function handler(req, res) {
   const allowed = await checkRateLimit(req, res, user);
   if (!allowed) return;
 
-  if (!PYTHON_SERVICE_URL) {
-    return res.status(500).json({ error: 'Python AI service URL is not configured.' });
-  }
-
   const { message, chat_history, current_table, doc_type, current_investigation } = req.body;
 
-  try {
-    const response = await fetch(`${PYTHON_SERVICE_URL}/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, chat_history, current_table, doc_type, current_investigation })
-    });
+  if (PYTHON_SERVICE_URL) {
+    try {
+      const response = await fetch(`${PYTHON_SERVICE_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, chat_history, current_table, doc_type, current_investigation })
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return res.status(response.status).json({ error: errorData.detail || 'AI Service error' });
+      if (response.ok) {
+        const data = await response.json();
+        return res.status(200).json(data);
+      }
+    } catch (error) {
+      console.warn('Python AI service call failed in Vercel function, using Groq direct fallback:', error);
     }
+  }
 
-    const data = await response.json();
-    return res.status(200).json(data);
-  } catch (error) {
-    console.error('AI chat proxy error:', error);
-    return res.status(500).json({ error: 'AI Service communication error' });
+  // Fallback direct Groq API execution if Python service is not set or failed
+  try {
+    const fallbackData = await fallbackChat({ message, chat_history, current_table, doc_type, current_investigation });
+    return res.status(200).json(fallbackData);
+  } catch (err) {
+    console.error('Vercel chat fallback error:', err);
+    return res.status(500).json({ error: `AI Chat error: ${err.message || 'Service unavailable'}` });
   }
 }

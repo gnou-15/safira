@@ -127,8 +127,8 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
         </div>
       </div>
 
-      {/* PAGE 4: SECTIONS 1, 2, 3, 4 */}
-      <div className="print-page section-content-page">
+      {/* PAGE 3: SECTIONS 1, 2, 3, 4 */}
+      <div className="print-page section-content-page page-3-container">
         <div className="print-header">
           <div className="print-header-left">
             <div>{currentInvestigation.ref_no || 'SSQA - 032'}</div>
@@ -140,30 +140,32 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
         </div>
         <div className="print-body">
           {/* 1. Factual Information */}
-          <h3 className="section-title">1. Factual Information</h3>
-          <h4 className="subsection-title">1.1 Operational Irregularity</h4>
-          <p className="factual-text">'{currentInvestigation.operational_irregularity || 'N/A'}'</p>
+          <div className="print-section-block">
+            <h3 className="section-title">1. Factual Information</h3>
+            <h4 className="subsection-title">1.1 Operational Irregularity</h4>
+            <p className="factual-text">'{currentInvestigation.operational_irregularity || 'N/A'}'</p>
 
-          <h4 className="subsection-title">1.2 Risk Index</h4>
-          <div className="print-risk-badge-wrapper">
-            <div className="print-risk-badge" style={getRiskIndexStyle(currentInvestigation.risk_index)}>
-              {currentInvestigation.risk_index || '2D - LOW'}
+            <h4 className="subsection-title">1.2 Risk Index</h4>
+            <div className="print-risk-badge-wrapper">
+              <div className="print-risk-badge" style={getRiskIndexStyle(currentInvestigation.risk_index)}>
+                {currentInvestigation.risk_index || '2D - LOW'}
+              </div>
             </div>
-          </div>
 
-          <h4 className="subsection-title">1.3 Personnel Information</h4>
-          <table className="print-personnel-table">
-            <tbody>
-              <tr><th>ID Number</th><td>{currentInvestigation.id_number || 'N/A'}</td></tr>
-              <tr><th>Position</th><td>{currentInvestigation.position || 'N/A'}</td></tr>
-              <tr><th>Date of Hiring</th><td>{currentInvestigation.date_of_hiring || 'N/A'}</td></tr>
-              <tr><th>Trainings</th><td>{currentInvestigation.trainings || 'N/A'}</td></tr>
-            </tbody>
-          </table>
+            <h4 className="subsection-title">1.3 Personnel Information</h4>
+            <table className="print-personnel-table">
+              <tbody>
+                <tr><th>ID Number</th><td>{currentInvestigation.id_number || 'N/A'}</td></tr>
+                <tr><th>Position</th><td>{currentInvestigation.position || 'N/A'}</td></tr>
+                <tr><th>Date of Hiring</th><td>{currentInvestigation.date_of_hiring || 'N/A'}</td></tr>
+                <tr><th>Trainings</th><td>{currentInvestigation.trainings || 'N/A'}</td></tr>
+              </tbody>
+            </table>
+          </div>
 
           {/* 2. Analysis */}
           {analysisItems.length > 0 && (
-            <>
+            <div className="print-section-block">
               <h3 className="section-title">2. Analysis</h3>
               <div className="print-bullet-list">
                 {analysisItems.map((item, idx) => (
@@ -173,13 +175,13 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
                   </div>
                 ))}
               </div>
-            </>
+            </div>
           )}
 
           {/* 3. Root Cause */}
           {rootCauseItems.length > 0 && (
-            <>
-              <h3 className="section-title">3. Root Cause:</h3>
+            <div className="print-section-block">
+              <h3 className="section-title">3. Root Cause</h3>
               <div className="print-bullet-list">
                 {rootCauseItems.map((item, idx) => {
                   const parts = item.split(/ [-–—] /);
@@ -195,12 +197,12 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
                   );
                 })}
               </div>
-            </>
+            </div>
           )}
 
           {/* 4. Immediate/Corrective Action */}
           {correctiveItems.length > 0 && (
-            <>
+            <div className="print-section-block">
               <h3 className="section-title">4. Immediate/Corrective Action</h3>
               <div className="print-bullet-list">
                 {correctiveItems.map((item, idx) => (
@@ -210,7 +212,7 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
                   </div>
                 ))}
               </div>
-            </>
+            </div>
           )}
         </div>
         <div className="print-footer">
@@ -221,8 +223,8 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
         </div>
       </div>
 
-      {/* PAGE 5: SECTIONS 5, 6, 7 */}
-      <div className="print-page section-content-page">
+      {/* PAGE 4: SECTIONS 5, 6, 7 */}
+      <div className="print-page section-content-page page-4-container">
         <div className="print-header">
           <div className="print-header-left">
             <div>{currentInvestigation.ref_no || 'SSQA - 032'}</div>
@@ -235,7 +237,7 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
         <div className="print-body">
           {/* 5. Preventive Action */}
           {preventiveItems.length > 0 && (
-            <>
+            <div className="print-section-block">
               <h3 className="section-title">5. Preventive Action</h3>
               <div className="print-bullet-list">
                 {preventiveItems.map((item, idx) => (
@@ -245,44 +247,48 @@ export default function InvestigationReportPrint({ currentInvestigation }) {
                   </div>
                 ))}
               </div>
-            </>
+            </div>
           )}
 
           {/* 6. References */}
-          <h3 className="section-title">6. References</h3>
-          <div className="print-references-text">
-            {refLines.length > 0 ? 
-              refLines.map((line, lidx) => (
-                <div key={lidx} style={{ marginBottom: '4px' }}>
-                  {line.replace(/^:\s*-\s*/, ': ').replace(/^-\s*/, ': ').trim()}
-                </div>
-              ))
-              : 'No references listed.'
-            }
+          <div className="print-section-block">
+            <h3 className="section-title">6. References</h3>
+            <div className="print-references-text">
+              {refLines.length > 0 ? 
+                refLines.map((line, lidx) => (
+                  <div key={lidx} style={{ marginBottom: '4px' }}>
+                    {line.replace(/^:\s*-\s*/, ': ').replace(/^-\s*/, ': ').trim()}
+                  </div>
+                ))
+                : 'No references listed.'
+              }
+            </div>
           </div>
 
           {/* 7. Investigation Team */}
-          <h3 className="section-title">7. Investigation Team</h3>
-          <div className="print-signatures-container">
-            <div className="print-sig-box">
-              <span className="sig-label">Prepared by:</span>
-              <div className="sig-space">
-                {currentInvestigation.prepared_by_name && currentInvestigation.prepared_by_name.toLowerCase().includes('borromeo') && (
-                  <img src="/signatures/borromeo.png" alt="Signature" className="print-sig-img" onError={(e) => { e.target.style.display = 'none'; }} />
-                )}
+          <div className="print-section-block signature-block">
+            <h3 className="section-title">7. Investigation Team</h3>
+            <div className="print-signatures-container">
+              <div className="print-sig-box">
+                <span className="sig-label">Prepared by:</span>
+                <div className="sig-space">
+                  {currentInvestigation.prepared_by_name && currentInvestigation.prepared_by_name.toLowerCase().includes('borromeo') && (
+                    <img src="/signatures/borromeo.png" alt="Signature" className="print-sig-img" onError={(e) => { e.target.style.display = 'none'; }} />
+                  )}
+                </div>
+                <div className="sig-name">{currentInvestigation.prepared_by_name || 'N/A'}</div>
+                <div className="sig-role">{currentInvestigation.prepared_by_role || 'N/A'}</div>
               </div>
-              <div className="sig-name">{currentInvestigation.prepared_by_name || 'N/A'}</div>
-              <div className="sig-role">{currentInvestigation.prepared_by_role || 'N/A'}</div>
-            </div>
-            <div className="print-sig-box">
-              <span className="sig-label">Approved by:</span>
-              <div className="sig-space">
-                {currentInvestigation.approved_by_name && currentInvestigation.approved_by_name.toLowerCase().includes('magsayo') && (
-                  <img src="/signatures/magsayo.png" alt="Signature" className="print-sig-img" onError={(e) => { e.target.style.display = 'none'; }} />
-                )}
+              <div className="print-sig-box">
+                <span className="sig-label">Approved by:</span>
+                <div className="sig-space">
+                  {currentInvestigation.approved_by_name && currentInvestigation.approved_by_name.toLowerCase().includes('magsayo') && (
+                    <img src="/signatures/magsayo.png" alt="Signature" className="print-sig-img" onError={(e) => { e.target.style.display = 'none'; }} />
+                  )}
+                </div>
+                <div className="sig-name">{currentInvestigation.approved_by_name || 'N/A'}</div>
+                <div className="sig-role">{currentInvestigation.approved_by_role || 'N/A'}</div>
               </div>
-              <div className="sig-name">{currentInvestigation.approved_by_name || 'N/A'}</div>
-              <div className="sig-role">{currentInvestigation.approved_by_role || 'N/A'}</div>
             </div>
           </div>
         </div>

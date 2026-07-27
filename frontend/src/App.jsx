@@ -94,7 +94,9 @@ function App() {
     handleFieldEdit: handleInvestigationFieldEdit,
     handleDeleteInvestigation,
     handleExitInvestigation,
-    handleSaveExplicit: handleInvestigationSaveExplicit
+    handleSaveExplicit: handleInvestigationSaveExplicit,
+    investigationConfirmModalState,
+    closeInvestigationConfirmModal
   } = useInvestigations(user, setCurrentPage);
 
   const handleGetToWorkInvestigation = async () => {
@@ -331,13 +333,13 @@ function App() {
 
       {/* In-App Deletion Confirmation Modal */}
       <ConfirmModal
-        isOpen={confirmModalState?.isOpen}
-        title={confirmModalState?.title}
-        message={confirmModalState?.message}
-        confirmText={confirmModalState?.confirmText}
-        useCountdown={confirmModalState?.useCountdown}
-        onConfirm={confirmModalState?.onConfirm}
-        onCancel={closeConfirmModal}
+        isOpen={confirmModalState?.isOpen || investigationConfirmModalState?.isOpen}
+        title={confirmModalState?.isOpen ? confirmModalState?.title : investigationConfirmModalState?.title}
+        message={confirmModalState?.isOpen ? confirmModalState?.message : investigationConfirmModalState?.message}
+        confirmText={confirmModalState?.isOpen ? confirmModalState?.confirmText : investigationConfirmModalState?.confirmText}
+        useCountdown={confirmModalState?.isOpen ? confirmModalState?.useCountdown : investigationConfirmModalState?.useCountdown}
+        onConfirm={confirmModalState?.isOpen ? confirmModalState?.onConfirm : investigationConfirmModalState?.onConfirm}
+        onCancel={confirmModalState?.isOpen ? closeConfirmModal : closeInvestigationConfirmModal}
       />
 
       {currentPage === 'login' && (

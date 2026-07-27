@@ -222,6 +222,19 @@
     display: block !important;
   }
 
+  /* Main Flow Page allows natural content height and clean browser page breaks */
+  .print-page.main-flow-page {
+    height: auto !important;
+    min-height: 268mm !important;
+    overflow: visible !important;
+  }
+
+  .print-section-block {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 8px !important;
+  }
+
   /* Page break BEFORE every page except the first one */
   .print-page+.print-page {
     page-break-before: always !important;
@@ -450,30 +463,34 @@
   .section-title {
     font-size: 12px !important;
     font-weight: bold !important;
-    margin-top: 10px !important;
-    margin-bottom: 4px !important;
+    margin-top: 7px !important;
+    margin-bottom: 3px !important;
     text-align: left !important;
     color: #000000 !important;
     font-family: 'Calibri', 'Segoe UI', Arial, sans-serif !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
   .subsection-title {
     font-size: 11px !important;
     font-weight: bold !important;
-    margin-top: 8px !important;
-    margin-bottom: 3px !important;
+    margin-top: 5px !important;
+    margin-bottom: 2px !important;
     text-align: left !important;
     margin-left: 18px !important;
     color: #000000 !important;
     font-family: 'Calibri', 'Segoe UI', Arial, sans-serif !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
   .summary-text,
   .factual-text {
     font-size: 11px !important;
-    line-height: 1.45 !important;
+    line-height: 1.35 !important;
     color: #000000 !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 5px !important;
     font-family: 'Calibri', 'Segoe UI', Arial, sans-serif !important;
     white-space: pre-wrap !important;
     text-align: justify !important;
@@ -483,15 +500,15 @@
   .print-personnel-table {
     width: calc(100% - 18px) !important;
     border-collapse: collapse !important;
-    margin-top: 4px !important;
-    margin-bottom: 8px !important;
+    margin-top: 3px !important;
+    margin-bottom: 5px !important;
     margin-left: 18px !important;
   }
 
   .print-personnel-table th,
   .print-personnel-table td {
     border: 1px solid #000000 !important;
-    padding: 3px 8px !important;
+    padding: 2px 8px !important;
     font-size: 11px !important;
     font-family: 'Calibri', 'Segoe UI', Arial, sans-serif !important;
     color: #000000 !important;
@@ -512,8 +529,8 @@
   .print-bullet-list {
     display: flex !important;
     flex-direction: column !important;
-    gap: 3px !important;
-    margin-top: 3px !important;
+    gap: 2.5px !important;
+    margin-top: 2px !important;
     margin-bottom: 3px !important;
     margin-left: 18px !important;
   }
@@ -525,6 +542,8 @@
     line-height: 1.35 !important;
     color: #000000 !important;
     font-family: 'Calibri', 'Segoe UI', Arial, sans-serif !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .bullet-letter {
@@ -575,6 +594,8 @@
     margin-top: 15px !important;
     margin-left: 120px !important;
     gap: 15px !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .print-sig-box {

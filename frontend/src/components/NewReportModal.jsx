@@ -59,7 +59,7 @@ export default function NewReportModal({
 
     debounceTimerRef.current = setTimeout(() => {
       fetchSuggestions(val);
-    }, 1500);
+    }, 650);
   };
 
   const handleTitleBlur = (e) => {

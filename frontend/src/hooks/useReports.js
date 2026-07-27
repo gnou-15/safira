@@ -311,10 +311,10 @@ export default function useReports() {
     });
   }, [requestConfirm]);
 
-  const handleDeleteReport = useCallback((reportId, title) => {
+  const handleDeleteReport = useCallback((reportId) => {
     requestConfirm({
       title: 'Delete HIRAC Report?',
-      message: `Are you sure you want to delete "${title || 'Untitled Report'}"? All hazard assessments inside will be permanently removed.`,
+      message: 'This action cannot be undone.',
       confirmText: 'Delete Report',
       useCountdown: true,
       onConfirm: async () => {

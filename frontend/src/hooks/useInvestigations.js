@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import useConfirmModal from './useConfirmModal';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -19,6 +20,8 @@ export default function useInvestigations(user, setCurrentPage) {
   const [hasChanges, setHasChanges] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
+
+  const { confirmModalState, requestConfirm, closeConfirmModal } = useConfirmModal();
 
   const idleTimerRef = useRef(null);
 
@@ -168,33 +171,41 @@ export default function useInvestigations(user, setCurrentPage) {
   };
 
   // Delete investigation
-  const handleDeleteInvestigation = async (id) => {
-    if (!id) return;
-    const confirmDelete = window.confirm("Are you sure you want to delete this investigation report? This action cannot be undone.");
-    if (!confirmDelete) return;
+  const handleDeleteInvestigation = useCallback((id) => {
+    const targetId = id || currentInvestigation?.id;
+    if (!targetId) return;
 
-    setLoadingMessage("Deleting investigation report...");
-    setIsLoading(true);
-    try {
-      const res = await authedFetch(`${API_URL}/api/investigations/${id}`, {
-        method: 'DELETE'
-      });
+    requestConfirm({
+      title: 'Delete Investigation Report?',
+      message: 'This action cannot be undone.',
+      confirmText: 'Delete Report',
+      useCountdown: true,
+      onConfirm: async () => {
+        setLoadingMessage("Deleting investigation report...");
+        setIsLoading(true);
+        try {
+          const res = await authedFetch(`${API_URL}/api/investigations/${targetId}`, {
+            method: 'DELETE'
+          });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to delete report');
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || 'Failed to delete report');
+          }
+
+          setInvestigations(prev => prev.filter(item => item.id !== targetId));
+          setCurrentInvestigation(null);
+          sessionStorage.removeItem('activeInvestigationId');
+          sessionStorage.setItem('safira_current_page', 'landing');
+          setCurrentPage('landing');
+        } catch (err) {
+          alert(`Error deleting investigation: ${err.message}`);
+        } finally {
+          setIsLoading(false);
+        }
       }
-
-      setInvestigations(prev => prev.filter(item => item.id !== id));
-      setCurrentInvestigation(null);
-      sessionStorage.removeItem('activeInvestigationId');
-      setCurrentPage('landing');
-    } catch (err) {
-      alert(`Error deleting investigation: ${err.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    });
+  }, [currentInvestigation, requestConfirm, setCurrentPage]);
 
   const handleExitInvestigation = async () => {
     if (hasChanges) {
@@ -249,6 +260,8 @@ export default function useInvestigations(user, setCurrentPage) {
     handleFieldEdit,
     handleDeleteInvestigation,
     handleExitInvestigation,
-    handleSaveExplicit
+    handleSaveExplicit,
+    investigationConfirmModalState: confirmModalState,
+    closeInvestigationConfirmModal: closeConfirmModal
   };
 }
