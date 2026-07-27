@@ -881,22 +881,35 @@
     flex-shrink: 0 !important;
   }
 
-  /* LEFT SIDE: Safira Brand & Aviator Logo (Close together on left side) */
+  /* Base logo container styling on mobile */
   .logo-container {
-    position: absolute !important;
-    left: 12px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
     display: inline-flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    justify-content: flex-start !important;
     width: auto !important;
     max-width: fit-content !important;
     gap: 1.5px !important;
     cursor: pointer !important;
     z-index: 10 !important;
     flex-shrink: 0 !important;
+  }
+
+  /* Landing page header logo: Positioned on left side */
+  .logo-container-landing {
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    justify-content: flex-start !important;
+  }
+
+  /* HIRAC & Investigation Edit Page logo: Centered in the middle of mobile header */
+  .logo-container-edit {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    justify-content: center !important;
   }
 
   .safira-logo-wrapper {

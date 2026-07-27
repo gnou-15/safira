@@ -108,7 +108,7 @@ export default function InvestigationReport({
         </div>
         <div className="inv-sub-section">
           <h4 className="inv-sub-heading">1.2 Risk Index</h4>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div className="inv-risk-index-container">
             <input 
               type="text" 
               className="inv-risk-index-input" 
@@ -117,7 +117,7 @@ export default function InvestigationReport({
               style={getRiskIndexStyle(currentInvestigation.risk_index)}
               placeholder="e.g. 2D - LOW"
             />
-            <span className="screen-only" style={{ fontSize: '11px', color: '#64748b' }}>
+            <span className="screen-only inv-risk-hint">
               (Type 'low', 'medium', 'high', or 'extreme' to auto-color code)
             </span>
           </div>

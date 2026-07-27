@@ -630,3 +630,18 @@
     font-family: 'Calibri', 'Segoe UI', Arial, sans-serif !important;
   }
 }
+
+.inv-risk-index-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.inv-risk-hint {
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+  margin-top: 2px;
+}

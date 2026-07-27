@@ -34,7 +34,7 @@ export default function Header({
     <header className="top-nav">
       {!currentReport && !currentInvestigation ? (
         <>
-          <div className="logo-container" onClick={() => fetchReports()}>
+          <div className="logo-container logo-container-landing" onClick={() => fetchReports()}>
             <div className="safira-logo-wrapper">
               <svg viewBox="0 0 100 100" className="safira-logo" width="30" height="30">
                 <defs>
@@ -168,7 +168,7 @@ export default function Header({
       ) : (
         <>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div className="logo-container" onClick={currentReport ? handleExitToLanding : handleExitInvestigation} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+            <div className="logo-container logo-container-edit" onClick={currentReport ? handleExitToLanding : handleExitInvestigation} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
               <div className="safira-logo-wrapper">
                 <svg viewBox="0 0 100 100" className="safira-logo" width="30" height="30">
                   <defs>
