@@ -31,7 +31,7 @@ export default function Header({
   const [showReportDropdown, setShowReportDropdown] = useState(false);
   const [copyText, setCopyText] = useState("Copy");
   return (
-    <header className="top-nav">
+    <header className={`top-nav ${(!currentReport && !currentInvestigation) ? 'top-nav-landing' : ''}`}>
       {!currentReport && !currentInvestigation ? (
         <>
           <div className="logo-container logo-container-landing" onClick={() => fetchReports()}>

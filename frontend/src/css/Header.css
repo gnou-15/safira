@@ -894,13 +894,29 @@
     flex-shrink: 0 !important;
   }
 
-  /* Landing page header logo: Positioned on left side */
+  /* Landing page mobile header styling: Centered Safira logo with Key button beside it */
+  .top-nav.top-nav-landing {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 52px !important;
+    padding: 8px 12px !important;
+    gap: 8px !important;
+    background: transparent !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Landing page header logo: Positioned at center beside key */
   .logo-container-landing {
-    position: absolute !important;
-    left: 12px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    justify-content: flex-start !important;
+    position: static !important;
+    transform: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    text-align: center !important;
   }
 
   /* HIRAC & Investigation Edit Page logo: Centered in the middle of mobile header */
@@ -919,12 +935,12 @@
   }
 
   .safira-logo {
-    width: 32px !important;
-    height: 32px !important;
+    width: 30px !important;
+    height: 30px !important;
   }
 
   .brand-text {
-    font-size: 22px !important;
+    font-size: 20px !important;
     font-weight: 800 !important;
     color: #3a9ad9 !important;
     font-family: 'Outfit', sans-serif !important;
@@ -936,16 +952,35 @@
     display: none !important;
   }
 
-  /* 3. RIGHTMOST: Key Button Container */
+  /* 3. Key Button Container: Beside Safira logo on mobile */
   .landing-nav-links {
-    position: absolute !important;
-    right: 12px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    display: flex !important;
+    position: static !important;
+    transform: none !important;
+    display: inline-flex !important;
     align-items: center !important;
-    justify-content: flex-end !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    width: auto !important;
     z-index: 10 !important;
+  }
+
+  /* Scale down Key button on mobile */
+  .landing-nav-links .header-key-btn,
+  .landing-nav-links .header-keyhole-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .landing-nav-links .btn-key-svg,
+  .landing-nav-links .btn-keyhole-svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   /* 3. RIGHTMOST: Nav Actions Container */
