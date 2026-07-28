@@ -402,9 +402,18 @@ export default function useReports() {
         setReports([savedMeta, ...reports]);
         setCurrentReport(savedMeta);
         setRows([defaultRow]);
+        sessionStorage.setItem('activeReportId', savedMeta.id);
+        sessionStorage.setItem('safira_current_page', 'document');
+        setCurrentPage('document');
       }
     } catch (err) {
       console.warn("Fallback to default report view:", err);
+      const defaultMeta = { id: 'temp-default-' + Date.now(), ...createDefaultReportMeta() };
+      const defaultRow = createDefaultRow();
+      setCurrentReport(defaultMeta);
+      setRows([defaultRow]);
+      sessionStorage.setItem('safira_current_page', 'document');
+      setCurrentPage('document');
     } finally {
       setIsPageLoading(false);
     }
@@ -452,6 +461,9 @@ export default function useReports() {
       setReports([savedReportMeta, ...reports]);
       setCurrentReport(savedReportMeta);
       setRows(generatedRows);
+      sessionStorage.setItem('activeReportId', savedReportMeta.id);
+      sessionStorage.setItem('safira_current_page', 'document');
+      setCurrentPage('document');
       setShowModal(false);
       setIncidentPrompt('');
       setChatHistory([
