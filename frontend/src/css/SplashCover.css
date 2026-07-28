@@ -40,7 +40,7 @@
   padding: 24px;
 }
 
-/* Standalone Safira Text - Carved / Pressed Down Inside Light Surface Effect */
+/* Standalone Safira Text - Carved Pressed-Down Inside Effect (850ms Resora Match) */
 .safira-press-text {
   font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 5.8rem;
@@ -59,15 +59,21 @@
     color: #38bdf8;
     text-shadow: 0 10px 24px rgba(56, 189, 248, 0.35), 0 2px 4px rgba(15, 23, 42, 0.1);
   }
-  45%, 75% {
+
+  45%,
+  75% {
     /* Pressed Down INSIDE the surface: Carved dark top inner wall + bright white bottom rim highlight */
     transform: scale(0.92) translateY(5px);
     color: #2b93c7;
     text-shadow:
-      -2px -2px 3px rgba(15, 23, 42, 0.65),   /* Dark top-left inner shadow wall */
-      1.5px 2px 1px #ffffff,                 /* Bright bottom-right rim highlight */
-      0px 1px 3px rgba(15, 23, 42, 0.3);     /* Ambient recessed inner shadow */
+      -2px -2px 3px rgba(15, 23, 42, 0.65),
+      /* Dark top-left inner shadow wall */
+      1.5px 2px 1px #ffffff,
+      /* Bright bottom-right rim highlight */
+      0px 1px 3px rgba(15, 23, 42, 0.3);
+    /* Ambient recessed inner shadow */
   }
+
   100% {
     transform: scale(0.95) translateY(3px);
     color: #38bdf8;

@@ -6,12 +6,12 @@ export default function SplashCover({ onComplete }) {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
-    // Trigger scale & fade-out after 600ms
+    // Trigger scale & fade-out after 600ms (Resora total: 850ms)
     const fadeTimer = setTimeout(() => {
       setIsFadingOut(true);
     }, 600);
 
-    // Unmount completely from DOM after 850ms (< 1s total)
+    // Unmount completely from DOM after 850ms (0.85s total)
     const removeTimer = setTimeout(() => {
       setIsVisible(false);
       if (onComplete) onComplete();
