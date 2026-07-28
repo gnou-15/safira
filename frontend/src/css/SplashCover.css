@@ -1,0 +1,86 @@
+/* Safira Preloader Cover - Light Sky Blue Theme & Carved Pressed-Down Inside Text Animation */
+
+.safira-preloader-cover {
+  z-index: 99999;
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+  will-change: opacity, transform;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  pointer-events: auto;
+  user-select: none;
+  opacity: 1;
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.safira-preloader-cover.preloader-fade-out {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.02);
+}
+
+.safira-loader-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.safira-press-container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+/* Standalone Safira Text - Carved / Pressed Down Inside Light Surface Effect */
+.safira-press-text {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 5.8rem;
+  font-weight: 900;
+  letter-spacing: -2.5px;
+  line-height: 1;
+  color: #38bdf8;
+  display: inline-block;
+  transform-origin: center center;
+  animation: safiraCarvedPressIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes safiraCarvedPressIn {
+  0% {
+    transform: scale(1) translateY(0);
+    color: #38bdf8;
+    text-shadow: 0 10px 24px rgba(56, 189, 248, 0.35), 0 2px 4px rgba(15, 23, 42, 0.1);
+  }
+  45%, 75% {
+    /* Pressed Down INSIDE the surface: Carved dark top inner wall + bright white bottom rim highlight */
+    transform: scale(0.92) translateY(5px);
+    color: #2b93c7;
+    text-shadow:
+      -2px -2px 3px rgba(15, 23, 42, 0.65),   /* Dark top-left inner shadow wall */
+      1.5px 2px 1px #ffffff,                 /* Bright bottom-right rim highlight */
+      0px 1px 3px rgba(15, 23, 42, 0.3);     /* Ambient recessed inner shadow */
+  }
+  100% {
+    transform: scale(0.95) translateY(3px);
+    color: #38bdf8;
+    text-shadow:
+      -1.5px -1.5px 2px rgba(15, 23, 42, 0.5),
+      1.5px 1.5px 1px #ffffff,
+      0px 2px 8px rgba(56, 189, 248, 0.25);
+  }
+}
+
+@media (max-width: 640px) {
+  .safira-press-text {
+    font-size: 3.8rem;
+    letter-spacing: -1.5px;
+  }
+}

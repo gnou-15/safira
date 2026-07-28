@@ -25,10 +25,9 @@ export default function useInvestigations(user, setCurrentPage) {
 
   const idleTimerRef = useRef(null);
 
-  // Fetch all investigations
+  // Fetch all investigations (background list fetch)
   const loadInvestigations = useCallback(async () => {
     if (!user) return;
-    setIsLoading(true);
     try {
       const res = await authedFetch(`${API_URL}/api/investigations`);
       if (res.ok) {
@@ -37,8 +36,6 @@ export default function useInvestigations(user, setCurrentPage) {
       }
     } catch (err) {
       console.error('Failed to load investigations:', err);
-    } finally {
-      setIsLoading(false);
     }
   }, [user]);
 

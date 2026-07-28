@@ -13,6 +13,7 @@ import DocumentSkeleton from './components/DocumentSkeleton';
 import useInvestigations from './hooks/useInvestigations';
 import NewInvestigationModal from './components/NewInvestigationModal';
 import ConfirmModal from './components/ConfirmModal';
+import SplashCover from './components/SplashCover';
 import './css/App.css';
 
 function App() {
@@ -142,8 +143,13 @@ function App() {
     }
   }, [isPageLoading, isLoadingInvestigations, isReportLoading, setCurrentPage]);
 
+  const [splashActive, setSplashActive] = useState(true);
+
   return (
     <div className={`app-container ${(!currentReport && !currentInvestigation) ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
+      {/* Sub-Second Initial Load & Refresh Splash Cover */}
+      <SplashCover onComplete={() => setSplashActive(false)} />
+
       {/* Top Navbar */}
       <Header
         user={user}
@@ -360,7 +366,7 @@ function App() {
         />
       )}
 
-      {(isPageLoading || isLoadingInvestigations) && (
+      {!splashActive && (isPageLoading || isLoadingInvestigations) && (
         <BufferLoader message={loadingMessage || investigationLoadingMessage} />
       )}
     </div>
