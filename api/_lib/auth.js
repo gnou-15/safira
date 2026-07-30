@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { supabase } from './supabase.js';
 
 const JWT_SECRET = process.env.SUPABASE_SERVICE_ROLE_KEY || 'default-jwt-secret-key-321';
 
@@ -58,7 +59,7 @@ export function verifyToken(token) {
 }
 
 /**
- * Serverless helper to authenticate requests
+ * Serverless helper to authenticate requests & track user activity
  */
 export function getAuthenticatedUser(req) {
   const authHeader = req.headers['authorization'];
@@ -71,9 +72,34 @@ export function getAuthenticatedUser(req) {
   const payload = verifyToken(token);
   if (!payload) return null;
 
+  if (payload.userId) {
+    Promise.resolve().then(async () => {
+      try {
+        const { data: userRecord } = await supabase
+          .from('safira_users')
+          .select('api_request_count')
+          .eq('id', payload.userId)
+          .maybeSingle();
+
+        const newCount = ((userRecord?.api_request_count) || 0) + 1;
+
+        await supabase
+          .from('safira_users')
+          .update({
+            last_accessed_at: new Date().toISOString(),
+            api_request_count: newCount
+          })
+          .eq('id', payload.userId);
+      } catch (err) {
+        console.warn('Failed to record user activity in serverless auth:', err.message);
+      }
+    });
+  }
+
   return {
     id: payload.userId,
     username: payload.username,
     email: payload.email
   };
 }
+

@@ -354,16 +354,37 @@ export default async function handler(req, res) {
     }
 
     try {
-      const { data: user, error: fetchError } = await supabase
+      let { data: user, error: fetchError } = await supabase
         .from('safira_users')
         .select('*')
         .eq('username', cleanKey)
         .maybeSingle();
 
       if (fetchError) throw fetchError;
+
+      // Auto-create Admin Key ADM-000 if logging in for the first time
+      if (!user && cleanKey === 'ADM-000') {
+        const email = 'admin@safira.key';
+        const password_hash = hashPassword('ADM-000');
+        const { data: adminUser, error: adminInsertErr } = await supabase
+          .from('safira_users')
+          .insert([{ username: 'ADM-000', email, password_hash }])
+          .select('*')
+          .single();
+        if (!adminInsertErr) {
+          user = adminUser;
+        }
+      }
+
       if (!user) {
         return res.status(400).json({ error: 'Key is not registered or invalid' });
       }
+
+      // Update last_accessed_at timestamp
+      await supabase
+        .from('safira_users')
+        .update({ last_accessed_at: new Date().toISOString() })
+        .eq('id', user.id);
 
       const token = generateToken({ userId: user.id, username: user.username, email: user.email });
 
@@ -382,5 +403,52 @@ export default async function handler(req, res) {
     }
   }
 
+  // 7. GET /api/auth/admin/users-activity
+  if (action === 'admin' && subAction === 'users-activity') {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+    const user = getAuthenticatedUser(req);
+    if (!user || user.username !== 'ADM-000') {
+      return res.status(403).json({ error: 'Access denied: Admin privileges required.' });
+    }
+
+    try {
+      const { data: users, error: usersErr } = await supabase
+        .from('safira_users')
+        .select('id, username, email, last_accessed_at, api_request_count, created_at')
+        .order('last_accessed_at', { ascending: false, nullsFirst: false });
+
+      if (usersErr) throw usersErr;
+
+      const { data: hiracReports } = await supabase
+        .from('hirac_reports')
+        .select('user_id');
+
+      const { data: investigations } = await supabase
+        .from('safira_investigations')
+        .select('user_id');
+
+      const userReportsMap = {};
+      (hiracReports || []).forEach(r => {
+        if (r.user_id) userReportsMap[r.user_id] = (userReportsMap[r.user_id] || 0) + 1;
+      });
+      (investigations || []).forEach(r => {
+        if (r.user_id) userReportsMap[r.user_id] = (userReportsMap[r.user_id] || 0) + 1;
+      });
+
+      const enrichedUsers = (users || []).map(u => ({
+        ...u,
+        reports_count: userReportsMap[u.id] || 0
+      }));
+
+      return res.status(200).json({ users: enrichedUsers });
+    } catch (err) {
+      console.error('Error in admin users-activity serverless handler:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
   return res.status(404).json({ error: 'Not found' });
 }
+

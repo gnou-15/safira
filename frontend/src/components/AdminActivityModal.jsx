@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/AdminActivityModal.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export default function AdminActivityModal({ showModal, setShowModal, token }) {
   const [users, setUsers] = useState([]);
@@ -19,12 +19,13 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
     setError('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/admin/users-activity`, {
+      const response = await fetch(`${API_URL}/api/auth/admin/users-activity`, {
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json'
         }
       });
+
 
 
       if (!response.ok) {
