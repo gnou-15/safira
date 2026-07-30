@@ -126,11 +126,26 @@ router.post('/key-login', async (req, res) => {
       return res.status(400).json({ error: 'Key is not registered or invalid' });
     }
 
-    // Update last_accessed_at timestamp on successful login
-    await supabase
-      .from('safira_users')
-      .update({ last_accessed_at: new Date().toISOString() })
-      .eq('id', user.id);
+    // Update last_accessed_at & increment API request count on login
+    try {
+      const { data: userRecord } = await supabase
+        .from('safira_users')
+        .select('api_request_count')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const newCount = ((userRecord?.api_request_count) || 0) + 1;
+
+      await supabase
+        .from('safira_users')
+        .update({
+          last_accessed_at: new Date().toISOString(),
+          api_request_count: newCount
+        })
+        .eq('id', user.id);
+    } catch (e) {
+      console.warn('Failed to track login activity:', e.message);
+    }
 
     const token = generateToken({ userId: user.id, username: user.username, email: user.email });
 

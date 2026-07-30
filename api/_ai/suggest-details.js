@@ -1,5 +1,5 @@
 import { setCorsHeaders } from '../_lib/supabase.js';
-import { getAuthenticatedUser } from '../_lib/auth.js';
+import { getAuthenticatedUser, trackUserActivity } from '../_lib/auth.js';
 import { checkRateLimit } from '../_lib/rateLimiter.js';
 
 const PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL;
@@ -20,6 +20,7 @@ export default async function handler(req, res) {
   if (!user) {
     return res.status(401).json({ error: 'Invalid or expired session token' });
   }
+  await trackUserActivity(user.id);
 
   // 2. Enforce daily rate limit
   const allowed = await checkRateLimit(req, res, user);

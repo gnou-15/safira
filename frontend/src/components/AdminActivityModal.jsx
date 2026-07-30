@@ -26,8 +26,6 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
         }
       });
 
-
-
       if (!response.ok) {
         const errData = await response.json();
         throw new Error(errData.error || 'Failed to fetch user activity');
@@ -52,19 +50,18 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
   if (!showModal) return null;
 
   const formatDate = (isoString) => {
-    if (!isoString) return 'Never';
+    if (!isoString) return <span className="time-never">Never</span>;
     const date = new Date(isoString);
-    if (isNaN(date.getTime())) return 'Never';
+    if (isNaN(date.getTime())) return <span className="time-never">Never</span>;
     
-    // Check if today
     const now = new Date();
     const isToday = date.toDateString() === now.toDateString();
-    
     const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    
     if (isToday) {
-      return `Today at ${timeStr}`;
+      return <span className="time-today">Today at {timeStr}</span>;
     }
-    return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at ${timeStr}`;
+    return <span className="time-past">{date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {timeStr}</span>;
   };
 
   const filteredUsers = users.filter((u) => {
@@ -84,10 +81,14 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
   return (
     <div className="admin-modal-overlay" onClick={() => setShowModal(false)}>
       <div className="admin-modal-container" onClick={(e) => e.stopPropagation()}>
+        
         {/* Header */}
         <div className="admin-modal-header">
           <div className="admin-modal-title-group">
-            <span className="admin-title-badge">ADMIN DASHBOARD</span>
+            <span className="admin-title-badge">
+              <span className="badge-pulse"></span>
+              ADMIN DASHBOARD
+            </span>
             <h2>Who Worked Today?</h2>
             <p className="admin-modal-subtitle">Real-time tracking of active key sessions, timestamps, and API usage.</p>
           </div>
@@ -96,27 +97,42 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
           </button>
         </div>
 
-        {/* Stats Row */}
+        {/* 4 Stat Cards Row */}
         <div className="admin-stats-row">
-          <div className="admin-stat-card">
-            <span className="stat-label">Active Keys Today</span>
-            <span className="stat-value text-cyan">{activeTodayCount}</span>
+          <div className="admin-stat-card card-cyan">
+            <div className="stat-card-top">
+              <span className="stat-label">Active Keys Today</span>
+              <span className="stat-icon">🟢</span>
+            </div>
+            <span className="stat-value val-cyan">{activeTodayCount}</span>
           </div>
-          <div className="admin-stat-card">
-            <span className="stat-label">Total Registered Keys</span>
-            <span className="stat-value">{users.length}</span>
+
+          <div className="admin-stat-card card-purple">
+            <div className="stat-card-top">
+              <span className="stat-label">Total Registered Keys</span>
+              <span className="stat-icon">🔑</span>
+            </div>
+            <span className="stat-value val-purple">{users.length}</span>
           </div>
-          <div className="admin-stat-card">
-            <span className="stat-label">Total API Requests</span>
-            <span className="stat-value text-amber">{totalApiRequests}</span>
+
+          <div className="admin-stat-card card-amber">
+            <div className="stat-card-top">
+              <span className="stat-label">Total API Requests</span>
+              <span className="stat-icon">⚡</span>
+            </div>
+            <span className="stat-value val-amber">{totalApiRequests}</span>
           </div>
-          <div className="admin-stat-card">
-            <span className="stat-label">Total Reports Created</span>
-            <span className="stat-value text-blue">{totalReportsCreated}</span>
+
+          <div className="admin-stat-card card-emerald">
+            <div className="stat-card-top">
+              <span className="stat-label">Total Reports Created</span>
+              <span className="stat-icon">📄</span>
+            </div>
+            <span className="stat-value val-emerald">{totalReportsCreated}</span>
           </div>
         </div>
 
-        {/* Controls Row */}
+        {/* Search Bar & Refresh Controls */}
         <div className="admin-controls-row">
           <div className="admin-search-wrapper">
             <span className="search-icon">🔍</span>
@@ -127,13 +143,17 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            {searchQuery && (
+              <button className="search-clear-btn" onClick={() => setSearchQuery('')}>✕</button>
+            )}
           </div>
           <button
-            className="admin-refresh-btn"
+            className={`admin-refresh-btn ${isLoading ? 'is-spinning' : ''}`}
             onClick={fetchUsersActivity}
             disabled={isLoading}
           >
-            {isLoading ? 'Refreshing...' : '🔄 Refresh Data'}
+            <span className="refresh-icon">🔄</span>
+            <span>{isLoading ? 'Refreshing...' : 'Refresh Data'}</span>
           </button>
         </div>
 
@@ -160,7 +180,8 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
               {isLoading && users.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="table-loading-cell">
-                    Loading key activity records...
+                    <div className="table-loader-spinner"></div>
+                    <span>Loading key activity records...</span>
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
@@ -178,7 +199,7 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
                     <tr key={u.id} className={isToday ? 'row-active-today' : ''}>
                       <td>
                         <div className="key-badge-container">
-                          <span className={`key-badge ${isAdminKey ? 'badge-admin' : ''}`}>
+                          <span className={`key-badge ${isAdminKey ? 'badge-admin' : 'badge-user'}`}>
                             {u.username}
                           </span>
                           {isAdminKey && <span className="admin-chip">ADMIN</span>}
@@ -189,12 +210,12 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
                       </td>
                       <td className="requests-cell">
                         <span className="request-count-pill">
-                          ⚡ {u.api_request_count || 0} reqs
+                          <span className="lightning-icon">⚡</span> {u.api_request_count || 0} reqs
                         </span>
                       </td>
                       <td className="reports-cell">
                         <span className="report-count-pill">
-                          📄 {u.reports_count || 0} reports
+                          <span className="doc-icon">📄</span> {u.reports_count || 0} reports
                         </span>
                       </td>
                       <td>
@@ -204,7 +225,7 @@ export default function AdminActivityModal({ showModal, setShowModal, token }) {
                           </span>
                         ) : (
                           <span className="status-indicator status-offline">
-                            Inactive
+                            <span className="status-dot-grey"></span> Inactive
                           </span>
                         )}
                       </td>

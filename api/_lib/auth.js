@@ -59,7 +59,7 @@ export function verifyToken(token) {
 }
 
 /**
- * Serverless helper to authenticate requests & track user activity
+ * Serverless helper to authenticate requests (synchronous, no side effects)
  */
 export function getAuthenticatedUser(req) {
   const authHeader = req.headers['authorization'];
@@ -72,34 +72,37 @@ export function getAuthenticatedUser(req) {
   const payload = verifyToken(token);
   if (!payload) return null;
 
-  if (payload.userId) {
-    Promise.resolve().then(async () => {
-      try {
-        const { data: userRecord } = await supabase
-          .from('safira_users')
-          .select('api_request_count')
-          .eq('id', payload.userId)
-          .maybeSingle();
-
-        const newCount = ((userRecord?.api_request_count) || 0) + 1;
-
-        await supabase
-          .from('safira_users')
-          .update({
-            last_accessed_at: new Date().toISOString(),
-            api_request_count: newCount
-          })
-          .eq('id', payload.userId);
-      } catch (err) {
-        console.warn('Failed to record user activity in serverless auth:', err.message);
-      }
-    });
-  }
-
   return {
     id: payload.userId,
     username: payload.username,
     email: payload.email
   };
+}
+
+/**
+ * Awaitable function to record user access timestamp & increment API request count.
+ * Must be awaited inside endpoint handlers to work on Vercel serverless.
+ */
+export async function trackUserActivity(userId) {
+  if (!userId) return;
+  try {
+    const { data: userRecord } = await supabase
+      .from('safira_users')
+      .select('api_request_count')
+      .eq('id', userId)
+      .maybeSingle();
+
+    const newCount = ((userRecord?.api_request_count) || 0) + 1;
+
+    await supabase
+      .from('safira_users')
+      .update({
+        last_accessed_at: new Date().toISOString(),
+        api_request_count: newCount
+      })
+      .eq('id', userId);
+  } catch (err) {
+    console.warn('Failed to record user activity:', err.message);
+  }
 }
 

@@ -1,5 +1,5 @@
 import { supabase, setCorsHeaders } from './_lib/supabase.js';
-import { hashPassword, verifyPassword, generateToken, getAuthenticatedUser } from './_lib/auth.js';
+import { hashPassword, verifyPassword, generateToken, getAuthenticatedUser, trackUserActivity } from './_lib/auth.js';
 
 function generateMnemonicKey() {
   const letters = Array.from({ length: 3 }, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
@@ -140,6 +140,7 @@ export default async function handler(req, res) {
     if (!user) {
       return res.status(401).json({ error: 'Invalid or expired session token' });
     }
+    await trackUserActivity(user.id);
     return res.status(200).json({ user });
   }
 
@@ -380,15 +381,8 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Key is not registered or invalid' });
       }
 
-      // Update last_accessed_at timestamp
-      try {
-        await supabase
-          .from('safira_users')
-          .update({ last_accessed_at: new Date().toISOString() })
-          .eq('id', user.id);
-      } catch (e) {
-        // Ignore if column not yet added to Supabase DB
-      }
+      // Update last_accessed_at timestamp & increment API request count
+      await trackUserActivity(user.id);
 
       const token = generateToken({ userId: user.id, username: user.username, email: user.email });
 
@@ -416,6 +410,7 @@ export default async function handler(req, res) {
     if (!user || user.username !== 'ADM-000') {
       return res.status(403).json({ error: 'Access denied: Admin privileges required.' });
     }
+    await trackUserActivity(user.id);
 
     try {
       const { data: users, error: usersErr } = await supabase

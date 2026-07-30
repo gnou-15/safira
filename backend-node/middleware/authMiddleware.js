@@ -3,9 +3,9 @@ import { supabase } from '../config/supabase.js';
 
 /**
  * Express middleware to verify the Bearer authentication token.
- * Also tracks user last access timestamp & API request count asynchronously.
+ * Also tracks user last access timestamp & API request count.
  */
-export function authMiddleware(req, res, next) {
+export async function authMiddleware(req, res, next) {
   const authHeader = req.headers['authorization'];
   if (!authHeader) {
     return res.status(401).json({ error: 'Authorization header is missing' });
@@ -29,30 +29,27 @@ export function authMiddleware(req, res, next) {
     email: payload.email
   };
 
-  // Asynchronously record user activity & API request count
+  // Await user activity tracking so it completes reliably
   if (payload.userId) {
-    Promise.resolve().then(async () => {
-      try {
-        // Fetch current count & update last_accessed_at
-        const { data: userRecord } = await supabase
-          .from('safira_users')
-          .select('api_request_count')
-          .eq('id', payload.userId)
-          .maybeSingle();
+    try {
+      const { data: userRecord } = await supabase
+        .from('safira_users')
+        .select('api_request_count')
+        .eq('id', payload.userId)
+        .maybeSingle();
 
-        const newCount = ((userRecord?.api_request_count) || 0) + 1;
+      const newCount = ((userRecord?.api_request_count) || 0) + 1;
 
-        await supabase
-          .from('safira_users')
-          .update({
-            last_accessed_at: new Date().toISOString(),
-            api_request_count: newCount
-          })
-          .eq('id', payload.userId);
-      } catch (err) {
-        console.warn('Failed to record user activity in middleware:', err.message);
-      }
-    });
+      await supabase
+        .from('safira_users')
+        .update({
+          last_accessed_at: new Date().toISOString(),
+          api_request_count: newCount
+        })
+        .eq('id', payload.userId);
+    } catch (err) {
+      console.warn('Failed to record user activity in middleware:', err.message);
+    }
   }
 
   next();

@@ -1,5 +1,5 @@
 import { supabase, clampScore, calcRiskLevel, parseDate, setCorsHeaders } from '../../_lib/supabase.js';
-import { getAuthenticatedUser } from '../../_lib/auth.js';
+import { getAuthenticatedUser, trackUserActivity } from '../../_lib/auth.js';
 
 export default async function handler(req, res) {
   setCorsHeaders(res);
@@ -13,6 +13,7 @@ export default async function handler(req, res) {
   if (!user) {
     return res.status(401).json({ error: 'Invalid or expired session token' });
   }
+  await trackUserActivity(user.id);
 
   const { id } = req.query;
 
