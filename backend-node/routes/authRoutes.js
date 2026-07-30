@@ -269,10 +269,11 @@ router.get('/admin/users-activity', authMiddleware, async (req, res) => {
   try {
     const { data: users, error: usersErr } = await supabase
       .from('safira_users')
-      .select('id, username, email, last_accessed_at, api_request_count, created_at')
-      .order('last_accessed_at', { ascending: false, nullsFirst: false });
+      .select('*')
+      .order('created_at', { ascending: false });
 
     if (usersErr) throw usersErr;
+
 
     // Aggregate report counts per user
     const { data: hiracReports } = await supabase

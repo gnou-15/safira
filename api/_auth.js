@@ -381,10 +381,14 @@ export default async function handler(req, res) {
       }
 
       // Update last_accessed_at timestamp
-      await supabase
-        .from('safira_users')
-        .update({ last_accessed_at: new Date().toISOString() })
-        .eq('id', user.id);
+      try {
+        await supabase
+          .from('safira_users')
+          .update({ last_accessed_at: new Date().toISOString() })
+          .eq('id', user.id);
+      } catch (e) {
+        // Ignore if column not yet added to Supabase DB
+      }
 
       const token = generateToken({ userId: user.id, username: user.username, email: user.email });
 
@@ -416,10 +420,11 @@ export default async function handler(req, res) {
     try {
       const { data: users, error: usersErr } = await supabase
         .from('safira_users')
-        .select('id, username, email, last_accessed_at, api_request_count, created_at')
-        .order('last_accessed_at', { ascending: false, nullsFirst: false });
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (usersErr) throw usersErr;
+
 
       const { data: hiracReports } = await supabase
         .from('hirac_reports')
