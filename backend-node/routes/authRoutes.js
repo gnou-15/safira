@@ -126,7 +126,14 @@ router.post('/key-login', async (req, res) => {
       return res.status(400).json({ error: 'Key is not registered or invalid' });
     }
 
+    // Update last_accessed_at timestamp on successful login
+    await supabase
+      .from('safira_users')
+      .update({ last_accessed_at: new Date().toISOString() })
+      .eq('id', user.id);
+
     const token = generateToken({ userId: user.id, username: user.username, email: user.email });
+
 
     res.json({
       message: 'Login successful',
@@ -249,6 +256,53 @@ router.post('/login', async (req, res) => {
 router.get('/me', authMiddleware, (req, res) => {
   res.json({ user: req.user });
 });
+
+/**
+ * GET /api/auth/admin/users-activity
+ * Retrieve key access log & API request volume (Admin ADM-000 only)
+ */
+router.get('/admin/users-activity', authMiddleware, async (req, res) => {
+  if (req.user?.username !== 'ADM-000') {
+    return res.status(403).json({ error: 'Access denied: Admin privileges required.' });
+  }
+
+  try {
+    const { data: users, error: usersErr } = await supabase
+      .from('safira_users')
+      .select('id, username, email, last_accessed_at, api_request_count, created_at')
+      .order('last_accessed_at', { ascending: false, nullsFirst: false });
+
+    if (usersErr) throw usersErr;
+
+    // Aggregate report counts per user
+    const { data: hiracReports } = await supabase
+      .from('hirac_reports')
+      .select('user_id');
+
+    const { data: investigations } = await supabase
+      .from('safira_investigations')
+      .select('user_id');
+
+    const userReportsMap = {};
+    (hiracReports || []).forEach(r => {
+      if (r.user_id) userReportsMap[r.user_id] = (userReportsMap[r.user_id] || 0) + 1;
+    });
+    (investigations || []).forEach(r => {
+      if (r.user_id) userReportsMap[r.user_id] = (userReportsMap[r.user_id] || 0) + 1;
+    });
+
+    const enrichedUsers = (users || []).map(u => ({
+      ...u,
+      reports_count: userReportsMap[u.id] || 0
+    }));
+
+    res.json({ users: enrichedUsers });
+  } catch (err) {
+    console.error('Error fetching admin user activity:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 /**
  * GET /api/auth/google

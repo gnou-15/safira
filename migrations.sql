@@ -150,5 +150,6 @@ CREATE INDEX IF NOT EXISTS idx_hirac_rows_report_id ON hirac_rows(report_id);
 CREATE INDEX IF NOT EXISTS idx_hirac_reports_user_id ON hirac_reports(user_id);
 CREATE INDEX IF NOT EXISTS idx_safira_investigations_user_id ON safira_investigations(user_id);
 CREATE INDEX IF NOT EXISTS idx_hirac_reports_created_at ON hirac_reports(created_at DESC);
-
-
+-- 9. User Activity & Request Tracking Columns
+ALTER TABLE safira_users ADD COLUMN IF NOT EXISTS last_accessed_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW());
+ALTER TABLE safira_users ADD COLUMN IF NOT EXISTS api_request_count INT DEFAULT 0;

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { formatTimestampShort } from '../utils/formatTimestampShort';
 import useTimeAndWeather from '../hooks/useTimeAndWeather';
+import AdminActivityModal from '../components/AdminActivityModal';
 import '../css/LandingPage.css';
 
 export default function LandingPage({
   user,
+  token,
   setCurrentPage,
   handleNavigate,
   reports,
@@ -18,10 +20,12 @@ export default function LandingPage({
 }) {
   const { skyPhase, weatherMeta } = useTimeAndWeather();
   const [showTypeSelector, setShowTypeSelector] = useState(false);
+  const [showAdminActivityModal, setShowAdminActivityModal] = useState(false);
   const autoLightningRef = useRef(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [lightning, setLightning] = useState(null);
   const [timeString, setTimeString] = useState('');
+
 
   useEffect(() => {
     const updateTime = () => {
@@ -336,13 +340,28 @@ export default function LandingPage({
               </defs>
 
               {/* Main Centered Text */}
-              <text x="400" y="70" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="48" letterSpacing="-1">
-                <tspan fill="#0f172a">ANY </tspan>
-                <tspan fill="#3a9ad9" className="hero-report-text">REPORT</tspan>
-              </text>
-              <text x="400" y="120" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="48" letterSpacing="-1" fill="#0f172a">
-                FOR TODAY?
-              </text>
+              {user?.username === 'ADM-000' ? (
+                <>
+                  <text x="400" y="70" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="46" letterSpacing="-1">
+                    <tspan fill="#0f172a">WHAT'S </tspan>
+                    <tspan fill="#3a9ad9" className="hero-report-text">UP</tspan>
+                  </text>
+                  <text x="400" y="120" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="48" letterSpacing="-1" fill="#0f172a">
+                    BOSS?
+                  </text>
+                </>
+              ) : (
+                <>
+                  <text x="400" y="70" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="48" letterSpacing="-1">
+                    <tspan fill="#0f172a">ANY </tspan>
+                    <tspan fill="#3a9ad9" className="hero-report-text">REPORT</tspan>
+                  </text>
+                  <text x="400" y="120" textAnchor="middle" fontFamily="'Outfit', 'Inter', sans-serif" fontWeight="900" fontSize="48" letterSpacing="-1" fill="#0f172a">
+                    FOR TODAY?
+                  </text>
+                </>
+              )}
+
 
               {/* Ground Line */}
               <line x1="160" y1="180" x2="640" y2="180" stroke="#3b1c14" strokeWidth="2.5" strokeLinecap="round" />
@@ -481,9 +500,15 @@ export default function LandingPage({
           </div>
 
           {/* Hero Action Button */}
-          <button className="btn-yes-today" onClick={handleAction}>
-            Yes There Is!
-          </button>
+          {user?.username === 'ADM-000' ? (
+            <button className="btn-yes-today btn-admin-who-worked" onClick={() => setShowAdminActivityModal(true)}>
+              Who worked today?
+            </button>
+          ) : (
+            <button className="btn-yes-today" onClick={handleAction}>
+              Yes There Is!
+            </button>
+          )}
 
           {/* Static app purpose statement */}
           <p className="landing-app-description">
@@ -531,6 +556,13 @@ export default function LandingPage({
       {/* City Skyline Silhouette */}
       <div className="landing-skyline"></div>
 
+      {/* Admin Activity Modal */}
+      <AdminActivityModal
+        showModal={showAdminActivityModal}
+        setShowModal={setShowAdminActivityModal}
+        token={token}
+      />
+
       {/* Footer Version Info */}
       <footer className="landing-footer">
         <span className="landing-footer-text">
@@ -554,3 +586,4 @@ export default function LandingPage({
     </div>
   );
 }
+
