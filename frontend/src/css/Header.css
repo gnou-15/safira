@@ -58,6 +58,14 @@
   text-transform: none;
   letter-spacing: 0px;
   display: inline-block;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.brand-subtext:hover {
+  text-decoration: none !important;
+  opacity: 0.75;
 }
 
 /* Report Select Dropdown in Navbar */

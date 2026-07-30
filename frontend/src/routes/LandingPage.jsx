@@ -533,7 +533,19 @@ export default function LandingPage({
 
       {/* Footer Version Info */}
       <footer className="landing-footer">
-        <span className="landing-footer-text">Safira by Nezer &bull;</span>
+        <span className="landing-footer-text">
+          Safira{' '}
+          <a
+            href="https://daniel-mapano.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-author-link"
+            onClick={(e) => e.stopPropagation()}
+          >
+            by Nezer
+          </a>{' '}
+          &bull;
+        </span>
         <span className="landing-footer-version">
           <span className="version-dot"></span>
           v1.0.0

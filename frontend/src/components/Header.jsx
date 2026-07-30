@@ -85,7 +85,18 @@ export default function Header({
                 </g>
               </svg>
             </div>
-            <span className="brand-text">Safira <span className="brand-subtext">by Nezer</span></span>
+            <span className="brand-text">
+              Safira{' '}
+              <a
+                href="https://daniel-mapano.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="brand-subtext"
+                onClick={(e) => e.stopPropagation()}
+              >
+                by Nezer
+              </a>
+            </span>
           </div>
           <div className="landing-nav-links">
 
