@@ -145,3 +145,10 @@ CREATE TABLE IF NOT EXISTS safira_investigations (
 ALTER TABLE hirac_reports ADD COLUMN IF NOT EXISTS doc_code VARCHAR(100);
 ALTER TABLE hirac_reports ADD COLUMN IF NOT EXISTS doc_revision VARCHAR(100);
 
+-- 8. Performance Indexes for Queries & Foreign Key Lookups
+CREATE INDEX IF NOT EXISTS idx_hirac_rows_report_id ON hirac_rows(report_id);
+CREATE INDEX IF NOT EXISTS idx_hirac_reports_user_id ON hirac_reports(user_id);
+CREATE INDEX IF NOT EXISTS idx_safira_investigations_user_id ON safira_investigations(user_id);
+CREATE INDEX IF NOT EXISTS idx_hirac_reports_created_at ON hirac_reports(created_at DESC);
+
+
