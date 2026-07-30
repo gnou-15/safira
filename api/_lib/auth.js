@@ -80,10 +80,26 @@ export function getAuthenticatedUser(req) {
 }
 
 /**
- * Awaitable function to record user access timestamp & increment API request count.
- * Must be awaited inside endpoint handlers to work on Vercel serverless.
+ * Updates only the last_accessed_at timestamp.
+ * Used on all authenticated endpoints to track when a user was last active.
  */
-export async function trackUserActivity(userId) {
+export async function updateLastAccessed(userId) {
+  if (!userId) return;
+  try {
+    await supabase
+      .from('safira_users')
+      .update({ last_accessed_at: new Date().toISOString() })
+      .eq('id', userId);
+  } catch (err) {
+    console.warn('Failed to update last_accessed_at:', err.message);
+  }
+}
+
+/**
+ * Increments api_request_count AND updates last_accessed_at.
+ * Used only on AI endpoints (generate, chat, suggest-details, investigate).
+ */
+export async function trackAiRequest(userId) {
   if (!userId) return;
   try {
     const { data: userRecord } = await supabase
@@ -102,7 +118,7 @@ export async function trackUserActivity(userId) {
       })
       .eq('id', userId);
   } catch (err) {
-    console.warn('Failed to record user activity:', err.message);
+    console.warn('Failed to track AI request:', err.message);
   }
 }
 

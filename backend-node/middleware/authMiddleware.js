@@ -29,26 +29,15 @@ export async function authMiddleware(req, res, next) {
     email: payload.email
   };
 
-  // Await user activity tracking so it completes reliably
+  // Update last_accessed_at timestamp only (AI request count is tracked separately)
   if (payload.userId) {
     try {
-      const { data: userRecord } = await supabase
-        .from('safira_users')
-        .select('api_request_count')
-        .eq('id', payload.userId)
-        .maybeSingle();
-
-      const newCount = ((userRecord?.api_request_count) || 0) + 1;
-
       await supabase
         .from('safira_users')
-        .update({
-          last_accessed_at: new Date().toISOString(),
-          api_request_count: newCount
-        })
+        .update({ last_accessed_at: new Date().toISOString() })
         .eq('id', payload.userId);
     } catch (err) {
-      console.warn('Failed to record user activity in middleware:', err.message);
+      console.warn('Failed to update last_accessed_at:', err.message);
     }
   }
 
