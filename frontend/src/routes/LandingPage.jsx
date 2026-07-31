@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { formatTimestampShort } from '../utils/formatTimestampShort';
 import useTimeAndWeather from '../hooks/useTimeAndWeather';
-import AdminActivityModal from '../components/AdminActivityModal';
 import '../css/LandingPage.css';
 
 export default function LandingPage({
@@ -20,7 +19,6 @@ export default function LandingPage({
 }) {
   const { skyPhase, weatherMeta } = useTimeAndWeather();
   const [showTypeSelector, setShowTypeSelector] = useState(false);
-  const [showAdminActivityModal, setShowAdminActivityModal] = useState(false);
   const autoLightningRef = useRef(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [lightning, setLightning] = useState(null);
@@ -501,8 +499,8 @@ export default function LandingPage({
 
           {/* Hero Action Button */}
           {user?.username === 'ADM-000' ? (
-            <button className="btn-yes-today btn-admin-who-worked" onClick={() => setShowAdminActivityModal(true)}>
-              Who worked today?
+            <button className="btn-yes-today btn-admin-who-worked" onClick={() => handleNavigate('activity')}>
+              Who is working?
             </button>
           ) : (
             <button className="btn-yes-today" onClick={handleAction}>
@@ -555,13 +553,6 @@ export default function LandingPage({
 
       {/* City Skyline Silhouette */}
       <div className="landing-skyline"></div>
-
-      {/* Admin Activity Modal */}
-      <AdminActivityModal
-        showModal={showAdminActivityModal}
-        setShowModal={setShowAdminActivityModal}
-        token={token}
-      />
 
       {/* Footer Version Info */}
       <footer className="landing-footer">

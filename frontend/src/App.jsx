@@ -12,6 +12,7 @@ import LoginPage from './routes/LoginPage';
 import DocumentSkeleton from './components/DocumentSkeleton';
 import useInvestigations from './hooks/useInvestigations';
 import NewInvestigationModal from './components/NewInvestigationModal';
+import UserActivityPage from './routes/UserActivityPage';
 import ConfirmModal from './components/ConfirmModal';
 import SplashCover from './components/SplashCover';
 import './css/App.css';
@@ -146,7 +147,7 @@ function App() {
   const [splashActive, setSplashActive] = useState(true);
 
   return (
-    <div className={`app-container ${(!currentReport && !currentInvestigation) ? 'landing-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
+    <div className={`app-container ${(!currentReport && !currentInvestigation && currentPage !== 'activity') ? 'landing-active' : ''} ${currentPage === 'activity' ? 'activity-active' : ''} ${currentPage === 'login' ? 'login-active' : ''}`}>
       {/* Sub-Second Initial Load & Refresh Splash Cover */}
       <SplashCover onComplete={() => setSplashActive(false)} />
 
@@ -155,6 +156,7 @@ function App() {
         user={user}
         handleLogout={handleLogout}
         setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
         handleNavigate={handleNavigate}
         currentReport={currentReport}
         setCurrentReport={setCurrentReport}
@@ -260,6 +262,11 @@ function App() {
         <section className="document-workspace">
           {isReportLoading ? (
             <DocumentSkeleton />
+          ) : currentPage === 'activity' ? (
+            <UserActivityPage
+              token={localStorage.getItem('safira_token')}
+              onBackToHome={() => handleNavigate('landing')}
+            />
           ) : currentPage === 'investigation' ? (
             <InvestigationReport
               currentInvestigation={currentInvestigation}

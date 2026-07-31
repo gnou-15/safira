@@ -407,8 +407,8 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Method not allowed' });
     }
     const user = getAuthenticatedUser(req);
-    if (!user || user.username !== 'ADM-000') {
-      return res.status(403).json({ error: 'Access denied: Admin privileges required.' });
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized session.' });
     }
     await updateLastAccessed(user.id);
 

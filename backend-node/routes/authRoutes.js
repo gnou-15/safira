@@ -277,8 +277,8 @@ router.get('/me', authMiddleware, (req, res) => {
  * Retrieve key access log & API request volume (Admin ADM-000 only)
  */
 router.get('/admin/users-activity', authMiddleware, async (req, res) => {
-  if (req.user?.username !== 'ADM-000') {
-    return res.status(403).json({ error: 'Access denied: Admin privileges required.' });
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized session.' });
   }
 
   try {
