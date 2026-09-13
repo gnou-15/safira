@@ -27,7 +27,7 @@ app.use('/api/auth', authRoutes);
 app.get('/health', getHealth);
 app.get('/api/health', getHealth);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Node.js API Gateway listening on port ${PORT}`);
 });
 

@@ -136,28 +136,38 @@ jobs:
 
       - name: Pull and Run Node Backend Container
         run: |
-          docker run -d --name node-health-check -p 5000:5000 ${{ env.IMAGE_NODE }}:latest
+          docker run -d --name node-health-check -e PORT=5000 -p 5000:5000 ${{ env.IMAGE_NODE }}:latest
           sleep 5
 
       - name: Verify Python Backend Health Endpoint
         run: |
-          RESPONSE=$(curl -s --retry 10 --retry-delay 2 --retry-connrefused http://localhost:8000/health)
+          RESPONSE=$(curl -s --retry 10 --retry-delay 2 --retry-connrefused http://localhost:8000/health) || {
+            echo "❌ Python Health Endpoint Connection Failed"
+            docker logs python-health-check
+            exit 1
+          }
           echo "Python Health Check Response: $RESPONSE"
           if [[ "$RESPONSE" == *"online"* ]]; then
             echo "✅ Python Backend Health Validation Passed!"
           else
             echo "❌ Python Backend Health Validation Failed!"
+            docker logs python-health-check
             exit 1
           fi
 
       - name: Verify Node Backend Health Endpoint
         run: |
-          RESPONSE=$(curl -s --retry 10 --retry-delay 2 --retry-connrefused http://localhost:5000/health)
+          RESPONSE=$(curl -s --retry 10 --retry-delay 2 --retry-connrefused http://localhost:5000/health) || {
+            echo "❌ Node Health Endpoint Connection Failed"
+            docker logs node-health-check
+            exit 1
+          }
           echo "Node Health Check Response: $RESPONSE"
           if [[ "$RESPONSE" == *"online"* ]]; then
             echo "✅ Node Backend Health Validation Passed!"
           else
             echo "❌ Node Backend Health Validation Failed!"
+            docker logs node-health-check
             exit 1
           fi
 
