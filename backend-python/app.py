@@ -34,6 +34,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Health check endpoints
+@app.get("/health")
+@app.get("/api/health")
+async def health_check():
+    return {
+        "status": "online",
+        "service": "SAFIRA AI Microservice",
+        "version": "1.0.0"
+    }
+
 # Initialize Groq client
 groq_api_key = os.getenv("GROQ_API_KEY")
 if not groq_api_key:

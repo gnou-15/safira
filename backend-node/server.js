@@ -5,6 +5,7 @@ import reportRoutes from './routes/reportRoutes.js';
 import investigationRoutes from './routes/investigationRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import { getHealth } from './controllers/healthController.js';
 
 // Load environment variables
 dotenv.config();
@@ -22,10 +23,9 @@ app.use('/api/investigations', investigationRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/auth', authRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'Node.js Gateway' });
-});
+// Health checks
+app.get('/health', getHealth);
+app.get('/api/health', getHealth);
 
 app.listen(PORT, () => {
   console.log(`Node.js API Gateway listening on port ${PORT}`);

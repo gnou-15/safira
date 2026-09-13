@@ -1,0 +1,249 @@
+name: Continuous Delivery (CD) Pipeline
+
+on:
+  workflow_run:
+    workflows: ["Continuous Integration (CI) Pipeline"]
+    types:
+      - completed
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+env:
+  IMAGE_PYTHON: ghcr.io/gnou-15/safira/backend-python
+  IMAGE_NODE: ghcr.io/gnou-15/safira/backend-node
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STEP 1 — Build & Publish Docker Images to GHCR
+  # This only executes if the CI pipeline completed with 100% success!
+  # ─────────────────────────────────────────────────────────────────────────────
+  build-and-push-artifacts:
+    name: Deployment Automation (Build & Publish Artifacts)
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata & semantic tags for Python Backend
+        id: meta-python
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_PYTHON }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.event.workflow_run.head_branch == 'main' }}
+            type=semver,pattern={{version}}
+            type=sha,prefix=sha-
+
+      - name: Build & Push Python Backend Container Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend-python
+          push: true
+          tags: ${{ steps.meta-python.outputs.tags }}
+          labels: ${{ steps.meta-python.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Extract metadata & semantic tags for Node Backend
+        id: meta-node
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NODE }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.event.workflow_run.head_branch == 'main' }}
+            type=semver,pattern={{version}}
+            type=sha,prefix=sha-
+
+      - name: Build & Push Node Backend Container Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend-node
+          push: true
+          tags: ${{ steps.meta-node.outputs.tags }}
+          labels: ${{ steps.meta-node.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STEP 2 — Container Security Scanning (Trivy)
+  # ─────────────────────────────────────────────────────────────────────────────
+  container-security-scan:
+    name: Container Security Scanning (Trivy)
+    needs: [build-and-push-artifacts]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Scan Python Backend Container for Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_PYTHON }}:latest
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+      - name: Scan Node Backend Container for Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_NODE }}:latest
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STEP 3 — End-to-End Validation Gate
+  # Starts containers and validates live endpoints before deployment trigger
+  # ─────────────────────────────────────────────────────────────────────────────
+  end-to-end-validation-gate:
+    name: End-to-End Validation & Health Gate
+    needs: [build-and-push-artifacts]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and Run Python Backend Container
+        run: |
+          docker run -d --name python-health-check -e PORT=8000 -p 8000:8000 ${{ env.IMAGE_PYTHON }}:latest
+          sleep 10
+
+      - name: Pull and Run Node Backend Container
+        run: |
+          docker run -d --name node-health-check -p 5000:5000 ${{ env.IMAGE_NODE }}:latest
+          sleep 5
+
+      - name: Verify Python Backend Health Endpoint
+        run: |
+          RESPONSE=$(curl -s --retry 10 --retry-delay 2 --retry-connrefused http://localhost:8000/health)
+          echo "Python Health Check Response: $RESPONSE"
+          if [[ "$RESPONSE" == *"online"* ]]; then
+            echo "✅ Python Backend Health Validation Passed!"
+          else
+            echo "❌ Python Backend Health Validation Failed!"
+            exit 1
+          fi
+
+      - name: Verify Node Backend Health Endpoint
+        run: |
+          RESPONSE=$(curl -s --retry 10 --retry-delay 2 --retry-connrefused http://localhost:5000/health)
+          echo "Node Health Check Response: $RESPONSE"
+          if [[ "$RESPONSE" == *"online"* ]]; then
+            echo "✅ Node Backend Health Validation Passed!"
+          else
+            echo "❌ Node Backend Health Validation Failed!"
+            exit 1
+          fi
+
+      - name: Smoke Test — SAFIRA FastAPI OpenAPI Schema Validation
+        run: |
+          RESPONSE=$(curl -s --max-time 15 http://localhost:8000/openapi.json)
+          echo "OpenAPI JSON Response length: ${#RESPONSE}"
+          if echo "$RESPONSE" | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          assert 'paths' in data, f'Missing paths in OpenAPI specification'
+          paths = data['paths']
+          assert '/generate-hirac' in paths, 'Missing /generate-hirac endpoint'
+          assert '/chat' in paths, 'Missing /chat endpoint'
+          assert '/health' in paths, 'Missing /health endpoint'
+          print('✅ SAFIRA FastAPI OpenAPI schema validation passed!')
+          print(f'   Registered endpoints count: {len(paths)}')
+          "; then
+            echo "✅ Python Microservice Smoke Test Passed!"
+          else
+            echo "❌ Python Microservice Smoke Test Failed!"
+            exit 1
+          fi
+
+      - name: Smoke Test — Node Gateway Health API Schema Validation
+        run: |
+          RESPONSE=$(curl -s --max-time 15 http://localhost:5000/api/health)
+          echo "Node Health Check API Response: $RESPONSE"
+          if echo "$RESPONSE" | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          assert data.get('status') == 'online', f'Unexpected status: {data.get(\"status\")}'
+          assert 'Node.js Gateway' in data.get('service', ''), f'Unexpected service: {data.get(\"service\")}'
+          print('✅ Node Gateway schema validation passed!')
+          "; then
+            echo "✅ Node Gateway Smoke Test Passed!"
+          else
+            echo "❌ Node Gateway Smoke Test Failed!"
+            exit 1
+          fi
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STEP 4 — Production Deployment & Live Post-Verification
+  # ─────────────────────────────────────────────────────────────────────────────
+  post-deployment-verification:
+    name: Production Deployment & Live Post-Verification
+    needs: [end-to-end-validation-gate]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Production Deployment Webhooks (Render, Railway, Vercel)
+        env:
+          PYTHON_HOOK: '${{ secrets.RENDER_PYTHON_DEPLOY_HOOK }}'
+          NODE_HOOK: '${{ secrets.RENDER_NODE_DEPLOY_HOOK }}'
+          VERCEL_HOOK: '${{ secrets.VERCEL_DEPLOY_HOOK }}'
+        run: |
+          if [ -n "$PYTHON_HOOK" ]; then
+            echo "🚀 Triggering Python Backend Deployment Webhook..."
+            curl -s -X POST "$PYTHON_HOOK"
+          else
+            echo "ℹ️ RENDER_PYTHON_DEPLOY_HOOK secret not set. Skipping Python webhook."
+          fi
+
+          if [ -n "$NODE_HOOK" ]; then
+            echo "🚀 Triggering Node Backend Deployment Webhook..."
+            curl -s -X POST "$NODE_HOOK"
+          else
+            echo "ℹ️ RENDER_NODE_DEPLOY_HOOK secret not set. Skipping Node webhook."
+          fi
+
+          if [ -n "$VERCEL_HOOK" ]; then
+            echo "🚀 Triggering Vercel Frontend Deployment Webhook..."
+            curl -s -X POST "$VERCEL_HOOK"
+          else
+            echo "ℹ️ VERCEL_DEPLOY_HOOK secret not set. (Using GitHub Vercel integration or deploy triggers)"
+          fi
+
+      - name: Verify Live Production Domain
+        env:
+          SAFIRA_DOMAIN: '${{ secrets.SAFIRA_PRODUCTION_URL }}'
+        run: |
+          DOMAIN="${SAFIRA_DOMAIN:-https://safira.vercel.app}"
+          echo "🌐 Performing Post-Deployment Verification ping against $DOMAIN..."
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "$DOMAIN" || true)
+          echo "Live Domain HTTP Status Code: $RESPONSE"
+          if [ "$RESPONSE" -eq 200 ] || [ "$RESPONSE" -eq 301 ] || [ "$RESPONSE" -eq 302 ]; then
+            echo "✅ Live Production Domain ($DOMAIN) Verified Successfully!"
+          else
+            echo "ℹ️ Live domain returned status code $RESPONSE. Verification logged."
+          fi

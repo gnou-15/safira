@@ -20,8 +20,9 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 # Copy the rest of the app code
 COPY *.py ./
 
-# Railway injects the PORT environment variable
-ENV PORT=8080
+# Default port (Railway or Render injects PORT environment variable)
+ENV PORT=8000
+EXPOSE 8000
 
 # Start the FastAPI server
 CMD uvicorn app:app --host 0.0.0.0 --port $PORT
