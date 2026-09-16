@@ -8,9 +8,8 @@ from dotenv import load_dotenv
 # pyrefly: ignore [missing-import]
 from supabase import create_client, Client
 # pyrefly: ignore [missing-import]
-from sentence_transformers import SentenceTransformer
-# pyrefly: ignore [missing-import]
 from pypdf import PdfReader
+from embeddings import get_embedding_vector
 
 # Load environment variables
 load_dotenv()
@@ -26,33 +25,9 @@ if not supabase_url or not supabase_key:
 # Initialize Supabase
 supabase: Client = create_client(supabase_url, supabase_key)
 
-# Initialize Embeddings model
-embedding_model = None
-embedding_type = None
-
-try:
-    print("Loading FastEmbed model (BAAI/bge-small-en-v1.5)...")
-    from fastembed import TextEmbedding
-    embedding_model = TextEmbedding("BAAI/bge-small-en-v1.5")
-    embedding_type = "fastembed"
-    print("FastEmbed model loaded successfully.")
-except Exception as e1:
-    print(f"FastEmbed load failed ({e1}), trying SentenceTransformer...")
-    try:
-        from sentence_transformers import SentenceTransformer
-        embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-        embedding_type = "sentence_transformers"
-        print("SentenceTransformer loaded successfully.")
-    except Exception as e2:
-        print(f"Error: Could not load embedding model: {e2}")
-        sys.exit(1)
-
 
 def get_embedding(text: str) -> list:
-    if embedding_type == "fastembed":
-        return list(embedding_model.embed([text]))[0].tolist()
-    else:
-        return embedding_model.encode(text).tolist()
+    return get_embedding_vector(text)
 
 # Create documents directory if it doesn't exist
 DOCS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "documents")

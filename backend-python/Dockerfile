@@ -12,10 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy requirements first (Docker caches this layer if requirements don't change)
 COPY requirements.txt .
 
-# Install PyTorch CPU-only first (much smaller than the default GPU version)
-# Then install the rest of the requirements
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
-    pip install --no-cache-dir -r requirements.txt
+# Install lightweight dependencies (FastEmbed uses ONNX Runtime instead of heavy PyTorch)
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the app code
 COPY *.py ./

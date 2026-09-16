@@ -18,6 +18,7 @@ from pypdf import PdfReader
 from prompt_guard import detect_injection_intent, sanitize_user_input
 from response_validator import validate_chat_response, REFUSAL_MESSAGE
 from supabase import create_client, Client
+from embeddings import get_embedding_vector, get_embedding_model
 
 # Load environment variables
 load_dotenv()
@@ -59,36 +60,7 @@ if supabase_url and supabase_key:
 else:
     print("Warning: Supabase credentials are not configured.")
 
-# Initialize local embedding model for RAG (384 dimensions)
-embedding_model = None
-embedding_type = None
-
-try:
-    print("Loading FastEmbed model (BAAI/bge-small-en-v1.5)...")
-    from fastembed import TextEmbedding
-    embedding_model = TextEmbedding("BAAI/bge-small-en-v1.5")
-    embedding_type = "fastembed"
-    print("FastEmbed model loaded successfully.")
-except Exception as e1:
-    print(f"FastEmbed load failed ({e1}), falling back to SentenceTransformer...")
-    try:
-        from sentence_transformers import SentenceTransformer
-        embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-        embedding_type = "sentence_transformers"
-        print("SentenceTransformer loaded successfully.")
-    except Exception as e2:
-        print(f"Warning: Local embedding model could not be loaded: {e2}")
-        embedding_model = None
-        embedding_type = None
-
-
-def get_embedding_vector(text: str) -> list:
-    if not embedding_model:
-        return []
-    if embedding_type == "fastembed":
-        return list(embedding_model.embed([text]))[0].tolist()
-    else:
-        return embedding_model.encode(text).tolist()
+# Note: Vector embedding model is lazily loaded via embeddings.py to maintain low memory (<100MB)
 
 
 # Helpers for Risk Assessment Calculations (5x5 matrix)
@@ -144,7 +116,7 @@ class SuggestDetailsRequest(BaseModel):
 
 # Helper: perform RAG search
 def search_safety_guidelines(query: str, limit: int = 3, match_threshold: float = 0.55) -> str:
-    if not supabase or not embedding_model:
+    if not supabase:
         return "No safety manuals connected."
     
     try:
@@ -593,7 +565,8 @@ def extract_text_from_pdf_bytes(pdf_bytes: bytes) -> str:
 async def upload_document(req: UploadDocumentRequest):
     if not supabase:
         raise HTTPException(status_code=500, detail="Supabase client is not configured.")
-    if not embedding_model:
+    model, _ = get_embedding_model()
+    if not model:
         raise HTTPException(status_code=500, detail="Embedding model is not configured.")
 
     filename = req.filename
@@ -633,7 +606,7 @@ async def upload_document(req: UploadDocumentRequest):
         # Ingest and embed chunks
         rows_to_insert = []
         for i, chunk in enumerate(chunks):
-            embedding_vector = embedding_model.encode(chunk).tolist()
+            embedding_vector = get_embedding_vector(chunk)
             rows_to_insert.append({
                 "document_name": filename,
                 "content": chunk,
