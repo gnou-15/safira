@@ -72,6 +72,7 @@ function App() {
     handleMetaEdit,
     handleGetToWork,
     handleCreateReport,
+    cancelGeneration,
     handleSendMessage,
     handlePrint,
     confirmModalState,
@@ -93,6 +94,7 @@ function App() {
     setShowInvestigationModal,
     loadInvestigation,
     handleCreateInvestigation,
+    cancelInvestigationGeneration,
     handleFieldEdit: handleInvestigationFieldEdit,
     handleDeleteInvestigation,
     handleExitInvestigation,
@@ -326,6 +328,7 @@ function App() {
         setIncidentPrompt={setIncidentPrompt}
         handleCreateReport={handleCreateReport}
         isGenerating={isGenerating}
+        cancelGeneration={cancelGeneration}
       />
 
       {/* New Investigation Report Modal */}
@@ -334,6 +337,7 @@ function App() {
         setShowModal={setShowInvestigationModal}
         handleCreateReport={handleCreateInvestigation}
         isGenerating={isGeneratingInvestigation}
+        cancelGeneration={cancelInvestigationGeneration}
       />
 
       {/* Safety Manuals Ingestion/Management Modal */}

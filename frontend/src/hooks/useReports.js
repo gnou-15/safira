@@ -419,26 +419,45 @@ export default function useReports() {
     }
   };
 
+  const generationAbortControllerRef = useRef(null);
+
+  const cancelGeneration = useCallback(() => {
+    if (generationAbortControllerRef.current) {
+      generationAbortControllerRef.current.abort();
+      generationAbortControllerRef.current = null;
+    }
+    setIsGenerating(false);
+  }, []);
+
   const handleCreateReport = async (e) => {
     e.preventDefault();
     if (!incidentPrompt.trim()) return;
     setIsGenerating(true);
+
+    const controller = new AbortController();
+    generationAbortControllerRef.current = controller;
+
     try {
       const aiRes = await authedFetch(`${API_URL}/api/ai/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           incident_prompt: incidentPrompt,
           location: newReportMeta.location,
           department: newReportMeta.department
         })
       });
-      if (!aiRes.ok) throw new Error('AI Generation failed');
+      if (!aiRes.ok) {
+        const errData = await aiRes.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || 'AI Generation failed');
+      }
       const generatedRows = await aiRes.json();
 
       const metaRes = await authedFetch(`${API_URL}/api/reports`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           title: newReportMeta.title,
           location: newReportMeta.location,
@@ -454,6 +473,7 @@ export default function useReports() {
       await authedFetch(`${API_URL}/api/reports/${savedReportMeta.id}/rows`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({ rows: generatedRows })
       });
 
@@ -470,8 +490,13 @@ export default function useReports() {
         { role: 'assistant', content: `Successfully generated HIRAC report for: "${newReportMeta.title}". You can now edit the cells directly or ask me to modify any specific rows.` }
       ]);
     } catch (err) {
+      if (err.name === 'AbortError') {
+        console.log('Report generation cancelled by user.');
+        return;
+      }
       alert(`Error generating report: ${err.message}`);
     } finally {
+      generationAbortControllerRef.current = null;
       setIsGenerating(false);
     }
   };
@@ -549,6 +574,7 @@ export default function useReports() {
     handleMetaEdit,
     handleGetToWork,
     handleCreateReport,
+    cancelGeneration,
     handleSendMessage,
     handlePrint,
     confirmModalState,

@@ -20,7 +20,7 @@ export const AiController = {
         incident_prompt,
         location,
         department
-      }, { timeout: 15000 });
+      }, { timeout: 3500 });
       return res.json(response.data);
     } catch (error) {
       console.warn('Python service unavailable/failed for HIRAC generation, executing fallback via Groq direct:', error.message);
@@ -46,7 +46,7 @@ export const AiController = {
         current_table,
         doc_type,
         current_investigation
-      }, { timeout: 15000 });
+      }, { timeout: 3500 });
       return res.json(response.data);
     } catch (error) {
       console.warn('Python service unavailable/failed for chat, executing fallback via Groq direct:', error.message);

@@ -13,7 +13,7 @@ export async function callGroqDirect(messages, temperature = 0.3, maxTokens = 10
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
+      model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
       messages,
       temperature,
       max_tokens: maxTokens

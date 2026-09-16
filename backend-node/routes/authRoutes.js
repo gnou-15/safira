@@ -22,6 +22,13 @@ function generateMnemonicKey() {
   return `${letters}-${numbers}`;
 }
 
+function formatDbError(err) {
+  if (err?.message?.includes('fetch failed') || err?.cause?.code === 'ENOTFOUND') {
+    return 'Database connection failed: Your Supabase project appears to be paused or unreachable. Please restore/unpause it in your Supabase dashboard.';
+  }
+  return err?.message || 'Authentication service error';
+}
+
 /**
  * POST /api/auth/key-generate
  * Generates a unique secure key, registers the user behind the scenes,
@@ -78,7 +85,7 @@ router.post('/key-generate', async (req, res) => {
     });
   } catch (err) {
     console.error('Key generation error:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: formatDbError(err) });
   }
 });
 
@@ -161,7 +168,7 @@ router.post('/key-login', async (req, res) => {
     });
   } catch (err) {
     console.error('Key login error:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: formatDbError(err) });
   }
 });
 

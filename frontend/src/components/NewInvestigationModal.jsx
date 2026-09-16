@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../css/NewReportModal.css';
 
 export default function NewInvestigationModal({
   showModal,
   setShowModal,
   handleCreateReport,
-  isGenerating
+  isGenerating,
+  cancelGeneration
 }) {
   const [title, setTitle] = useState('Safety Incident Investigation Report');
   const [executiveSummary, setExecutiveSummary] = useState('');
@@ -13,6 +14,25 @@ export default function NewInvestigationModal({
   const [position, setPosition] = useState('');
   const [dateOfHiring, setDateOfHiring] = useState('');
   const [trainings, setTrainings] = useState('All trainings/courses are current');
+
+  useEffect(() => {
+    if (!showModal) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isGenerating) {
+          if (cancelGeneration) cancelGeneration();
+        } else {
+          setShowModal(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showModal, isGenerating, cancelGeneration, setShowModal]);
 
   if (!showModal) return null;
 
@@ -48,6 +68,14 @@ export default function NewInvestigationModal({
               </div>
               <h4>Analyzing Incident Details...</h4>
               <p>Our safety model is generating factual analysis, root causes, and corrective actions.</p>
+              <button
+                type="button"
+                className="modal-generating-cancel-btn"
+                onClick={cancelGeneration}
+                title="Cancel generation (or press Esc)"
+              >
+                <kbd>ESC</kbd> Cancel Generating
+              </button>
             </div>
           </div>
         )}

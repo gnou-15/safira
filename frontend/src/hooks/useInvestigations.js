@@ -63,15 +63,30 @@ export default function useInvestigations(user, setCurrentPage) {
     }
   };
 
+  const generationAbortControllerRef = useRef(null);
+
+  const cancelInvestigationGeneration = useCallback(() => {
+    if (generationAbortControllerRef.current) {
+      generationAbortControllerRef.current.abort();
+      generationAbortControllerRef.current = null;
+    }
+    setIsGenerating(false);
+  }, []);
+
   // Create an investigation report using Groq
   const handleCreateInvestigation = async (meta) => {
     setIsGenerating(true);
     setLoadingMessage("Analyzing incident using AI...");
+
+    const controller = new AbortController();
+    generationAbortControllerRef.current = controller;
+
     try {
       // 1. Generate via AI proxy
       const aiRes = await authedFetch(`${API_URL}/api/ai/investigate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify(meta)
       });
 
@@ -86,6 +101,7 @@ export default function useInvestigations(user, setCurrentPage) {
       const saveRes = await authedFetch(`${API_URL}/api/investigations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           title: generated.title || meta.title,
           id_number: meta.id_number,
@@ -116,8 +132,13 @@ export default function useInvestigations(user, setCurrentPage) {
       setCurrentPage('investigation');
       setShowModal(false);
     } catch (err) {
+      if (err.name === 'AbortError') {
+        console.log('Investigation generation cancelled by user.');
+        return;
+      }
       alert(`Error generating report: ${err.message}`);
     } finally {
+      generationAbortControllerRef.current = null;
       setIsGenerating(false);
     }
   };
@@ -254,6 +275,7 @@ export default function useInvestigations(user, setCurrentPage) {
     setShowInvestigationModal: setShowModal,
     loadInvestigation,
     handleCreateInvestigation,
+    cancelInvestigationGeneration,
     handleFieldEdit,
     handleDeleteInvestigation,
     handleExitInvestigation,

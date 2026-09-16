@@ -9,15 +9,17 @@ export default function NewReportModal({
   incidentPrompt,
   setIncidentPrompt,
   handleCreateReport,
-  isGenerating
+  isGenerating,
+  cancelGeneration
 }) {
   const [isSuggesting, setIsSuggesting] = useState(false);
   const debounceTimerRef = useRef(null);
   const lastFetchedTitleRef = useRef('');
 
-  const fetchSuggestions = async (title) => {
-    const trimmedTitle = title.trim();
-    if (!trimmedTitle || trimmedTitle.length < 5 || trimmedTitle === lastFetchedTitleRef.current) return;
+  const fetchSuggestions = async (title, force = false) => {
+    const trimmedTitle = (title || '').trim();
+    if (!trimmedTitle || trimmedTitle.length < 3) return;
+    if (!force && trimmedTitle === lastFetchedTitleRef.current) return;
     
     lastFetchedTitleRef.current = trimmedTitle;
     setIsSuggesting(true);
@@ -51,6 +53,21 @@ export default function NewReportModal({
     }
   };
 
+  const handleRegenerateDescription = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (isSuggesting || isGenerating) return;
+
+    let targetTitle = (newReportMeta.title || '').trim();
+    if (!targetTitle) {
+      targetTitle = 'Airport Ramp Operations & Ground Safety';
+      setNewReportMeta(prev => ({ ...prev, title: targetTitle }));
+    }
+    fetchSuggestions(targetTitle, true);
+  };
+
   const handleTitleChange = (e) => {
     const val = e.target.value;
     setNewReportMeta(prev => ({ ...prev, title: val }));
@@ -69,10 +86,23 @@ export default function NewReportModal({
   };
 
   useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    if (!showModal) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isGenerating) {
+          if (cancelGeneration) cancelGeneration();
+        } else {
+          setShowModal(false);
+        }
+      }
     };
-  }, []);
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showModal, isGenerating, cancelGeneration, setShowModal]);
 
   if (!showModal) return null;
 
@@ -96,6 +126,14 @@ export default function NewReportModal({
               </div>
               <h4>Analyzing Hazard Scenario...</h4>
               <p>Our safety model is generating risk rows and control mitigations.</p>
+              <button
+                type="button"
+                className="modal-generating-cancel-btn"
+                onClick={cancelGeneration}
+                title="Cancel generation (or press Esc)"
+              >
+                <kbd>ESC</kbd> Cancel Generating
+              </button>
             </div>
           </div>
         )}
@@ -138,16 +176,37 @@ export default function NewReportModal({
 
         <div className="modal-form-group">
           <label className="modal-label">Describe the Incident, Activity, or Hazard Scenario</label>
-          <textarea
-            className="modal-prompt-textarea"
-            placeholder="e.g. A severe Typhoon warning in Mactan Cebu affecting baggage handler equipment and strong wind damage inside the passenger terminal..."
-            value={incidentPrompt}
-            onChange={(e) => setIncidentPrompt(e.target.value)}
-            required
-          />
-          {isSuggesting && (
-            <div className="modal-suggesting-spinner">AI suggesting details...</div>
-          )}
+          <div className="modal-prompt-container">
+            <textarea
+              className="modal-prompt-textarea"
+              placeholder="e.g. A severe Typhoon warning in Mactan Cebu affecting baggage handler equipment and strong wind damage inside the passenger terminal..."
+              value={incidentPrompt}
+              onChange={(e) => setIncidentPrompt(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="btn-regenerate-prompt"
+              onClick={handleRegenerateDescription}
+              disabled={isSuggesting || isGenerating}
+              title="Regenerate description scenario"
+            >
+              <svg
+                className={`refresh-icon ${isSuggesting ? 'spin-anim' : ''}`}
+                viewBox="0 0 24 24"
+                width="12"
+                height="12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+              <span>{isSuggesting ? 'Regenerating...' : 'Regenerate'}</span>
+            </button>
+          </div>
         </div>
         
         <div className="modal-actions">

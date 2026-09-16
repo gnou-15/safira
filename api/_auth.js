@@ -7,6 +7,13 @@ function generateMnemonicKey() {
   return `${letters}-${numbers}`;
 }
 
+function formatDbError(err) {
+  if (err?.message?.includes('fetch failed') || err?.cause?.code === 'ENOTFOUND') {
+    return 'Database connection failed: Your Supabase project appears to be paused or unreachable. Please restore/unpause it in your Supabase dashboard.';
+  }
+  return err?.message || 'Authentication service error';
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(res);
 
@@ -334,7 +341,7 @@ export default async function handler(req, res) {
       });
     } catch (err) {
       console.error('Key generation serverless error:', err);
-      return res.status(500).json({ error: err.message });
+      return res.status(500).json({ error: formatDbError(err) });
     }
   }
 
@@ -397,7 +404,7 @@ export default async function handler(req, res) {
       });
     } catch (err) {
       console.error('Key login serverless error:', err);
-      return res.status(500).json({ error: err.message });
+      return res.status(500).json({ error: formatDbError(err) });
     }
   }
 
