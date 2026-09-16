@@ -7,6 +7,17 @@ if (!supabaseUrl || !supabaseKey) {
   console.warn("Warning: Supabase credentials are not configured.");
 }
 
+// Fallback for Node environments lacking native WebSocket (< Node 22)
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = class DummyWebSocket {
+    constructor() {}
+    addEventListener() {}
+    removeEventListener() {}
+    send() {}
+    close() {}
+  };
+}
+
 export const supabase = createClient(supabaseUrl || '', supabaseKey || '');
 
 // Helper: validate a date string or return null
