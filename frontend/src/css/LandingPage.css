@@ -907,7 +907,6 @@
    Activated via body.sky-night (toggled by LandingPage.jsx useEffect)
    ============================================================ */
 
-html,
 body.sky-night {
   background-color: #06091a !important;
   background: #06091a !important;

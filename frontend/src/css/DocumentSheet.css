@@ -867,6 +867,13 @@
 
 @media print {
 
+  html,
+  body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
   .screen-only,
   .risk-cell-content.screen-only,
   .row-actions-td {
@@ -1179,6 +1186,10 @@
     padding: 0 !important;
     z-index: 9999 !important;
     pointer-events: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .doc-footer-fields {
@@ -1186,6 +1197,10 @@
     flex-direction: column !important;
     align-items: flex-end !important;
     gap: 0px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   .doc-footer-text {
